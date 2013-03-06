@@ -100,20 +100,16 @@ return array( %s );";
 
 
 
-	private function distinct(){
-
-		$array = static::object_to_array($this->_t());
-		$this->result = static::array_to_object(array_unique($array));
-
-		return $this;
-	}
-
-
-
 	private function find($id){
 
 		return $this->get_file($id);
 
+	}
+
+
+
+	private function first(){
+		return $this->limit(0,1)->get();
 	}
 
 
@@ -189,8 +185,144 @@ return array( %s );";
 	}
 
 
+/*
+////////////////////////////////////////////////////////*Think about it*//*
 
-	private function where_equal($column, $data, $and=false, $or=false){
+	private function distinct(){
+
+		$this->result = array_unique(static::object_to_array($this->_t()));
+
+		return $this;
+	}
+
+	private function distinct(){
+
+		$array = static::object_to_array($this->_t());
+		$this->result = static::array_to_object(array_unique($array));
+
+		return $this;
+	}
+*/
+
+
+
+	private function limit($start, $end){
+
+		if($this->_t()){
+			$this->result = array_slice($this->_t(), $start, $end);
+		}
+
+		return $this;
+
+	}
+
+	private function skip($num){
+		$this->limit($num, null);
+
+		return $this;
+	}
+
+	private function take($num){
+		$this->limit(0, $num);
+
+		return $this;
+	}
+
+
+	private function order_by($field, $type='ASC'){
+
+		if($this->_t()){
+			foreach ($this->_t() as $file_id => $row) {
+				$res[$file_id] = $row->{$field}; 
+			}
+
+			if($type == 'ASC' || $type == 'asc'){
+				asort($res);
+			}
+			if($type == 'DESC' || $type == 'desc'){
+				arsort($res);
+			}
+
+
+			$table = $this->_t();
+			foreach ($res as $id => $value) {
+				$res[$id] = $table[$id];
+			}
+
+			$this->result = $res;
+		}else{
+			$this->result = '';
+		}
+
+		return $this;
+
+	}
+
+
+
+	private function where($column, $operator, $data){
+		
+		$this->_switch_select($column, $operator, $data, false, false);
+
+		return $this;
+
+	}
+
+
+	private function and_where($column, $operator, $data){
+		
+		$this->_switch_select($column, $operator, $data, true, false);
+
+		return $this;
+
+	}
+
+
+	private function or_where($column, $operator, $data){
+		
+		$this->_switch_select($column, $operator, $data, false, true);
+
+		return $this;
+
+	}
+
+
+	public function _switch_select($column, $operator, $data, $and, $or){
+
+		switch ($operator) {
+		    case '=':
+		        $this->where_equal($column, $data, $and, $or);
+		        break;
+		    case '<>':
+		    case '!=':
+		    	$this->where_not($column, $data, $and, $or);
+		    	break;
+		    case 'like':
+		    	$this->where_like($column, $data, $and, $or);
+		    	break;
+		    case '>':
+		    	$this->where_compare($column, $data, $and, $or, 'greater');
+		    	break;
+		   	case '<':
+		    	$this->where_compare($column, $data, $and, $or, 'less');
+		    	break;
+		    case '>=':
+		    	$this->where_compare($column, $data, $and, $or, 'greater_or_equal');
+		    	break;
+		   	case '<=':
+		    	$this->where_compare($column, $data, $and, $or, 'less_or_equal');
+		    	break;
+		    default:
+		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
+
+		}
+
+		return $this;
+
+	}
+
+
+	private function where_compare($column, $data, $and=false, $or=false, $type){
 
 		if($this->_t_where($and, $or)){
 
@@ -200,18 +332,67 @@ return array( %s );";
 
 					if(is_array($data)){
 
-						if(in_array($row->{$column}, $data)){
-
-							$res[$file_id] = $row;
-
-						}
+						die('Array is not supported in "Greater than" operation');
 
 					}else{
 
-						if($row->{$column} ==  $data){
+						$data = intval($data);
 
-							$res[$file_id] = $row;
+						if($type == 'greater')
+						{
 
+							if($row->{$column} > $data){
+
+								if($or){
+									$this->result[$file_id] = $row;
+
+									$andor = true;
+								}else{
+									$res[$file_id] = $row;
+								}
+
+							}
+
+						}elseif($type == 'less'){
+
+							if($row->{$column} < $data){
+
+								if($or){
+									$this->result[$file_id] = $row;
+
+									$andor = true;
+								}else{
+									$res[$file_id] = $row;
+								}
+
+							}
+
+						}elseif($type == 'greater_or_equal'){
+
+							if($row->{$column} >= $data){
+
+								if($or){
+									$this->result[$file_id] = $row;
+
+									$andor = true;
+								}else{
+									$res[$file_id] = $row;
+								}
+
+							}
+
+						}elseif($type == 'less_or_equal'){
+
+							if($row->{$column} <= $data){
+
+								if($or){
+									$this->result[$file_id] = $row;
+
+									$andor = true;
+								}else{
+									$res[$file_id] = $row;
+								}
+							}
 						}
 					}
 				}
@@ -219,7 +400,7 @@ return array( %s );";
 
 			if(isset($res)){
 				$this->result = $res;
-			}else{
+			}elseif(!isset($andor) && $and || !$this->result && !$or){
 				$this->result = '';
 			}
 
@@ -233,70 +414,64 @@ return array( %s );";
 	}
 
 
-	private function where($column, $operator, $data){
-		
-		switch ($operator) {
-		    case '=':
-		        $this->where_equal($column, $data);
-		        break;
-		    case '!=':
-		    	$this->where_not($column, $data);
-		    	break;
-		    case 'like':
-		    	$this->where_like($column, $data);
-		    	break;
-		    default:
-		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
+	private function where_equal($column, $data, $and=false, $or=false){
+
+		if($this->_t_where($and, $or)){
+
+			foreach ($this->_t_where($and, $or) as $file_id => $row) {
+
+				if(isset($row->{$column})){
+
+					if(is_array($data)){
+
+						if(in_array($row->{$column}, $data)){
+
+							if($or){
+								$this->result[$file_id] = $row;
+
+								$andor = true;
+								//var_dump('make $andor = true');
+							}else{
+								$res[$file_id] = $row;
+							}
+
+						}
+
+					}else{
+
+						if($row->{$column} ==  $data){
+
+							if($or){
+								$this->result[$file_id] = $row;
+
+								$andor = true;
+								//var_dump('make $andor = true');
+							}else{
+								$res[$file_id] = $row;
+							}
+
+						}
+					}
+				}
+			}
+
+			if(isset($res)){
+				$this->result = $res;
+				//var_dump('make ->result = $res');
+			}elseif(!isset($andor) && $and || !$this->result && !$or){
+				$this->result = '';
+				//var_dump('make ->result = null');
+			}
+
+		}else{
+
+			$this->result = '';
+
+			//var_dump('make ->result = ""');
 
 		}
-
+		//var_dump('return this');
 		return $this;
-
-	}
-
-
-
-	private function and_where($column, $operator, $data){
-		
-		switch ($operator) {
-		    case '=':
-		        $this->where_equal($column, $data, true);
-		        break;
-		    case '!=':
-		    	$this->where_not($column, $data, true);
-		    	break;
-		    case 'like':
-		    	$this->where_like($column, $data, true);
-		    	break;
-		    default:
-		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
-
-		}
-
-		return $this;
-
-	}
-
-
-	private function or_where($column, $operator, $data){
-		
-		switch ($operator) {
-		    case '=':
-		        $this->where_equal($column, $data, false, true);
-		        break;
-		    case '!=':
-		    	$this->where_not($column, $data, false, true);
-		    	break;
-		    case 'like':
-		    	$this->where_like($column, $data, false, true);
-		    	break;
-		    default:
-		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
-
-		}
-
-		return $this;
-
 	}
 
 
@@ -313,7 +488,13 @@ return array( %s );";
 
 						if(!in_array($row->{$column}, $data)){
 
-							$res[$file_id] = $row;
+							if($or){
+								$this->result[$file_id] = $row;
+
+								$andor = true;
+							}else{
+								$res[$file_id] = $row;
+							}
 
 						}
 
@@ -321,7 +502,13 @@ return array( %s );";
 
 						if($row->{$column} !==  $data){
 
-							$res[$file_id] = $row;
+							if($or){
+								$this->result[$file_id] = $row;
+
+								$andor = true;
+							}else{
+								$res[$file_id] = $row;
+							}
 
 						}
 					}
@@ -330,7 +517,7 @@ return array( %s );";
 
 			if(isset($res)){
 				$this->result = $res;
-			}else{
+			}elseif(!isset($andor) && $and || !$this->result && !$or){
 				$this->result = '';
 			}
 
@@ -358,7 +545,13 @@ return array( %s );";
 
 							if(strripos($row->{$column}, $needle) !== false){
 
-								$res[$file_id] = $row;
+								if($or){
+									$this->result[$file_id] = $row;
+
+									$andor = true;
+								}else{
+									$res[$file_id] = $row;
+								}
 
 							}
 						}
@@ -367,7 +560,13 @@ return array( %s );";
 
 						if(strripos($row->{$column}, $data) !== false){
 
-							$res[$file_id] = $row;
+							if($or){
+								$this->result[$file_id] = $row;
+
+								$andor = true;
+							}else{
+								$res[$file_id] = $row;
+							}
 
 						}
 					}
@@ -376,7 +575,7 @@ return array( %s );";
 
 			if(isset($res)){
 				$this->result = $res;
-			}else{
+			}elseif(!isset($andor) && $and || !$this->result && !$or){
 				$this->result = '';
 			}
 
@@ -402,14 +601,7 @@ return array( %s );";
 
 		if(isset($this->result)){
 
-			if(!empty($this->result)){
-				
-				return $this->result;
-
-			}else{
-
-		 		return $this->full_table;
-			}
+			return $this->result;
 
 		}else{
 
@@ -423,7 +615,11 @@ return array( %s );";
 	public function _t_where($and, $or){
 
 		if($and){
-			$table = $this->result;
+			if(isset($this->result)){
+				$table = $this->result;
+			}else{
+				die('"and_where" or "or_where" must be at least as second parameter!');
+			}
 		}elseif($or){
 			$table = $this->full_table;
 		}else{
@@ -607,14 +803,18 @@ return array( %s );";
 
 
 
-	public static function object_to_array($data){
+	public static function object_to_array($data, $once=false){
 
 	    if (is_array($data) || is_object($data))
 	    {
 	        $result = array();
 	        foreach ($data as $key => $value){
 
-	            $result[$key] = static::object_to_array($value);
+	        	if($once){
+	        		$result[$key] = $value;
+	        	}else{
+	        		$result[$key] = static::object_to_array($value);
+	        	}
 
 	        }
 	        return $result;
