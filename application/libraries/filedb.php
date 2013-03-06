@@ -190,17 +190,11 @@ return array( %s );";
 
 
 
-	private function where_equal($column, $data, $and=false){
+	private function where_equal($column, $data, $and=false, $or=false){
 
-		if($and){
-			$table = $this->result;
-		}else{
-			$table = $this->_t();
-		}
+		if($this->_t_where($and, $or)){
 
-		if($table){
-
-			foreach ($table as $file_id => $row) {
+			foreach ($this->_t_where($and, $or) as $file_id => $row) {
 
 				if(isset($row->{$column})){
 
@@ -284,86 +278,112 @@ return array( %s );";
 	}
 
 
-
-	private function where_not($column, $data, $and=false){
+	private function or_where($column, $operator, $data){
 		
-		if($and){
-			$table = $this->result;
-		}else{
-			$table = $this->_t();
+		switch ($operator) {
+		    case '=':
+		        $this->where_equal($column, $data, false, true);
+		        break;
+		    case '!=':
+		    	$this->where_not($column, $data, false, true);
+		    	break;
+		    case 'like':
+		    	$this->where_like($column, $data, false, true);
+		    	break;
+		    default:
+		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
+
 		}
 
-		foreach ($table as $file_id => $row) {
+		return $this;
 
-			if(isset($row->{$column})){
+	}
 
-				if(is_array($data)){
 
-					if(!in_array($row->{$column}, $data)){
 
-						$res[$file_id] = $row;
+	private function where_not($column, $data, $and=false, $or=false){
+		
+		if($this->_t_where($and, $or)){
 
-					}
+			foreach ($this->_t_where($and, $or) as $file_id => $row) {
 
-				}else{
+				if(isset($row->{$column})){
 
-					if($row->{$column} !==  $data){
+					if(is_array($data)){
 
-						$res[$file_id] = $row;
+						if(!in_array($row->{$column}, $data)){
 
+							$res[$file_id] = $row;
+
+						}
+
+					}else{
+
+						if($row->{$column} !==  $data){
+
+							$res[$file_id] = $row;
+
+						}
 					}
 				}
 			}
-		}
 
-		if(isset($res)){
-			$this->result = $res;
+			if(isset($res)){
+				$this->result = $res;
+			}else{
+				$this->result = '';
+			}
+
 		}else{
+
 			$this->result = '';
+
 		}
 
 		return $this;
 	}
 
 
-	private function where_like($column, $data, $and=false){
+	private function where_like($column, $data, $and=false, $or=false){
 
-		if($and){
-			$table = $this->result;
-		}else{
-			$table = $this->_t();
-		}
+		if($this->_t_where($and, $or)){
 
-		foreach ($table as $file_id => $row) {
+			foreach ($this->_t_where($and, $or) as $file_id => $row) {
 
-			if(isset($row->{$column})){
+				if(isset($row->{$column})){
 
-				if(is_array($data)){
+					if(is_array($data)){
 
-					foreach($data as $needle){
+						foreach($data as $needle){
 
-						if(strripos($row->{$column}, $needle) !== false){
+							if(strripos($row->{$column}, $needle) !== false){
+
+								$res[$file_id] = $row;
+
+							}
+						}
+
+					}else{
+
+						if(strripos($row->{$column}, $data) !== false){
 
 							$res[$file_id] = $row;
 
 						}
 					}
-
-				}else{
-
-					if(strripos($row->{$column}, $data) !== false){
-
-						$res[$file_id] = $row;
-
-					}
 				}
 			}
-		}
 
-		if(isset($res)){
-			$this->result = $res;
+			if(isset($res)){
+				$this->result = $res;
+			}else{
+				$this->result = '';
+			}
+
 		}else{
+
 			$this->result = '';
+
 		}
 
 		return $this;
@@ -400,26 +420,41 @@ return array( %s );";
 	}
 
 
-	public function _only($column){
+	public function _t_where($and, $or){
 
-		if(isset($this->result)){
+		if($and){
 			$table = $this->result;
-		}else{
+		}elseif($or){
 			$table = $this->full_table;
+		}else{
+			$table = $this->_t();
 		}
 
-		if($table){
+		return $table;
 
-			foreach ($table as $file_id => $row) {
+	}
+
+
+	public function _only($column){
+
+		if($this->_t()){
+
+			foreach ($this->_t() as $file_id => $row) {
 
 				if(is_array($column)){
+
+					$mid_res = array();
 					
 					foreach ($column as $value) {
 
 						if(isset($row->{$value})){
 						
-							$res[$file_id] = array($value => $row->{$value});
+							 $mid_res = array_merge($mid_res, array($value => $row->{$value}));
 						}
+					}
+
+					if($mid_res){
+						$res[$file_id] = $mid_res;
 					}
 
 				}else{
@@ -451,15 +486,9 @@ return array( %s );";
 
 	private function only($column){
 
-		if(isset($this->result)){
-			$table = $this->result;
-		}else{
-			$table = $this->full_table;
-		}
+		if($this->_t()){
 
-		if($table){
-
-			foreach ($table as $file_id => $row) {
+			foreach ($this->_t() as $file_id => $row) {
 
 				if(is_array($column)){
 					
