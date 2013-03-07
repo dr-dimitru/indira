@@ -117,7 +117,7 @@ class Utilites{
 
 	public static function adminLogin($login, $remember)
 	{	
-		$admin_data = Admin::where('name', '=', $login)->get();
+		$admin_data = Admin::where('name', '=', $login)->or_where('email', '=', $login)->get();
 		foreach($admin_data as $admin)
 		{
 			
