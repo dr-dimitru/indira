@@ -289,6 +289,12 @@ return array( %s );";
 
 	public function _switch_select($column, $operator, $data, $and, $or){
 
+		if($and || $or){
+			if(!isset($this->result)){
+				$this->result = '';
+			}
+		}
+
 		switch ($operator) {
 		    case '=':
 		        $this->where_equal($column, $data, $and, $or);
@@ -345,8 +351,6 @@ return array( %s );";
 
 								if($or){
 									$this->result[$file_id] = $row;
-
-									$andor = true;
 								}else{
 									$res[$file_id] = $row;
 								}
@@ -359,8 +363,6 @@ return array( %s );";
 
 								if($or){
 									$this->result[$file_id] = $row;
-
-									$andor = true;
 								}else{
 									$res[$file_id] = $row;
 								}
@@ -373,8 +375,6 @@ return array( %s );";
 
 								if($or){
 									$this->result[$file_id] = $row;
-
-									$andor = true;
 								}else{
 									$res[$file_id] = $row;
 								}
@@ -387,8 +387,6 @@ return array( %s );";
 
 								if($or){
 									$this->result[$file_id] = $row;
-
-									$andor = true;
 								}else{
 									$res[$file_id] = $row;
 								}
@@ -398,10 +396,18 @@ return array( %s );";
 				}
 			}
 
-			if(isset($res)){
-				$this->result = $res;
-			}elseif(!isset($andor) && $and || !$this->result && !$or){
-				$this->result = '';
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
 			}
 
 		}else{
@@ -428,13 +434,9 @@ return array( %s );";
 
 							if($or){
 								$this->result[$file_id] = $row;
-
-								$andor = true;
-								//var_dump('make $andor = true');
 							}else{
 								$res[$file_id] = $row;
 							}
-
 						}
 
 					}else{
@@ -443,34 +445,34 @@ return array( %s );";
 
 							if($or){
 								$this->result[$file_id] = $row;
-
-								$andor = true;
-								//var_dump('make $andor = true');
 							}else{
 								$res[$file_id] = $row;
 							}
-
 						}
 					}
 				}
 			}
 
-			if(isset($res)){
-				$this->result = $res;
-				//var_dump('make ->result = $res');
-			}elseif(!isset($andor) && $and || !$this->result && !$or){
-				$this->result = '';
-				//var_dump('make ->result = null');
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
 			}
 
 		}else{
 
 			$this->result = '';
 
-			//var_dump('make ->result = ""');
-
 		}
-		//var_dump('return this');
+
 		return $this;
 	}
 
@@ -515,10 +517,18 @@ return array( %s );";
 				}
 			}
 
-			if(isset($res)){
-				$this->result = $res;
-			}elseif(!isset($andor) && $and || !$this->result && !$or){
-				$this->result = '';
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
 			}
 
 		}else{
@@ -547,8 +557,6 @@ return array( %s );";
 
 								if($or){
 									$this->result[$file_id] = $row;
-
-									$andor = true;
 								}else{
 									$res[$file_id] = $row;
 								}
@@ -562,8 +570,6 @@ return array( %s );";
 
 							if($or){
 								$this->result[$file_id] = $row;
-
-								$andor = true;
 							}else{
 								$res[$file_id] = $row;
 							}
@@ -573,10 +579,18 @@ return array( %s );";
 				}
 			}
 
-			if(isset($res)){
-				$this->result = $res;
-			}elseif(!isset($andor) && $and || !$this->result && !$or){
-				$this->result = '';
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
 			}
 
 		}else{
@@ -700,7 +714,7 @@ return array( %s );";
 
 					if(isset($row->{$column})){
 
-						$res[$file_id] = $row->{$column};
+						$res = $row->{$column};
 					}
 
 				}
@@ -709,9 +723,9 @@ return array( %s );";
 			if(isset($res)){
 				$this->result = $res;
 			}else{
-				$this->result = '';
+				$res = '';
 			}
-			return $this->get();
+			return $res;
 
 		}else{
 
