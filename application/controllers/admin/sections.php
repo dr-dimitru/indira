@@ -10,8 +10,14 @@ class Admin_Sections_Controller extends Base_Controller {
 
 		}else{
 
-			return View::make('admin.sections.sections')
+			if (Request::ajax())
+			{
+				return View::make('admin.sections.sections')
 					->with('sections', Sections::all());
+			}else{
+				return View::make('admin.assets.no_ajax')
+					->with('sections', Sections::all())->with('page', 'admin.sections.sections');
+			}
 
 		}
 	}

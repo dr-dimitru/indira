@@ -11,11 +11,18 @@ class Admin_Section_Area_Controller extends Base_Controller {
 			return View::make('admin.login_area');
 		
 		}else{
-			
-			$id 		= 	stripcslashes(Input::get('data'));
 
-			return View::make('admin.sections.section_area')
-					->with('section', Sections::find($id));
+			$id = stripcslashes(Input::get('data'));
+
+			if (Request::ajax())
+			{
+				return View::make('admin.sections.section_area')
+							->with('section', Sections::find($id));
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('sections', Sections::find($id))
+							->with('page', 'admin.sections.section_area');
+			}
 		}
 	}
 
@@ -33,8 +40,14 @@ class Admin_Section_Area_Controller extends Base_Controller {
 			$section->title 	= 	null;
 			$section->lang 		= 	null;
 
-
-			return View::make('admin.sections.section_area_new')->with('section', $section);
+			if (Request::ajax())
+			{
+				return View::make('admin.sections.section_area_new')->with('section', $section);
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('section', $section)
+							->with('page', 'admin.sections.section_area_new');
+			}
 		}
 	}
 

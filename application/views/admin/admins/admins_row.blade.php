@@ -20,14 +20,14 @@
 			<button 
 				id="edit_{{ $admin->id }}"
 				class="btn" 
-				onclick="showerp('{{ htmlspecialchars($json_save) }}', '../admin/admins_action/save', 'edit_{{ $admin->id }}', 'work_area', false, true)"
+				onclick="showerp('{{ htmlspecialchars($json_save) }}', '{{ URL::to('admin/admins_action/save') }}', 'edit_{{ $admin->id }}', 'work_area', false, true)"
 			>
 					<i class="icon-save" style="color:#5bb75b"></i>
 			</button> 
 			<button 
 				id="delete_{{ $admin->id }}"
 				class="btn btn-danger"  
-				onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','../admin/admins_action/delete', 'delete_{{ $admin->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), $admin->name )) }}', false, true)">
+				onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/admins_action/delete') }}', 'delete_{{ $admin->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), $admin->name )) }}', false, true)">
 					<i class="icon-trash icon-large"></i>
 			</button> 
 		</div>

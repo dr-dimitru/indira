@@ -10,7 +10,13 @@ class Admin_Posts_List_Controller extends Base_Controller {
 
 		}else{
 
-			return View::make('admin.posts.posts_list');
+			if (Request::ajax())
+			{
+				return View::make('admin.posts.posts_list');
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('page', 'admin.posts.posts_list');
+			}
 
 		}
 	}

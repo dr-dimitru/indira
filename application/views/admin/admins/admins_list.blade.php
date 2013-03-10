@@ -3,9 +3,9 @@
 <h3>{{ Lang::line('content.admins_word')->get(Session::get('lang')) }} 
 	<small>
 		<a 
-			href="#" 
-			id="new_admins"
-			onclick="shower('../admin/admins/new', 'new_admins', 'work_area', false)"
+			href="{{ URL::to('admin/admins/new') }}"
+			data-title="Indira CMS · {{ Lang::line('content.admins_word')->get(Session::get('lang')) }} · {{ Lang::line('content.add_new_word')->get(Session::get('lang')) }}" 
+			id="go_to_new_admins"
 			class="btn btn-small"
 			style="position: relative; top:-6px;"
 		>

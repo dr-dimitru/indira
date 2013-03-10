@@ -3,9 +3,8 @@
 <h3>{{ Lang::line('content.sections_word')->get(Session::get('lang')) }} 
 	<small>
 		<a 
-			href="#" 
-			id="new_section"
-			onclick="shower('../admin/section_area/new', 'new_section', 'work_area', false)"
+			href="{{ URL::to('admin/section_area/new') }}" 
+			id="go_to_new_section"
 			class="btn btn-small"
 			style="position: relative; top:-6px;"
 		>
@@ -36,24 +35,35 @@
 			?>
 				<tr>
 					<td>
-						<a id="go_to_section_{{ $section->id }}" href="#" onclick="showerp('{{ $section->id }}', '../admin/section_area', 'go_to_section_{{ $section->id }}', 'work_area', false)">{{ $section->title }}</a>
+						<a 	
+							id="go_to_section_{{ $section->id }}" 
+							href="{{ URL::to('admin/section_area') }}" 
+							data-post="{{ $section->id }}" 
+							data-out="work_area"
+							data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }} · {{ $section->title }}"
+						>
+							{{ $section->title }}
+						</a>
 					</td>
 					<td>
 						<span class="badge badge-info">{{ $section->lang }}</span>
 					</td>
 					<td>
 						<div class="btn-group">
-							<button 
-								id="edit_{{ $section->id }}"
+							<a 
+								id="go_to_btn_section_{{ $section->id }}"
+								href="{{ URL::to('admin/section_area') }}" 
+								data-post="{{ $section->id }}" 
+								data-out="work_area"
+								data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }} · {{ $section->title }}"
 								class="btn" 
-								onclick="showerp('{{ $section->id }}', '../admin/section_area', 'edit_{{ $section->id }}', 'work_area', false)"
 							>
 									<i class="icon-edit icon-large"></i>
-							</button> 
+							</a> 
 							<button 
 								id="delete_{{ $section->id }}"
 								class="btn btn-danger"  
-								onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','../admin/section_area/delete', 'delete_{{ $section->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($section->title) )) }}')">
+								onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/section_area/delete') }}', 'delete_{{ $section->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($section->title) )) }}')">
 									<i class="icon-trash icon-large"></i>
 							</button> 
 						</div>

@@ -10,7 +10,13 @@ class Admin_Admins_Controller extends Base_Controller {
 
 		}else{
 
-			return View::make('admin.admins.admins_list');
+			if (Request::ajax())
+			{
+				return View::make('admin.admins.admins_list');
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('page', 'admin.admins.admins_list');
+			}
 
 		}
 	}
@@ -29,9 +35,14 @@ class Admin_Admins_Controller extends Base_Controller {
 			$admin->access 		= 	null;
 			$admin->email 		= 	null;
 
-			return View::make('admin.admins.admins_new')->with('admin', $admin);
-
+			if (Request::ajax())
+			{
+				return View::make('admin.admins.admins_new')->with('admin', $admin);
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('admin', $admin)
+							->with('page', 'admin.admins.admins_new');
+			}
 		}
 	}
-
 }

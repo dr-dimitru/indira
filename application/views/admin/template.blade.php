@@ -12,8 +12,19 @@
 		</div>
 		<div id="main_container" class="container-fluid">
 			<div class="inner">
-				@section('content_area')
-				@yield_section
+				<div class="row-fluid">
+					<div class="span12">
+						@include('admin.sidebar')
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<div id="work_area">
+							@section('content_area')
+							@yield_section
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		@include('admin.assets.footer')

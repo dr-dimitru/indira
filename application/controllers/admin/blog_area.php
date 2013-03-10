@@ -13,10 +13,15 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 		}else{
 			
 			$id 	= 	stripcslashes(Input::get('data'));
-			$blog 	= 	Blog::find($id);
 
-			return View::make('admin.blog.blog_area')
-					->with('post', $blog);
+			if (Request::ajax())
+			{
+				return View::make('admin.blog.blog_area')->with('post', Blog::find($id));
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('post', Blog::find($id))
+							->with('page', 'admin.blog.blog_area');
+			}
 		}
 	}
 
@@ -43,8 +48,14 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			$blog->created_at 	= 	null;
 			$blog->updated_at 	= 	null;
 
-			return View::make('admin.blog.blog_area_new')
-					->with('post', $blog);
+			if (Request::ajax())
+			{
+				return View::make('admin.blog.blog_area_new')->with('post', $blog);
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('post', $blog)
+							->with('page', 'admin.blog.blog_area_new');
+			}
 		}
 	}
 

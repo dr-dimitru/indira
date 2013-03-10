@@ -2,11 +2,6 @@
 
 @section('content_area')
 <div class="row-fluid">
-	<div class="span12">
-		@include('admin.sidebar')
-	</div>
-</div>
-<div class="row-fluid">
 	<div class="span9">
 		@include('admin.login_area')
 	</div>

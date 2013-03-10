@@ -1,14 +1,13 @@
 <h3>{{ Lang::line('content.add_new_word')->get(Session::get('lang')) }}
 	<small>
-		<a 
-			href="#!/posts_list" 
+		<button 
 			id="back"
-			onclick="shower('../admin/posts_list', 'back', 'work_area', false, true)"
+			onclick="History.back()"
 			class="btn btn-small"
 			style="position: relative; top:-6px;"
 		>
 			<i class="icon-chevron-left"></i> {{ Lang::line('content.go_back')->get(Session::get('lang')) }}
-		</a>
+		</button>
 	</small>
 </h3>
 <hr>
@@ -143,7 +142,7 @@
 			class="btn"
 			type="button"
 			disabled="disabled" 
-			onclick="showerp('<?= htmlspecialchars($json_save) ?>', '../admin/post_area/add', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
+			onclick="showerp('<?= htmlspecialchars($json_save) ?>', '{{ URL::to('admin/post_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
 				<i class="icon-save" style="color:#5bb75b"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
 		</button>
 		<span id="status_{{ $post->id }}" class="btn disabled">
@@ -171,6 +170,6 @@
 </script>
 <script>
 	function save_btn(){
-		showerp('<?= $json_save ?>', '../admin/post_area/add', 'save_button_{{ $post->id }}', 'work_area', false, false);
+		showerp('<?= $json_save ?>', '{{ URL::to("admin/post_area/add") }}', 'save_button_{{ $post->id }}', 'work_area', false, false);
 	}
 </script>

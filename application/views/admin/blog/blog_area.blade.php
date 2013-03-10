@@ -1,14 +1,13 @@
 <h3>{{ stripslashes($post->title) }}
 	<small>
-		<a 
-			href="#!/blog_list" 
+		<button 
 			id="back"
-			onclick="shower('../admin/blog_list', 'back', 'work_area', false)"
+			onclick="History.back()"
 			class="btn btn-small"
 			style="position: relative; top:-6px;"
 		>
 			<i class="icon-chevron-left"></i> {{ Lang::line('content.go_back')->get(Session::get('lang')) }}
-		</a>
+		</button>
 	</small>
 </h3>
 <hr>
@@ -141,7 +140,7 @@
 				class="btn"
 				type="button"
 				disabled="disabled" 
-				onclick="showerp('<?= htmlspecialchars($json_save) ?>', '../admin/blog_area/save', 'save_button_{{ $post->id }}', 'status_{{ $post->id }}', false, true); ">
+				onclick="showerp('<?= htmlspecialchars($json_save) ?>', '{{ URL::to('admin/blog_area/save') }}', 'save_button_{{ $post->id }}', 'status_{{ $post->id }}', false, true); ">
 					<i class="icon-save" style="color:#5bb75b"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
 			</button>
 		</div>
@@ -165,6 +164,6 @@
 </div>
 <script>
 	function save_btn(){
-		showerp('<?= $json_save ?>', '../admin/blog_area/save', 'save_button_{{ $post->id }}', 'status_{{ $post->id }}', false, true);
+		showerp('<?= $json_save ?>', '{{ URL::to("admin/blog_area/save") }}', 'save_button_{{ $post->id }}', 'status_{{ $post->id }}', false, true);
 	}
 </script>

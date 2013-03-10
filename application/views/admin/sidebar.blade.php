@@ -22,16 +22,17 @@
 		</li>
 		<li class="divider-vertical"></li>
 		<li>
-			<a id="go_to_posts" href="#!/posts_list" onclick="shower('../admin/posts_list', 'go_to_posts', 'work_area', false, true)">{{ Lang::line('content.post_word')->get(Session::get('lang')) }}</a></li>
+			<a id="go_to_posts" href="{{ URL::to('admin/posts_list') }}" data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }}">{{ Lang::line('content.post_word')->get(Session::get('lang')) }}</a></li>
 		</li>
 		<li>
-			<a id="go_to_sections" href="#!/sections" onclick="shower('../admin/sections', 'go_to_sections', 'work_area', false, true)">{{ Lang::line('content.sections_word')->get(Session::get('lang')) }}</a></li>
+			<a id="go_to_sections" href="{{ URL::to('admin/sections') }}" data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }}">{{ Lang::line('content.sections_word')->get(Session::get('lang')) }}</a></li>
 		</li>
 		<li>
-			<a id="go_to_admins" href="#!/admins" onclick="shower('../admin/admins', 'go_to_admins', 'work_area', false, true)">{{ Lang::line('content.admins_word')->get(Session::get('lang')) }}</a></li>
+			<a id="go_to_blog" href="{{ URL::to('admin/blog_list') }}" data-title="Indira CMS · {{ Lang::line('content.blog_word')->get(Session::get('lang')) }}">{{ Lang::line('content.blog_word')->get(Session::get('lang')) }}</a></li>
 		</li>
+		<li class="divider-vertical"></li>
 		<li>
-			<a id="go_to_blog" href="#!/blog_list" onclick="shower('../admin/blog_list', 'go_to_blog', 'work_area', false, true)">{{ Lang::line('content.blog_word')->get(Session::get('lang')) }}</a></li>
+			<a id="go_to_admins" href="{{ URL::to('admin/admins') }}" data-title="Indira CMS · {{ Lang::line('content.admins_word')->get(Session::get('lang')) }}">{{ Lang::line('content.admins_word')->get(Session::get('lang')) }}</a></li>
 		</li>
 	</ul>
 	@endif

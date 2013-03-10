@@ -13,10 +13,16 @@ class Admin_Post_Area_Controller extends Base_Controller {
 		}else{
 			
 			$id 	= 	stripcslashes(Input::get('data'));
-			$post 	= 	Posts::find($id);
 
-			return View::make('admin.posts.post_area')
-					->with('post', $post);
+			if (Request::ajax())
+			{
+				return View::make('admin.posts.post_area')
+							->with('post', Posts::find($id));
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('post', Posts::find($id))
+							->with('page', 'admin.posts.post_area');
+			}
 		}
 	}
 
@@ -43,8 +49,15 @@ class Admin_Post_Area_Controller extends Base_Controller {
 			$post->created_at 	= 	null;
 			$post->updated_at 	= 	null;
 
-			return View::make('admin.posts.post_area_new')
-					->with('post', $post);
+			if (Request::ajax())
+			{
+				return View::make('admin.posts.post_area_new')
+							->with('post', $post);
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('post', $post)
+							->with('page', 'admin.posts.post_area_new');
+			}
 		}
 	}
 

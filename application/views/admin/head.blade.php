@@ -28,113 +28,173 @@ ________________________________________________________________________________
 		{{ HTML::script('https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js') }}
 		{{ HTML::script('js/modernizr-2.5.3.min.js') }}
 		{{ HTML::script('js/bootstrap.min.js') }}
-		{{-- HTML::script('js/indira.min.js') --}}
+		{{ HTML::script('js/history/jquery.history.js') }}
+		{{-- HTML::script('js/indira_app.js') --}}
 		<script type="text/javascript">
-function shower(p, load_el, out_el, append, restore){
-	
-	if(append || restore)
-	{
-		var prev_load_el = $('#super_logo').html();
-	}
-	
-	$.ajax({
-	  type: "GET",
-	  url: p
-	}).done(function( html ) {
-		if(append)
-		{
-			$('#super_logo').html(prev_load_el);
-			$('#'+out_el).append(html);
-		}
-		else if(restore)
-		{
-			$('#super_logo').html(prev_load_el);
-			$('#'+out_el).html(html);
-		}
-		else
-		{
-			$('#'+out_el).html(html);
-		}
-		$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
-	});
-	
-	
-	$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
-}
+			$(function(){
+				ajaxify();
+			});
 
-function showerp(q, p, load_el, out_el, append, restore){
-	
-	q = q.replace(/\n/g, '<br>');
-	
-	if(append || restore)
-	{
-		var prev_load_el = $('#super_logo').html();
-	}
-	
-	$.ajax({
-	  type: "POST",
-	  url: p,
-	  data: 'data='+encodeURIComponent(q),
-	}).done(function( html ) {
-		if(append)
-		{
-			$('#super_logo').html(prev_load_el);
-			$('#'+out_el).append(html);
-		}
-		else if(restore)
-		{
-			$('#super_logo').html(prev_load_el);
-			$('#'+out_el).html(html);
-		}
-		else
-		{
-			$('#'+out_el).html(html);
-		}
-		$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
-	});
+			function ajaxify(){
 
-	$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
-}
+				$('a[id^="go_to_"]').bind('click', function(){
 
-function showerp_alert(q, p, load_el, out_el, message, append, restore){
-	var message = confirm(message);
-	if (message==true)
-	{
-		q = q.replace(/\n/g, '<br>');
-		
-		if(append || restore)
-		{
-			var prev_load_el = $('#super_logo').html();
-		}
-		
-		$.ajax({
-		  type: "POST",
-		  url: p,
-		  data: 'data='+encodeURIComponent(q),
-		}).done(function( html ) {
-			if(append)
-			{
-				$('#super_logo').html(prev_load_el);
-				$('#'+out_el).append(html);
+					var load_el, out_el, q, link;
+
+					if($(this).attr('data-load')){
+						load_el = $(this).attr('data-load');
+					}else{
+						load_el = $(this).attr('id');
+					}
+
+					if($(this).attr('data-out')){
+						out_el = $(this).attr('data-out');
+					}else{
+						out_el = 'work_area';
+					}
+
+					if($(this).attr('data-title')){
+						title = $(this).attr('data-title');
+					}else{
+						title = '';
+					}
+
+					link = $(this).attr('href');
+
+					if($(this).attr('data-post')){
+						
+						q = $(this).attr('data-post');
+						showerp(q, link, load_el, out_el, false);
+					
+					}else{
+
+						q = '';
+						shower(link, load_el, out_el, false);
+
+					}
+
+					History.pushState({query:q, load_element:load_el, out_element:out_el},title,link);
+					return false;
+				});
+
 			}
-			else if(restore)
-			{
-				$('#super_logo').html(prev_load_el);
-				$('#'+out_el).html(html);
-			}
-			else
-			{
-				$('#'+out_el).html(html);
-			}
-			$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
-		});
-	
-		$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
-	}
-}
-		</script>
 
-		<script>
+			History.Adapter.bind(window,'statechange',function(){ 
+			    var State = History.getState();     
+			    if(State.data.query){
+			    	showerp(State.data.query, State.url, State.data.load_element, State.data.out_element, false)
+			    }else{
+			    	shower(State.url, State.data.load_element, State.data.out_element, false)
+			    }
+			});
+
+			function shower(p, load_el, out_el, append, restore){
+				
+				if(append || restore)
+				{
+					var prev_load_el = $('#super_logo').html();
+				}
+				
+				$.ajax({
+				  type: "GET",
+				  url: p
+				}).done(function( html ) {
+					if(append)
+					{
+						$('#super_logo').html(prev_load_el);
+						$('#'+out_el).append(html);
+					}
+					else if(restore)
+					{
+						$('#super_logo').html(prev_load_el);
+						$('#'+out_el).html(html);
+					}
+					else
+					{
+						$('#'+out_el).html(html);
+					}
+					$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
+					ajaxify();
+				});
+				
+				
+				$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
+			}
+
+			function showerp(q, p, load_el, out_el, append, restore){
+				
+				q = q.replace(/\n/g, '<br>');
+				
+				if(append || restore)
+				{
+					var prev_load_el = $('#super_logo').html();
+				}
+				
+				$.ajax({
+				  type: "POST",
+				  url: p,
+				  data: 'data='+encodeURIComponent(q),
+				}).done(function( html ) {
+					if(append)
+					{
+						$('#super_logo').html(prev_load_el);
+						$('#'+out_el).append(html);
+					}
+					else if(restore)
+					{
+						$('#super_logo').html(prev_load_el);
+						$('#'+out_el).html(html);
+					}
+					else
+					{
+						$('#'+out_el).html(html);
+					}
+					$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
+					ajaxify();
+				});
+
+				$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
+			}
+
+			function showerp_alert(q, p, load_el, out_el, message, append, restore){
+				var message = confirm(message);
+				if (message==true)
+				{
+					q = q.replace(/\n/g, '<br>');
+					
+					if(append || restore)
+					{
+						var prev_load_el = $('#super_logo').html();
+					}
+					
+					$.ajax({
+					  type: "POST",
+					  url: p,
+					  data: 'data='+encodeURIComponent(q),
+					}).done(function( html ) {
+						if(append)
+						{
+							$('#super_logo').html(prev_load_el);
+							$('#'+out_el).append(html);
+						}
+						else if(restore)
+						{
+							$('#super_logo').html(prev_load_el);
+							$('#'+out_el).html(html);
+						}
+						else
+						{
+							$('#'+out_el).html(html);
+						}
+						$('#super_logo').html('<i class="icon-lemon icon-2x"></i>');
+						ajaxify();
+					});
+				
+					$('#super_logo').html('<i class="icon-cog icon-2x icon-spin"></i>');
+				}
+			}
+
+
 			$(document).ready(
 				function(){
 					$('#admin_nav').find('li').click(function(){
