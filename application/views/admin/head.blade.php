@@ -22,6 +22,16 @@ ________________________________________________________________________________
 <!--[if gt IE 8]><!--> 
 <html itemscope itemtype="http://schema.org/WebPage" xmlns:og="http://ogp.me/ns#" style="padding:0px; margin:0px;" class="no-js" lang="{{ Session::get('lang'); }}"> <!--<![endif]-->
 	<head>
+
+		{{ HTML::style('css/bootstrap.css') }}
+		{{ HTML::style('css/styles.css') }}
+		{{ HTML::style('css/font-awesome.min.css') }}
+		{{ HTML::style('js/css/redactor.css') }}
+		<!--[if IE 7]>
+			<link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+		<![endif]-->
+		{{ HTML::style('js/google-code-prettify/prettify.css') }}
+
 		<!--[if lt IE 9]>
 		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -29,6 +39,7 @@ ________________________________________________________________________________
 		{{ HTML::script('js/modernizr-2.5.3.min.js') }}
 		{{ HTML::script('js/bootstrap.min.js') }}
 		{{ HTML::script('js/history/jquery.history.js') }}
+		{{ HTML::script('js/redactor.js') }}
 		{{-- HTML::script('js/indira_app.js') --}}
 		<script type="text/javascript">
 			$(function(){
@@ -213,16 +224,6 @@ ________________________________________________________________________________
 		
 		<link rel="shortcut icon" href="img/favicon.ico" />
 		<link rel="apple-touch-icon-precomposed" href="img/icon.png">
-		
-		{{ HTML::style('css/bootstrap.css') }}
-		{{ HTML::style('css/styles.css') }}
-		{{ HTML::style('css/font-awesome.min.css') }}
-		{{ HTML::style('js/css/redactor.css') }}
-		{{ HTML::script('js/redactor.js') }}
-		<!--[if IE 7]>
-			<link rel="stylesheet" href="css/font-awesome-ie7.min.css">
-		<![endif]-->
-		{{ HTML::style('js/google-code-prettify/prettify.css') }}
 
 		<title>Indira CMS · Admin</title>
 

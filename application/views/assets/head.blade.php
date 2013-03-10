@@ -22,6 +22,11 @@ ________________________________________________________________________________
 <!--[if gt IE 8]><!--> 
 <html itemscope itemtype="http://schema.org/WebPage" xmlns:og="http://ogp.me/ns#" style="padding:0px; margin:0px;" class="no-js" lang="{{ Session::get('lang'); }}"> <!--<![endif]-->
 	<head>
+		{{ HTML::style('css/bootstrap.css') }}
+		{{ HTML::style('css/bootstrap-responsive.css') }}
+		{{ HTML::style('css/styles.css') }}
+		{{ HTML::style('css/font-awesome.min.css') }}
+		{{ HTML::style('js/css/redactor.css') }}
 		<!--[if lt IE 9]>
 		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -30,7 +35,6 @@ ________________________________________________________________________________
 		{{ HTML::script('js/indira.js') }}
 		
 		@if (Admin::check() && isset($post))
-			{{ HTML::style('js/css/redactor.css') }}
 			{{ HTML::script('js/redactor.js') }}
 			<? $json_save = '{"id": "'.$post->id.'", "title": "\'+encodeURI(\''.$post->title.'\')+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "'.$post->access.'", "media": "'.$post->media.'", "section": "'.$post->section.'", "tags": "\'+encodeURI(\''.$post->tags.'\')+\'", "lang": "'.$post->lang.'"}'; ?>
 			<script>
@@ -82,11 +86,7 @@ ________________________________________________________________________________
 		
 		<link rel="shortcut icon" href="img/favicon.ico" />
 		<link rel="apple-touch-icon-precomposed" href="img/icon.png">
-		
-		{{ HTML::style('css/bootstrap.css') }}
-		{{ HTML::style('css/bootstrap-responsive.css') }}
-		{{ HTML::style('css/styles.css') }}
-		{{ HTML::style('css/font-awesome.min.css') }}
+
 		<!--[if IE 7]>
 			<link rel="stylesheet" href="css/font-awesome-ie7.min.css">
 		<![endif]-->

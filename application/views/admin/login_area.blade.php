@@ -36,7 +36,7 @@ if(Cookie::get('admin_password')){
 	<button 
 		style="min-width: 60px" 
 		id="login_button" 
-		onclick="showerp('<?= htmlspecialchars($login_query) ?>', '../admin/login', 'status', 'status', false)" 
+		onclick="showerp('{{ htmlspecialchars($login_query) }}', '{{ URL::to('admin/login') }}', 'status', 'status', false)" 
 		class="btn btn-primary" 
 		type="submit">{{ Lang::line('content.login_action_word')->get(Session::get('lang')) }}
 	</button>
@@ -69,3 +69,10 @@ if(Cookie::get('admin_password')){
     data-toggle="modal">
         <i class="icon-warning-sign"></i> {{ Lang::line('content.pass_recovery_word')->get(Session::get('lang')) }}
 </a>
+<script type="text/javascript">
+$(document).keypress(function(e) {
+    if(e.which == 13 && $('#admin_login').is(":focus") || e.which == 13 && $('#admin_password').is(":focus")) {
+        showerp('{{ $login_query }}', '{{ URL::to("admin/login") }}', 'status', 'status', false);
+    }
+});
+</script>

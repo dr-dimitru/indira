@@ -338,7 +338,7 @@ return array( %s );";
 
 					if(is_array($data)){
 
-						die('Array is not supported in "Greater than" operation');
+						die('Arrays is not supported in "Greater than", "Less than" and other similar operations');
 
 					}else{
 
