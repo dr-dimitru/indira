@@ -54,6 +54,21 @@ Route::get('admin/lang/(:any)', array('as' => 'admin_lang', 'uses' => 'lang@inde
 
 }));
 
+Route::get('admin/db/(:any)', array('uses' => 'admin.db@index', function($table)
+{
+
+}));
+
+Route::get('admin/db/update/(:any)', array('uses' => 'admin.db@update', function($table)
+{
+
+}));
+
+Route::get('admin/db/delete/(:any)', array('uses' => 'admin.db@delete', function($id)
+{
+
+}));
+
 
 Route::controller(Controller::detect());
 
@@ -138,8 +153,7 @@ Route::filter('before', function()
 
 	if(!Session::get('lang', null) && !Cookie::get('lang'))
 	{
-		$lang = Config::get('application.language');
-		Session::put('lang', $lang);
+		Session::put('lang', Config::get('application.language'));
 	}
 	
 	if(Cookie::get('lang'))
