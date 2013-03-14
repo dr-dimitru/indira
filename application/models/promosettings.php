@@ -2,7 +2,7 @@
 
 class Promosettings extends Filedb
 {
-	public static $table = 'promo_settings';
+	public static $table = 'promosettings';
 
 	public static $model = array(	'id' => '', 
 									'name' => '', 

@@ -22,7 +22,7 @@
 		  		<a  href="<?= Config::get('application.url') ?>/admin" onclick=" _gaq.push(['_trackEvent', 'demo', 'go_to_demo', 'Test admin side']);" class="btn btn-success btn-large btn-block"><i class="icon-play icon-white"></i> {{ Lang::line('promo.try_it')->get(Session::get('lang')) }}</a>
 		  	</div>
 		  	<div class="span4">
-		  		<a  href="<?= Config::get('application.url') ?>/build/build.zip" onclick=" _gaq.push(['_trackEvent', 'download', 'download_click', 'Download Indira']);" class="btn btn-inverse btn-large btn-block"><i class="icon-download-alt icon-white"></i> {{ Lang::line('promo.download')->get(Session::get('lang')) }}</a>
+		  		<a  href="https://github.com/dr-dimitru/indira/archive/master.zip" target="_blank" onclick=" _gaq.push(['_trackEvent', 'download', 'download_click', 'Download Indira']);" class="btn btn-inverse btn-large btn-block"><i class="icon-download-alt icon-white"></i> {{ Lang::line('promo.download')->get(Session::get('lang')) }}</a>
 		  	</div>
 		</div>
 		

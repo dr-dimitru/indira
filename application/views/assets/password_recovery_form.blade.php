@@ -15,16 +15,16 @@
 	 					class="input" 
 	 					id="email" 
 	 					type="email" 
-	 					value="<? 
-	 					if(Cookie::get('userdata_login')){
-	 						echo trim(Crypter::decrypt(Cookie::get('userdata_login')));
-	 					}
-	 					?>" 
+	 					value=" 
+	 					@if(Cookie::get('userdata_login'))
+	 						{{ trim(Crypter::decrypt(Cookie::get('userdata_login'))) }}
+	 					@endif
+	 					" 
 	 				/>
 	 			</div>
 	 		</div>
 	 	</fieldset>
-	 	<?
+	 	<?php
 	 		$json_data = '{"email": "\'+encodeURI($(\'#email\').val())+\'"}';
 	 	?>
 	 	<div id="recovery_action"></div>
@@ -32,7 +32,7 @@
 	 <div class="modal-footer">
 	    <a 
 	    	href="#" 
-	    	onclick="showerp('<?= htmlspecialchars($json_data); ?>', '<?= Config::get('application.url'); ?>/password_recovery/', 'recovery_action', 'recovery_action')" 
+	    	onclick="showerp('{{ htmlspecialchars($json_data) }}', '{{ Config::get('application.url') }}/password_recovery/', 'recovery_action', 'recovery_action')" 
 	    	class="btn btn-primary">
 	    		{{ Lang::line('content.pass_recovery_action_word')->get(Session::get('lang')) }}
 	    </a>

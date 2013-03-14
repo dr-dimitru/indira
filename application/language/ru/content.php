@@ -105,4 +105,12 @@ return array(
 	'go_back' => 'Назад',
 	'adminizer_welcome' => 'Indira CMS позволяет редактировать контент новым способом - "EiP" (Edit in Place или Редактирование "На живую"). Попробуйте сами - в админке нажмите на кнопку с <strong><i class="icon-lemon"></i></strong> - лемоном',
 	'blog_word' => 'Блог',
+	'admin_tools' => 'Администрирование',
+	'db_management' => 'База данных',
+	'content_management' => 'Контент',
+	'db_info_title' => 'Информация о Базе Данных',
+	'update_db' => 'Обновить Таблицу в соотвествии с моделью', 
+	'publish' => 'Опубликовать',
+	'unpublish' => 'Скрыть',
+	'unpublished' => 'Скрытый',
 );

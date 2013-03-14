@@ -1,5 +1,3 @@
-<? $sections = Sections::where('lang', '=', Session::get('lang'))->get(); ?>
-
 @if($sections)
 	@foreach ($sections as $section)
 
@@ -9,11 +7,9 @@
 				<h1>{{ $section->title }}</h1>
 			</div>
 			
-			<? $posts = Posts::where('section', '=', array($section->id))->get(); ?>
-			
 			@if($posts)
 				@foreach ($posts as $post)
-				    @if($post->access <= Session::get('user.access_level'))
+				    @if($post->access <= Session::get('user.access_level') && $post->section == $section->id)
 					<div class="span4">
 						@include('partials.postpreview')
 					</div>

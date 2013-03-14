@@ -34,19 +34,37 @@
 			</thead>
 			<tbody>
 				@foreach ($posts as $post)
-					<? 
+					<?php 
 						$post_tags = explode(",", $post->tags); 
 						$json_delete = '{ "id": "'.$post->id.'", "delete": "delete"}';
+						$json_pub = '{ "id": "'.$post->id.'" }';
 					?>
 						<tr>
 							<td>
+								@if($post->published == 0)
+								<sup>
+									<font class="h6">{{ Lang::line('content.unpublished')->get(Session::get('lang')) }}</font>
+								</sup>
+								@endif
 								<a 	id="go_to_post_{{ $post->id }}" 
 									href="{{ URL::to('/admin/blog_area') }}" 
 									data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }} · {{ $post->title }}" 
 									data-post="{{ $post->id }}"
-								>
-									{{ $post->title }}
-								</a>
+								>{{ $post->title }}</a>
+
+
+								<button 
+									id="pub_{{ $post->id }}"
+									class="btn btn-mini"  
+									onclick="showerp('{{ htmlspecialchars($json_pub) }}','{{ URL::to('admin/blog_area/publish') }}', 'pub_{{ $post->id }}', 'work_area', false, true)">
+										@if($post->published == 1)
+											<i class="icon-minus-sign"></i>
+											{{ Lang::line('content.unpublish')->get(Session::get('lang')) }}
+										@else
+											<i class="icon-cloud-upload"></i>
+											{{ Lang::line('content.publish')->get(Session::get('lang')) }}
+										@endif
+								</button> 
 							</td>
 							<td>
 								<span class="badge badge-info">{{ $post->access }}</span>

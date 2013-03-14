@@ -12,5 +12,6 @@ class Blog extends Filedb
 									'access' => '1', 
 									'qr_code' => '', 
 									'lang' => '', 
-									'tags' => '');
+									'tags' => '',
+									'published' => '0');
 }

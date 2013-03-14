@@ -10,6 +10,8 @@ class Admin_Posts_List_Controller extends Base_Controller {
 
 		}else{
 
+			Session::put('href.previous', URL::current());
+
 			if (Request::ajax())
 			{
 				return View::make('admin.posts.posts_list');

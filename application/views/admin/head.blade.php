@@ -205,15 +205,18 @@ ________________________________________________________________________________
 				}
 			}
 
+		</script>
 
-			$(document).ready(
-				function(){
-					$('#admin_nav').find('li').click(function(){
-						$('#admin_nav').find('li').removeClass('active');
-						$(this).addClass('active');
-					});
-				}
-			);
+		<script type="text/javascript">
+			// $(document).ready(
+			// 	function(){
+			// 		$('#admin_nav').find('li').click(function(){
+			// 			console.log($('#admin_nav').find('li'));
+			// 			$('#admin_nav').find('li').removeClass('active');
+			// 			$(this).addClass('active');
+			// 		});
+			// 	}
+			// );
 		</script>
 		
 		<meta charset="UTF-8" />

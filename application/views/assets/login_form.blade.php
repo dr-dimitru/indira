@@ -1,7 +1,3 @@
-<?
-    $promo_active = Promosettings::get_settings('active');
-    $promo_on_login = Promosettings::get_settings('on_login');
-?>
 <div id="login_form" class="modal fade">
 	 <div class="modal-header">
 	 	<a class="close" data-dismiss="modal" >×</a>
@@ -19,12 +15,9 @@
                         type="email" 
                         name="login" 
                         id="login" 
-                        value="<? 
-                        if(Cookie::get('userdata_login'))
-                        {
-                            echo trim(Crypter::decrypt(Cookie::get('userdata_login')));
-                        } 
-                        ?>" 
+                        value="@if(Cookie::get('userdata_login'))
+                        {{ trim(Crypter::decrypt(Cookie::get('userdata_login'))) }}
+                        @endif" 
                         class="input" 
                         placeholder="{{ Lang::line('placeholders.email')->get(Session::get('lang')) }}" 
                     />
@@ -43,7 +36,7 @@
                         id="password" 
                         type="password" 
                         class="input" 
-                        value="<? 
+                        value="<?php 
                         if(Cookie::get('userdata_pass'))
                         {
                            echo trim(Crypter::decrypt(Cookie::get('userdata_pass')));
@@ -56,8 +49,8 @@
             </div>
        </fieldset>
         
-        @if($promo_active == 1 && $promo_on_login == 1)
-            <? 
+        @if(Promosettings::get_settings('active') == 1 && Promosettings::get_settings('on_login') == 1)
+            <?php 
                 $json_data = '{"login": "\'+encodeURI($(\'#login\').val())+\'", "password": "\'+encodeURI($(\'#password\').val())+\'", "promo": "\'+encodeURI($(\'#promo_code\').val())+\'", "remember": "\'+$(\'#remember-me\').val()+\'"}';
              ?>
             <fieldset>
@@ -71,7 +64,7 @@
             </fieldset>
                 
         @else
-            <? $json_data = '{"login": "\'+encodeURI($(\'#login\').val())+\'", "password": "\'+encodeURI($(\'#password\').val())+\'", "remember": "\'+$(\'#remember-me\').val()+\'"}'; ?>
+            <?php $json_data = '{"login": "\'+encodeURI($(\'#login\').val())+\'", "password": "\'+encodeURI($(\'#password\').val())+\'", "remember": "\'+$(\'#remember-me\').val()+\'"}'; ?>
         @endif
         
         <div id="login_action"></div>
@@ -106,7 +99,7 @@
 
         <a 
             href="#" 
-            onclick="showerp('<?= htmlspecialchars($json_data); ?>', '<?= Config::get('application.url') ?>/login', 'login_action', 'login_action')" 
+            onclick="showerp('{{ htmlspecialchars($json_data) }}', '{{ Config::get('application.url') }}/login', 'login_action', 'login_action')" 
             class="btn btn-primary">
                 {{ Lang::line('content.login_action_word')->get(Session::get('lang')) }}
         </a>

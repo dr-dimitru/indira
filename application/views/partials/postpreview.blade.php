@@ -1,4 +1,4 @@
-<? $post_media = explode(",", $post->media); ?>
+<?php $post_media = explode(",", $post->media); ?>
 <h2>
 	<a 
 		href="{{ URL::to($post->id) }}" 

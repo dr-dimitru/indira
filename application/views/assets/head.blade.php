@@ -34,7 +34,7 @@ ________________________________________________________________________________
 		{{ HTML::script('js/modernizr-2.5.3.min.js') }}
 		{{ HTML::script('js/indira.js') }}
 		
-		@if (Admin::check() && isset($post))
+		@if (Admin::check() && isset($post->id))
 			{{ HTML::script('js/redactor.js') }}
 			<? $json_save = '{"id": "'.$post->id.'", "title": "\'+encodeURI(\''.$post->title.'\')+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "'.$post->access.'", "media": "'.$post->media.'", "section": "'.$post->section.'", "tags": "\'+encodeURI(\''.$post->tags.'\')+\'", "lang": "'.$post->lang.'"}'; ?>
 			<script>

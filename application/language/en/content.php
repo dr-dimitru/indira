@@ -107,4 +107,12 @@ return array(
 	'go_back' => 'Вack',
 	'adminizer_welcome' => 'Indira CMS introuduce the new way to manage your content - "EiP" (Edit in Place). To try it - just click on button with <strong><i class="icon-lemon"></i></strong> - lemon',
 	'blog_word' => 'Blog',
+	'admin_tools' => 'Admin tools',
+	'db_management' => 'Database',
+	'content_management' => 'Content',
+	'db_info_title' => 'Database Summary',
+	'update_db' => 'Update Table within model',
+	'publish' => 'Publish',
+	'unpublish' => 'Unbublish',
+	'unpublished' => 'Unpublished',
 );

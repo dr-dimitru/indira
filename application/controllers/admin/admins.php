@@ -10,6 +10,8 @@ class Admin_Admins_Controller extends Base_Controller {
 
 		}else{
 
+			Session::put('href.previous', URL::current());
+
 			if (Request::ajax())
 			{
 				return View::make('admin.admins.admins_list');
@@ -28,6 +30,8 @@ class Admin_Admins_Controller extends Base_Controller {
 
 		}else{
 
+			Session::put('href.previous', URL::current());
+			
 			$admin 				= 	new stdClass;
 			$admin->id 			= 	'new';
 			$admin->name 		= 	null;

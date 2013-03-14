@@ -34,6 +34,8 @@ class Admin_Section_Area_Controller extends Base_Controller {
 			return View::make('admin.login_area');
 		
 		}else{
+
+			Session::put('href.previous', URL::current());
 		
 			$section 			= 	new stdClass;
 			$section->id 		= 	'new';

@@ -33,6 +33,8 @@ class Admin_Post_Area_Controller extends Base_Controller {
 			return View::make('admin.login_area');
 		
 		}else{
+
+			Session::put('href.previous', URL::current());
 		
 			$post 				= 	new stdClass;
 			$post->id 			= 	'new';

@@ -32,7 +32,9 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			return View::make('admin.login_area');
 		
 		}else{
-		
+			
+			Session::put('href.previous', URL::current());
+
 			$blog 				= 	new stdClass;
 			$blog->id 			= 	'new';
 			$blog->title 		= 	null;
@@ -234,6 +236,43 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			}
 
 		}
+	}
+
+
+	public function post_publish(){
+
+		if(!Admin::check()){
+			
+			return Lang::line('content.logged_out_warning')
+					->get(Session::get('lang'));
+		
+		}elseif(Admin::check() != '777'){
+			
+			return Lang::line('content.permissions_denied')
+					->get(Session::get('lang'));
+		
+		}else{
+
+			$json 				= 	stripcslashes(Input::get('data'));
+			$json_arr 			= 	json_decode($json, true);
+
+			$blog 				= 	new stdClass;
+			$blog->id 			= 	$json_arr["id"];
+
+			if(Blog::find($blog->id)->published){
+
+				Blog::where('id', '=', $blog->id)->update(array('published' => 0));
+
+			}else{
+
+				Blog::where('id', '=', $blog->id)->update(array('published' => 1));
+
+			}
+
+
+			return View::make('admin.blog.blog_list')->with('posts', Blog::all());
+		}
+
 	}
 
 

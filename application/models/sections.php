@@ -2,7 +2,7 @@
 
 class Sections extends Filedb
 {
-	public static $table = 'section';
+	public static $table = 'sections';
 
 	public static $model = array(	'id' => '', 
 									'title' => '', 

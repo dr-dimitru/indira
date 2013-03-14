@@ -1,7 +1,3 @@
-<?
-	$promo_active = Promosettings::get_settings('active');
-	$promo_on_signup = Promosettings::get_settings('on_registration');
-?>
 <div id="registration_form" class="modal fade">
 	 <div class="modal-header">
 	 	<a class="close" data-dismiss="modal" >×</a>
@@ -49,8 +45,8 @@
 	 		</div>
 	 	</fieldset>
 	 	
-	 	@if($promo_active == 1 && $promo_on_signup == 1)
-		 	<? $json_data = '{"login": "\'+encodeURI($(\'#reg_login\').val())+\'", "name": "\'+encodeURI($(\'#name\').val())+\'", "password": "\'+encodeURI($(\'#reg_password\').val())+\'", "re_password": "\'+encodeURI($(\'#re_password\').val())+\'", "promo": "\'+encodeURI($(\'#reg_promo_code\').val())+\'"}'; ?>
+	 	@if(Promosettings::get_settings('active') == 1 && Promosettings::get_settings('on_registration') == 1)
+		 	<?php $json_data = '{"login": "\'+encodeURI($(\'#reg_login\').val())+\'", "name": "\'+encodeURI($(\'#name\').val())+\'", "password": "\'+encodeURI($(\'#reg_password\').val())+\'", "re_password": "\'+encodeURI($(\'#re_password\').val())+\'", "promo": "\'+encodeURI($(\'#reg_promo_code\').val())+\'"}'; ?>
 		 	<fieldset>
 		 		<div class="control-group">
 		 	 		<label class="control-label" for="reg_promo_code">
@@ -63,7 +59,7 @@
 		 		</div>
 		 	</fieldset>
 	 	@else
-	 		<? $json_data = '{"login": "\'+encodeURI($(\'#reg_login\').val())+\'", "name": "\'+encodeURI($(\'#name\').val())+\'", "password": "\'+encodeURI($(\'#reg_password\').val())+\'", "re_password": "\'+encodeURI($(\'#re_password\').val())+\'"}'; ?>
+	 		<?php $json_data = '{"login": "\'+encodeURI($(\'#reg_login\').val())+\'", "name": "\'+encodeURI($(\'#name\').val())+\'", "password": "\'+encodeURI($(\'#reg_password\').val())+\'", "re_password": "\'+encodeURI($(\'#re_password\').val())+\'"}'; ?>
 	 	@endif
 
 	 	<div id="registration_action"></div>

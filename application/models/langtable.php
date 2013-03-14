@@ -2,7 +2,7 @@
 
 class Langtable extends Filedb
 {
-	public static $table = 'lang_table';
+	public static $table = 'langtable';
 
 	public static $model = array(	'id' => '', 
 									'lang' => '', 

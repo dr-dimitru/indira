@@ -10,6 +10,8 @@ class Admin_Sections_Controller extends Base_Controller {
 
 		}else{
 
+			Session::put('href.previous', URL::current());
+
 			if (Request::ajax())
 			{
 				return View::make('admin.sections.sections')

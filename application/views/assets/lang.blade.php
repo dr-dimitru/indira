@@ -1,9 +1,8 @@
 {{-- LANGUAGE CYCLE --}}
 
 		<ul class="nav pull-right">
-    <? $langs = Langtable::get_lang_params();?>
     		<li class="divider-vertical"></li>
-		@foreach($langs as $key => $value)
+		@foreach(Langtable::get_lang_params() as $key => $value)
 		
 		    @if(Session::get('lang') == $key)
 			<li class="active">{{ HTML::link_to_route('lang', $value["text_lang"], array($key)) }}</li>

@@ -11,6 +11,10 @@ return array( %s );";
 
 	public static $table;
 
+	public static $models_dir = 'application/models';
+
+	public static $storage_dir = 'storage/db';
+
 	public static $model;
 
 	protected static $_inst = NULL;
@@ -31,6 +35,22 @@ return array( %s );";
 
 
 
+	public static function get_table($table=null){
+
+		if(!empty(static::$table)){
+
+			return static::$table;
+
+		}elseif($table != null){
+
+			return strtolower(Str::plural(class_basename($table)));
+
+		}
+
+	}
+
+
+
 	public function table()
 	{
 		
@@ -39,11 +59,88 @@ return array( %s );";
 	}
 
 
+
+	static function get_tables(){
+
+		$tables_by_model = array_diff(scandir(static::$models_dir), array('..', '.'));
+
+		foreach ($tables_by_model as $table) {
+
+			$table_model_file = substr($table, 0, -4);
+
+			$tables[] = $table_model_file::get_table($table_model_file);
+
+		}
+		
+		return $tables;
+	}
+
+
+	static function get_db_size(){
+
+		$size = 0;
+		$tables = static::get_tables();
+
+		foreach ($tables as $table) {
+
+			$size += static::get_table_size($table);
+
+		}
+
+		return $size;
+	}
+
+
+	static function get_table_size($table){
+
+		$size = 0;
+		$records = array_diff(scandir('storage/db/'.$table), array('..', '.'));
+		
+		foreach ($records as $record) {
+			
+			$size += filesize('storage/db/'.$table.'/'.$record);
+		
+		}
+
+		return $size;
+
+	}
+
+	static function get_table_records($table){
+
+		return count(array_diff(scandir('storage/db/'.$table), array('..', '.')));
+
+	}
+
+
+	static function get_db_records(){
+
+		$records = 0;
+		$tables = static::get_tables();
+
+		foreach ($tables as $table) {
+
+			$records += static::get_table_records($table);
+
+		}
+
+		return $records;
+	}
+
+
 	
 	public function init(){
 
 		$this->full_table = array();
-		$rows = scandir($this->dir.'/'.static::$table);
+		if(is_dir($this->dir.'/'.static::$table)){
+
+			$rows = scandir($this->dir.'/'.static::$table);
+
+		}else{
+
+			return 'No such table ('.$this->dir.'/'.static::$table.')!';
+
+		}
 
 		foreach ($rows as $key => $value) {
 			
@@ -102,8 +199,16 @@ return array( %s );";
 
 	private function find($id){
 
-		return $this->get_file($id);
+		$id = intval($id);
 
+		foreach ($this->_t() as $file_id => $row) {
+
+			if($row->id == $id){
+
+				return $this->get_file($id);
+
+			}
+		}
 	}
 
 
@@ -492,8 +597,6 @@ return array( %s );";
 
 							if($or){
 								$this->result[$file_id] = $row;
-
-								$andor = true;
 							}else{
 								$res[$file_id] = $row;
 							}
@@ -506,8 +609,6 @@ return array( %s );";
 
 							if($or){
 								$this->result[$file_id] = $row;
-
-								$andor = true;
 							}else{
 								$res[$file_id] = $row;
 							}
@@ -922,10 +1023,31 @@ $file 		.= 	");";
 
 
 
+	public static function _row($key, $value, $timestamp=null){
+
+		if($key == $timestamp){
+
+			return "'".$key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
+";
+		}elseif($key == 'id'){
+
+			return "'".$key."' => ".intval($value).", 
+";
+		}else{
+
+			return "'".$key."' => '".rawurlencode($value)."', 
+";
+		}
+
+	}
+
+
+
 
 	private function update($data=array()){
 
 		$result = "";
+		$table_dir = $this->dir."/".static::$table;
 
 		foreach ($this->_t() as $row) {
 
@@ -936,48 +1058,24 @@ $file 		.= 	");";
 
 				if(array_key_exists($model_key, $data)){
 
-					if($model_key == 'updated_at'){
-
-						$file .= "'".$model_key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
-";
-					}elseif($model_key == 'id'){
-
-						$file .= "'".$model_key."' => ".$data[$model_key].", 
-";
-					}else{
-
-						$file .= "'".$model_key."' => '".rawurlencode($data[$model_key])."', 
-";
-					}
+					$file .= static::_row($model_key, $data[$model_key], 'updated_at');
 
 				}elseif(isset($row->$model_key)){
 
-					if($model_key == 'updated_at'){
-
-						$file .= "'".$model_key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
-";
-					}elseif($model_key == 'id'){
-
-						$file .= "'".$model_key."' => ".$row->$model_key.", 
-";
-					}else{
-
-						$file .= "'".$model_key."' => '".rawurlencode($row->$model_key)."', 
-";
-					}
+					$file .= static::_row($model_key, $row->$model_key, 'updated_at');
 
 				}else{
 
-					$file .= "'".$model_key."' => '".rawurlencode($default_value)."', 
-";
+					$file .= static::_row($model_key, $default_value);
+
  				}			
 			}
 
 			$file = sprintf(static::$file_pattern, $file);
 			
-			if(!file_exists(dirname($file_dir))){
+			if(!is_dir($table_dir)){
     			
-    			mkdir(dirname($file_dir), 0777, true);
+    			mkdir($table_dir, 0755, true);
 
     		}
 
@@ -991,6 +1089,15 @@ $file 		.= 	");";
 
 	private function insert($data=array()){
 
+		$table_dir = $this->dir."/".static::$table;
+		$file = "";
+
+		if(!is_dir($table_dir)){
+			
+			mkdir($table_dir, 0755, true);
+
+		}
+
 		$rows = scandir($this->dir.'/'.static::$table);
 		
 		foreach ($rows as $value) {
@@ -999,51 +1106,36 @@ $file 		.= 	");";
 
 		$max_id = intval(max($rows_1));
 		$new_id = ++$max_id;
-
 		$file_dir 	= 	$this->dir."/".static::$table."/".$new_id.".php";
-		$file = "";
 
 		foreach (static::$model as $model_key => $default_value) {
 
 			if(array_key_exists($model_key, $data)){
 
-				if($model_key == 'updated_at'){
-
-					$file .= "'".$model_key."' => '0000-00-00 00:00:00', 
-";
-				}elseif($model_key == 'created_at'){
-
-					$file .= "'".$model_key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
-";
-				}else{
-
-					$file .= "'".$model_key."' => '".rawurlencode($data[$model_key])."', 
-";
-				}
+				$file .= static::_row($model_key, $data[$model_key], 'created_at');
 
 			}else{
 
 				if($model_key == 'id'){
 
-					$file .= "'".$model_key."' => ".$new_id.", 
-";
+					$file .= static::_row($model_key, $new_id);
+
 				}elseif($model_key == 'created_at'){
 
-					$file .= "'".$model_key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
-";
+					$file .= static::_row($model_key, $data, 'created_at');
+
 				}else{
 
-					$file .= "'".$model_key."' => '".rawurlencode($default_value)."', 
-";
+					$file .= static::_row($model_key, $default_value, 'created_at');
 				}
 			}			
 		}
 
 		$file = sprintf(static::$file_pattern, $file);
 			
-		if(!file_exists(dirname($file_dir))){
+		if(!is_dir($table_dir)){
 			
-			mkdir(dirname($file_dir), 0777, true);
+			mkdir($table_dir, 0755, true);
 
 		}
 
@@ -1077,7 +1169,7 @@ $file 		.= 	");";
 		//QR-Code SETTINGS
 			$filename = $id.'_post.png';
 			$errorCorrectionLevel = 'H';
-			$matrixPointSize = 1;
+			$matrixPointSize = 2;
 			$PNG_WEB_DIR = '/uploads/';
 			$filename = $PNG_WEB_DIR.$filename;
 			$QR_data = Config::get('application.url').'/'.$id;
@@ -1086,8 +1178,6 @@ $file 		.= 	");";
 			QRcode::png($QR_data, './public'.$filename, $errorCorrectionLevel, $matrixPointSize, 2);
 		
 		//ADD QR-Code INTO DB
-		$this	->	where('id', '=', $id)
-				->	update(array('qr_code' => '.'.$filename));
 		
 		return '.'.$filename;
 		

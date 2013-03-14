@@ -10,6 +10,8 @@ class Admin_Blog_List_Controller extends Base_Controller {
 
 		}else{
 			
+			Session::put('href.previous', URL::current());
+			
 			if (Request::ajax())
 			{
 				return View::make('admin.blog.blog_list')->with('posts', Blog::all());

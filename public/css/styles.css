@@ -460,3 +460,11 @@ i.blue{
 	-o-transition: all 1.5s ease-out;
 	-ms-transition: all 1.5s ease-out;
 }
+
+.ellipsis{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100px;
+}
