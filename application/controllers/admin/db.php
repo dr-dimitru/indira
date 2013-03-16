@@ -66,7 +66,7 @@ class Admin_Db_Controller extends Base_Controller {
 		}
 	}
 
-	public function action_delete($id){
+	public function action_edit($table, $id){
 
 		if(!Admin::check()){
 
@@ -79,10 +79,102 @@ class Admin_Db_Controller extends Base_Controller {
 		
 		}else{
 
-			$table::delete($id);
-			return View::make('admin.db.table_info')
-						->with('table_name', $table)
-						->with('table', $table::all());
+			if (Request::ajax())
+			{
+				return View::make('admin.db.table_edit')
+							->with('table_name', $table)
+							->with('table', $table::where('id', '=', $id)->get());
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('table_name', $table)
+							->with('table', $table::where('id', '=', $id)->get())
+							->with('page', 'admin.db.table_edit');
+			}
+		}
+	}
+
+	public function action_delete(){
+
+		if(!Admin::check()){
+
+			return View::make('admin.login_area');
+
+		}elseif(Admin::check() != '777'){
+			
+			return Lang::line('content.permissions_denied')
+					->get(Session::get('lang'));
+		
+		}else{
+
+
+			$json 		= 	stripcslashes(Input::get('data'));
+			$json_arr 	= 	json_decode($json, true);
+
+			$db 		= 	new stdClass;
+			$id 		= 	$json_arr["id"];
+			$delete 	= 	$json_arr["delete"];
+			$table 		= 	$json_arr["table"];
+
+			if($delete == 'delete'){
+
+				$table::delete($id);
+				return View::make('admin.db.table_info')
+							->with('table_name', $table)
+							->with('table', $table::all());
+
+			}else{
+
+				return Lang::line('forms.undefined_err_word')
+							->get(Session::get('lang'));
+
+			}
+		}
+	}
+
+	public function action_save(){
+
+		if(!Admin::check()){
+
+			return View::make('admin.login_area');
+
+		}elseif(Admin::check() != '777'){
+			
+			return Lang::line('content.permissions_denied')
+					->get(Session::get('lang'));
+		
+		}else{
+
+
+			$json 		= 	stripcslashes(Input::get('data'));
+			$json_arr 	= 	json_decode($json, true);
+
+			$db 		= 	new stdClass;
+			$id 		= 	$json_arr["id"];
+			$data_arr 	= 	$json_arr["data_arr"];
+			$table 		= 	$json_arr["table"];
+
+			foreach($data_arr as $key => $value){
+
+				$data_arr[$key] = rawurldecode($value);
+
+			}
+			
+
+			$upd = $table::where('id', '=', $id)->update($data_arr);
+
+			if($upd !== 0){
+					
+				return View::make('admin.db.table_edit')
+							->with('table_name', $table)
+							->with('status', Lang::line('content.updated_word')->get(Session::get('lang')))
+							->with('table', $table::where('id', '=', $id)->get());
+			
+			}else{
+			
+				return Lang::line('forms.undefined_err_word')
+						->get(Session::get('lang'));
+			
+			}
 		}
 	}
 }

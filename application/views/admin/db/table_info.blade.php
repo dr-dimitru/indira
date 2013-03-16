@@ -25,6 +25,7 @@
 <hr>
 <div class="row-fluid">
 	<div class="span12">
+		@if($table)
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -41,13 +42,23 @@
 				@foreach($table as $value)
 				<tr>
 					<td>
-						edit
+						<a
+							href="{{ URL::to('admin/db/edit/'.$table_name.'/'.$value->id) }}" 
+							id="go_to_edit_row_{{ $value->id }}" 
+							class="btn btn-mini"
+							data-title="Indira CMS · File DB · {{ Lang::line('content.edit_word')->get(Session::get('lang')) }} · {{ $table }}"
+						>
+							<i class="icon-edit icon-large"></i> {{ Lang::line('content.edit_word')->get(Session::get('lang')) }}
+						</a>
 					</td>
 					<td>
+						<?php
+							$json_delete = '{ "id": "'.$value->id.'", "table": "'.$table_name.'", "delete": "delete"}';
+						?>
 						<button 
 							id="delete_row_{{ $value->id }}" 
 							class="btn btn-danger btn-mini"
-							onclick="showerp_alert('', '{{ URL::to('') }}')"
+							onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}', '{{ URL::to('admin/db/delete') }}', 'delete_row_{{ $value->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), $value->id )) }}', false, true)"
 						>
 							 <i class="icon-trash icon-large"></i> {{ Lang::line('content.delete_word')->get(Session::get('lang')) }}
 						</button>
@@ -59,5 +70,10 @@
 				@endforeach
 			</tbody>
 		</table>
+		@else
+		<center>
+			<h6>No records in "{{ $table_name }}" table</h6>
+		</center>
+		@endif
 	</div>
 </div>
