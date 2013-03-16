@@ -756,7 +756,14 @@ h5 {
   font-size: 14px;
 }
 
-h6, .h6{
+h6 {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  line-height: 10px;
+}
+
+.h6 {
   font-size: 9px;
   color: #999;
   text-transform: uppercase;

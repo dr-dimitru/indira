@@ -48,6 +48,8 @@ ________________________________________________________________________________
 
 			function ajaxify(){
 
+				$('a[id^="go_to_"]').unbind();
+
 				$('a[id^="go_to_"]').bind('click', function(){
 
 					var load_el, out_el, q, link;

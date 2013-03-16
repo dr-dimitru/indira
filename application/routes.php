@@ -1,73 +1,16 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Simply tell Laravel the HTTP verbs and URIs it should respond to. It is a
-| breeze to setup your application using Laravel's RESTful routing and it
-| is perfectly suited for building large applications and simple APIs.
-|
-| Let's respond to a simple GET request to http://example.com/hello:
-|
-|		Route::get('hello', function()
-|		{
-|			return 'Hello World!';
-|		});
-|
-| You can even respond to more than one URI:
-|
-|		Route::post(array('hello', 'world'), function()
-|		{
-|			return 'Hello World!';
-|		});
-|
-| It's easy to allow URI wildcards using (:num) or (:any):
-|
-|		Route::put('hello/(:any)', function($name)
-|		{
-|			return "Welcome, $name.";
-|		});
-|
-*/
+Route::get('/(:num)', array('as' => 'item', 'uses' => 'item@index'));
 
-// Route::any('admin/uploads/(:any)', function($file)
-// {
-//     Redirect::to(URL::home().'/uploads/'.$file);
-// 	//return URL::home().'/uploads/'.$file;
-// });
+Route::get('lang/(:any)', array('as' => 'lang', 'uses' => 'lang@index'));
 
-Route::get('/(:num)', array('as' => 'item', 'uses' => 'item@index', function($item)
-{
+Route::get('admin/lang/(:any)', array('as' => 'admin_lang', 'uses' => 'lang@index'));
 
-}));
+Route::get('admin/db/(:any)', array('uses' => 'admin.db@index'));
 
+Route::get('admin/db/update/(:any)', array('uses' => 'admin.db@update'));
 
-Route::get('lang/(:any)', array('as' => 'lang', 'uses' => 'lang@index', function($lang)
-{
-
-}));
-
-Route::get('admin/lang/(:any)', array('as' => 'admin_lang', 'uses' => 'lang@index', function($lang)
-{
-
-}));
-
-Route::get('admin/db/(:any)', array('uses' => 'admin.db@index', function($table)
-{
-
-}));
-
-Route::get('admin/db/update/(:any)', array('uses' => 'admin.db@update', function($table)
-{
-
-}));
-
-Route::get('admin/db/delete/(:any)', array('uses' => 'admin.db@delete', function($id)
-{
-
-}));
+Route::get('admin/db/delete/(:any)', array('uses' => 'admin.db@delete'));
 
 
 Route::controller(Controller::detect());
