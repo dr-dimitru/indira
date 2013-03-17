@@ -93,6 +93,12 @@ return array( %s );";
 
 	static function get_table_size($table){
 
+		if(!is_dir('storage/db/'.$table)){
+
+			mkdir('storage/db/'.$table, 0755, true);
+
+		}
+
 		$size = 0;
 		$records = array_diff(scandir('storage/db/'.$table), array('..', '.'));
 		
@@ -939,13 +945,101 @@ return array( %s );";
 
 
 
+	public static function _rawurlencode($data){
+
+		if(is_object($data)){
+
+			foreach ($data as $key => $value) {
+
+				if(is_array($value) || is_object($value)){
+
+					$result->{$key} = static::_rawurlencode($value);
+
+				}else{
+
+					$result->{$key} = rawurlencode($value);
+				
+				}
+			}
+
+		}elseif(is_array($data)){
+
+			foreach ($data as $key => $value) {
+
+				if(is_array($value) || is_object($value)){
+
+					$result[$key] = static::_rawurlencode($value);
+
+				}else{
+
+					$result[$key] = rawurlencode($value);
+				
+				}
+			}
+
+		}else{
+
+			$result = rawurlencode($data);
+
+		}
+
+		return $result;
+
+	}
+
+
+
+	public static function _rawurldecode($data){
+
+		if(is_object($data)){
+
+			foreach ($data as $key => $value) {
+
+				if(is_array($value) || is_object($value)){
+
+					$result->{$key} = static::_rawurlencode($value);
+
+				}else{
+
+					$result->{$key} = rawurldecode($value);
+				
+				}
+			}
+
+		}elseif(is_array($data)){
+
+			foreach ($data as $key => $value) {
+
+				if(is_array($value) || is_object($value)){
+
+					$result[$key] = static::_rawurlencode($value);
+
+				}else{
+
+					$result[$key] = rawurldecode($value);
+				
+				}
+			}
+
+		}else{
+
+			$result = rawurldecode($data);
+
+		}
+
+		return $result;
+
+	}
+
+
+
 	public static function decode_table($table, $file){
 
 		$file = require static::$dir.'/'.$table.'/'.$file.'.php';
 
 		foreach ($file as $key => $value) {
 
-			$result[$key] = rawurldecode($value);
+			$result[$key] = static::_rawurldecode($value);
 
 		}
 
@@ -958,7 +1052,7 @@ return array( %s );";
 
 		foreach ($obj as $key => $value) {
 
-			$result[$key] = rawurldecode($value);
+			$result[$key] = static::_rawurldecode($value);
 
 		}
 
@@ -994,12 +1088,12 @@ $file 		.= 	"return array( ";
 
 					if($key == 'id'){
 
-$file 	.= 	"'".$key."' => ".rawurlencode($value).", 
+$file 	.= 	"'".$key."' => ".static::_rawurlencode($value).", 
 ";
 
 					}else{
 
-$file 	.= 	"'".$key."' => '".rawurlencode($value)."', 
+$file 	.= 	"'".$key."' => '".static::_rawurlencode($value)."', 
 ";
 
 					}
@@ -1027,7 +1121,7 @@ $file 		.= 	");";
 
 		if($key == $timestamp){
 
-			return "'".$key."' => '".rawurlencode(date("Y-m-d H:i:s"))."', 
+			return "'".$key."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', 
 ";
 		}elseif($key == 'id'){
 
@@ -1035,7 +1129,7 @@ $file 		.= 	");";
 ";
 		}else{
 
-			return "'".$key."' => '".rawurlencode($value)."', 
+			return "'".$key."' => '".static::_rawurlencode($value)."', 
 ";
 		}
 
