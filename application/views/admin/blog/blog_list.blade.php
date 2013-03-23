@@ -88,7 +88,7 @@
 									<button 
 										id="delete_{{ $post->id }}"
 										class="btn btn-danger"  
-										onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/blog_area/delete') }}', 'delete_{{ $post->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), $post->title )) }}', false, true)">
+										onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/blog_area/delete') }}', 'delete_{{ $post->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($post->title) )) }}', false, true)">
 											<i class="icon-trash icon-large"></i>
 									</button> 
 								</div>

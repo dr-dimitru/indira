@@ -22,7 +22,7 @@
 			type="text"
 			class="span6" 
 			value="{{ $post->title }}" 
-			oninput="$('#save_button_{{ $post->id }}').attr('disabled', false);"
+			oninput="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);"
 		/>
 	</div>
 </div>
@@ -38,7 +38,7 @@
 			placeholder="tag1, tag2, tag3, " 
 			class="span6" 
 			value="{{ $post->tags }}" 
-			oninput="$('#save_button_{{ $post->id }}').attr('disabled', false);" 
+			oninput="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);" 
 		/>
 	</div>
 </div>
@@ -55,7 +55,7 @@
 		<select 
 			id="post_access_{{ $post->id }}" 
 			class="span6" 
-			onchange="$('#save_button_{{ $post->id }}').attr('disabled', false);"
+			onchange="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);"
 		>
 			@foreach ($accessLevels as $key => $value)
 				<option
@@ -83,7 +83,7 @@
 		<select 
 			id="lang_{{ $post->id }}" 
 			class="span6" 
-			onchange="$('#save_button_{{ $post->id }}').attr('disabled', false);"
+			onchange="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);"
 		>
 			<option DISABLED value="0">{{ Lang::line('content.select_lang_word')->get(Session::get('lang')) }}</option> 
 			@foreach ($langs as $key => $value)
@@ -106,7 +106,9 @@
 	</div>
 	<div class="span8">
 
-<? $json_save = '{"title": "\'+encodeURI($(\'#title_'.$post->id.'\').val())+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "\'+$(\'#post_access_'.$post->id.'\').val()+\'", "tags": "\'+encodeURI($(\'#tags_'.$post->id.'\').val())+\'", "lang": "\'+$(\'#lang_'.$post->id.'\').val()+\'"}'; ?>
+<? $json_save = '{"title": "\'+encodeURI($(\'#title_'.$post->id.'\').val())+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "\'+$(\'#post_access_'.$post->id.'\').val()+\'", "tags": "\'+encodeURI($(\'#tags_'.$post->id.'\').val())+\'", "lang": "\'+$(\'#lang_'.$post->id.'\').val()+\'", "published": 0}'; ?>
+
+<? $json_save_publish = '{"title": "\'+encodeURI($(\'#title_'.$post->id.'\').val())+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "\'+$(\'#post_access_'.$post->id.'\').val()+\'", "tags": "\'+encodeURI($(\'#tags_'.$post->id.'\').val())+\'", "lang": "\'+$(\'#lang_'.$post->id.'\').val()+\'", "published": 1}'; ?>
 
 		<button 
 			id="save_button_{{ $post->id }}"
@@ -115,6 +117,14 @@
 			disabled="disabled" 
 			onclick="showerp('<?= htmlspecialchars($json_save) ?>', '{{ URL::to('admin/blog_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
 				<i class="icon-save" style="color:#5bb75b"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
+		</button>
+		<button 
+			id="save_button_publish_{{ $post->id }}"
+			class="btn btn-success"
+			type="button"
+			disabled="disabled" 
+			onclick="showerp('<?= htmlspecialchars($json_save_publish) ?>', '{{ URL::to('admin/blog_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
+				<i class="icon-save"></i> & <i class="icon-cloud-upload"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
 		</button>
 		<span id="status_{{ $post->id }}" class="btn disabled">
 			@if(isset($status))

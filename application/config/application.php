@@ -69,7 +69,7 @@ return array(
 	|
 	*/
 
-	'key' => 'd3dnjxdf934hnc834ncndcs96ernewf9', //change to yourdomain.com unique key
+	'key' => 'd3dnjxdf934hnc834ncndcs96230newf', //change to yourdomain.com unique key
 
 	/*
 	|--------------------------------------------------------------------------

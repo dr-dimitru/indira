@@ -111,7 +111,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 										->get(Session::get('lang')).'</li>';
 				}
 				
-				return '<div class="alert alert-error compact"><ul>'.$errors.'</ul></div>';
+				$errors = '<div class="alert alert-error compact"><ul>'.$errors.'</ul></div>';
 			
 			}else{
 
@@ -164,6 +164,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			$blog->access 		= 	$json_arr["access"];
 			$blog->tags 		= 	rawurldecode($json_arr["tags"]);
 			$blog->lang 		= 	$json_arr["lang"];
+			$blog->published 	= 	$json_arr["published"];
 
 			//CHECK SAME TITLE
 			$sTitle = Blog::where('title', '=', $blog->title)
@@ -207,7 +208,8 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 												'access' 	=> 	$blog->access,
 												'qr_code'	=> 	null,
 												'lang' 		=> 	$blog->lang,
-												'tags' 		=> 	$blog->tags));
+												'tags' 		=> 	$blog->tags,
+												'published' => 	$blog->published));
 
 				if($newId !== 0){
 
