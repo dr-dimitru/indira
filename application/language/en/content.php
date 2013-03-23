@@ -113,6 +113,6 @@ return array(
 	'db_info_title' => 'Database Summary',
 	'update_db' => 'Update Table within model',
 	'publish' => 'Publish',
-	'unpublish' => 'Unbublish',
+	'unpublish' => 'Unpublish',
 	'unpublished' => 'Unpublished',
 );
