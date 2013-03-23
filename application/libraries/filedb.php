@@ -296,31 +296,24 @@ return array( %s );";
 	}
 
 
-/*
-////////////////////////////////////////////////////////*Think about it*//*
+	private function paginate($per_page, $array_data=null){
 
-	private function distinct(){
+		$qty = $this->count();
+		$table = static::$table;
 
-		$this->result = array_unique(static::object_to_array($this->_t()));
+		if($array_data){
+			return Paginator::make($table::get($array_data), $qty, $per_page);
+		}else{
+			return Paginator::make($table::all(), $qty, $per_page);
+		}
 
-		return $this;
 	}
 
-	private function distinct(){
 
-		$array = static::object_to_array($this->_t());
-		$this->result = static::array_to_object(array_unique($array));
-
-		return $this;
-	}
-*/
-
-
-
-	private function limit($start, $end){
+	private function limit($start, $take){
 
 		if($this->_t()){
-			$this->result = array_slice($this->_t(), $start, $end);
+			$this->result = array_slice($this->_t(), $start, $take);
 		}
 
 		return $this;
@@ -337,6 +330,119 @@ return array( %s );";
 		$this->limit(0, $num);
 
 		return $this;
+	}
+
+
+	private function avg($field){
+
+		return $this->sum($field) / $this->count();
+
+	}
+
+
+	private function sum($field){
+
+		$pre_res = $this->only(array($field));
+
+		if(isset($pre_res)){
+
+			$num = array_values($pre_res);
+			$num = intval(array_shift($num));
+
+			if(is_numeric($num)){
+
+				foreach ($pre_res as $value) {
+					
+					$res[] = $value[$field];
+
+				}
+
+				return array_sum($res);
+				
+			}else{
+
+				die('Non numeric field "'.$field.'" is provided!');
+			}
+
+		}else{
+			return null;
+		}
+
+	}
+
+
+	private function count(){
+
+		$pre_res = static::object_to_array($this->_t());
+
+		if(isset($pre_res)){
+
+			return count($pre_res);
+
+		}else{
+			return null;
+		}
+
+	}
+
+
+	private function max($field){
+
+		$pre_res = $this->only(array($field));
+
+		if(isset($pre_res)){
+
+			$num = array_values($pre_res);
+			$num = intval(array_shift($num));
+
+			if(is_numeric($num)){
+
+				foreach ($pre_res as $value) {
+					$res[] = $value;
+				}
+
+				$max = max($res);
+
+				return $max[$field];
+
+			}else{
+
+				die('Non numeric field "'.$field.'" is provided!');
+			}
+
+		}else{
+			return null;
+		}
+	}
+
+
+	private function min($field){
+
+		$pre_res = $this->only(array($field));
+
+		if(isset($pre_res)){
+
+			$num = array_values($pre_res);
+			$num = intval(array_shift($num));
+
+			if(is_numeric($num)){
+
+				foreach ($pre_res as $value) {
+					$res[] = $value;
+				}
+
+				$min = min($res);
+
+				return $min[$field];
+
+			}else{
+
+				die('Non numeric field "'.$field.'" is provided!');
+			}
+
+		}else{
+			return null;
+		}
 	}
 
 
@@ -379,6 +485,37 @@ return array( %s );";
 
 	}
 
+	private function where_null($column){
+
+		$this->_switch_select($column, '=', null, false, false);
+
+		return $this;
+
+	}
+
+	private function where_not_null($column){
+
+		$this->_switch_select($column, '!=', null, false, false);
+
+		return $this;
+
+	}
+
+	private function where_in($column, $data_array){
+
+		$this->_switch_select($column, '=', $data_array, false, false);
+
+		return $this;
+
+	}
+
+	private function where_not_in($column, $data_array){
+
+		$this->_switch_select($column, '!=', $data_array, false, false);
+
+		return $this;
+
+	}
 
 	private function and_where($column, $operator, $data){
 		
@@ -388,7 +525,6 @@ return array( %s );";
 
 	}
 
-
 	private function or_where($column, $operator, $data){
 		
 		$this->_switch_select($column, $operator, $data, false, true);
@@ -397,6 +533,37 @@ return array( %s );";
 
 	}
 
+	private function or_where_in($column, $data_array){
+
+		$this->_switch_select($column, '=', $data_array, false, true);
+
+		return $this;
+
+	}
+
+	private function or_where_null($column){
+
+		$this->_switch_select($column, '=', null, false, true);
+
+		return $this;
+
+	}
+
+	private function or_where_not_in($column, $data_array){
+
+		$this->_switch_select($column, '!=', $data_array, false, true);
+
+		return $this;
+
+	}
+
+	private function or_where_not_null($column){
+
+		$this->_switch_select($column, '!=', null, false, true);
+
+		return $this;
+
+	}
 
 	public function _switch_select($column, $operator, $data, $and, $or){
 
@@ -828,9 +995,9 @@ return array( %s );";
 			}
 
 			if(isset($res)){
-				$this->result = $res;
+				return $res;
 			}else{
-				$res = '';
+				$res = null;
 			}
 			return $res;
 
@@ -881,27 +1048,6 @@ return array( %s );";
 	}
 
 
-	public function where_in($object, $column, $data){
-
-		foreach ($object as $file => $row) {
-			
-			if($row->{$column} == $data){
-
-				$res[$file] = static::array_to_object($row);
-
-			}
-		}
-
-		if(isset($res)){
-			$this->result = $res;
-		}else{
-			$this->result = '';
-		}
-		return $this;
-	}
-
-
-
 	public static function array_to_object($array){
 		
 		$obj = new stdClass;
@@ -945,7 +1091,7 @@ return array( %s );";
 
 
 
-	public static function _rawurlencode($data){
+	private static function _rawurlencode($data){
 
 		if(is_object($data)){
 
@@ -956,8 +1102,11 @@ return array( %s );";
 					$result->{$key} = static::_rawurlencode($value);
 
 				}else{
-
-					$result->{$key} = rawurlencode($value);
+					if(!empty($value)){
+						$result->{$key} = rawurlencode($value);
+					}else{
+						$result->{$key} = '';
+					}
 				
 				}
 			}
@@ -971,9 +1120,11 @@ return array( %s );";
 					$result[$key] = static::_rawurlencode($value);
 
 				}else{
-
-					$result[$key] = rawurlencode($value);
-				
+					if(!empty($value)){
+						$result[$key] = rawurlencode($value);
+					}else{
+						$result[$key] = '';
+					}	
 				}
 			}
 
@@ -989,7 +1140,7 @@ return array( %s );";
 
 
 
-	public static function _rawurldecode($data){
+	private static function _rawurldecode($data){
 
 		if(is_object($data)){
 
@@ -1119,20 +1270,62 @@ $file 		.= 	");";
 
 	public static function _row($key, $value, $timestamp=null){
 
-		if($key == $timestamp){
+		if(is_array($value)){
 
-			return "'".$key."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', 
-";
-		}elseif($key == 'id'){
+			return static::_row_array($key, $value, $timestamp);
 
-			return "'".$key."' => ".intval($value).", 
-";
 		}else{
 
-			return "'".$key."' => '".static::_rawurlencode($value)."', 
-";
-		}
+			if($key == $timestamp){
 
+				return "'".$key."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', 
+";
+			}elseif($key == 'id'){
+
+				return "'".$key."' => ".intval($value).", 
+";
+			}else{
+
+				return "'".$key."' => '".static::_rawurlencode($value)."', 
+";
+			}
+		}
+	}
+
+
+	public static function _row_array($key, $value, $timestamp=null){
+
+		$file = '';
+		$file .= "'".$key."' => array(";
+
+			foreach($value as $key1 => $val){
+
+				if(is_array($val)){
+
+					$file .= "'".$key1."' => '".static::_row_array($key1, $val, $timestamp)."', ";
+
+				}else{
+
+					if($key == $timestamp){
+
+						$file .= "'".$key1."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', ";
+
+					}elseif($key == 'id'){
+
+						$file .= "'".$key1."' => ".intval($val).", ";
+
+					}else{
+
+						$file .= "'".$key1."' => '".static::_rawurlencode($val)."', ";
+
+					}
+				}
+			}
+
+		$file .= "),
+";
+
+		return $file;
 	}
 
 
@@ -1216,7 +1409,7 @@ $file 		.= 	");";
 
 				}elseif($model_key == 'created_at'){
 
-					$file .= static::_row($model_key, $data, 'created_at');
+					$file .= static::_row($model_key, null, 'created_at');
 
 				}else{
 
@@ -1240,41 +1433,40 @@ $file 		.= 	");";
 
 
 
-	private function delete($ids){
+	private function delete($ids=null){
 
-		if(is_array($ids)){
-			
-			foreach($ids as $id){
-			
-				return unlink($this->dir."/".static::$table."/".$id.".php");
+		if($ids == null){
+
+			if(isset($this->result)){
+
+				foreach ($this->result as $row) {
+
+					$this->delete($row->id);
+
+				}
+
+			}else{
+
+				die("Use TableName::delete($id), TableName::delete(array('$id1', '$id2'..)) or select TableName::where('some request')->delete()");
 
 			}
 
 		}else{
 
-			return unlink($this->dir."/".static::$table."/".$ids.".php");
+			if(is_array($ids)){
+				
+				foreach($ids as $id){
+				
+					return unlink($this->dir."/".static::$table."/".$id.".php");
 
+				}
+
+			}else{
+
+				return unlink($this->dir."/".static::$table."/".$ids.".php");
+
+			}
 		}
-
-	}
-
-
-	private function add_qrcode($id) {		
-		//QR-Code SETTINGS
-			$filename = $id.'_post.png';
-			$errorCorrectionLevel = 'H';
-			$matrixPointSize = 2;
-			$PNG_WEB_DIR = '/uploads/';
-			$filename = $PNG_WEB_DIR.$filename;
-			$QR_data = Config::get('application.url').'/'.$id;
-			
-		//RUN QR-Code GENERATION
-			QRcode::png($QR_data, './public'.$filename, $errorCorrectionLevel, $matrixPointSize, 2);
-		
-		//ADD QR-Code INTO DB
-		
-		return '.'.$filename;
-		
 	}
 
 

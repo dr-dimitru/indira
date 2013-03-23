@@ -166,4 +166,18 @@ class Utilites{
 		Session::put('user.access_level', Crypter::decrypt(Cookie::get('user_access_level', null)));
 
 	}
+
+	public static function qrcode($QR_data, $name, $matrixPointSize){		
+		//QR-Code SETTINGS
+			$filename = $name.'.png';
+			$errorCorrectionLevel = 'Q';
+			$PNG_WEB_DIR = 'public/uploads/';
+			$filename = $PNG_WEB_DIR.$filename;
+			
+		//RUN QR-Code GENERATION
+			QRcode::png($QR_data, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
+		
+		return URL::to($filename);
+		
+	}
 }
