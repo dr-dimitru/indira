@@ -11,7 +11,7 @@
 			<div class="page-header">
 				<h1>
 			
-					{{ $post->qr_code_filename }}
+					<img src="{{ $post->qr_code }}" alt="{{ Lang::line('content.site_title')->get(Session::get('lang')) }} · {{ $post->title }}" title="{{ Lang::line('content.site_title')->get(Session::get('lang')) }} · {{ $post->title }}" />
 					<small class="time">{{ $post->updated_at }}</small>
 					{{ $post->title }}
 					<small class="tweet-btn"><a class="btn btn-mini" href="http://twitter.com/home?status=<?= urlencode($post->title.': '.URL::current()) ?>" target="_blank"><i class="icon-twitter icon-large"></i> Tweet</a> <a class="btn btn-mini" href="https://plus.google.com/share?url=<?= urlencode(URL::current()); ?>" target="_blank"><i class="icon-google-plus icon-large"></i> +1</a></small>
