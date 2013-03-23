@@ -34,7 +34,50 @@
 								{{ Lang::line('content.action_word')->get(Session::get('lang')) }}
 							</th>
 						@foreach($value1 as $key => $row_value)
-							<th>{{ $key }}</th>
+							<th>
+								<span style="white-space:nowrap;">{{ $key }} 
+								@if(isset($order))
+									@if($order['field'] == $key && $order['order'] == 'desc')
+										 <a href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/asc') }}" 
+										 	style="cursor: pointer;" 
+										 	id="go_to_order_asc_{{ $key }}"
+										 >
+										 	<i class="icon-caret-up"></i>
+										 </a>
+									@elseif($order['field'] == $key && $order['order'] == 'asc')
+										 <a href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/desc') }}" 
+										 	style="cursor: pointer;" 
+										 	id="go_to_order_desc_{{ $key }}"
+										 >
+										 	<i class="icon-caret-down"></i>
+										 </a>
+									@else
+										<a 	href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/asc') }}" 
+											style="cursor: pointer;" 
+											id="go_to_order_asc_{{ $key }}" 
+											style="color: #999"
+										>
+											<i style="color: #999" class="icon-caret-down"></i>
+										</a>
+									@endif
+								@elseif($key == 'id')
+									<a 	href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/asc') }}" 
+										style="cursor: pointer;" 
+										id="go_to_order_asc_{{ $key }}"
+									>
+										<i class="icon-caret-down"></i>
+									</a>
+								@else
+									<a href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/asc') }}" 
+									 	style="cursor: pointer;" 
+									 	id="go_to_order_asc_{{ $key }}" 
+									 	style="color: #999" 
+									 >
+									 	<i style="color: #999" class="icon-caret-down"></i>
+									 </a>
+								@endif
+								</span>
+							</th>
 						@endforeach
 				</tr>
 			</thead>
@@ -64,7 +107,11 @@
 						</button>
 					</td>
 					@foreach($value as $key => $row_value)
-					<td class="ellipsis">{{ substr(strip_tags($value->$key), 0, 100) }}</td>
+						@if(is_object($value->$key))
+							<td class="ellipsis">{{ var_dump($value->$key) }}</td>
+						@else
+							<td class="ellipsis">{{ substr(strip_tags($value->$key), 0, 100) }}</td>
+						@endif
 					@endforeach
 				</tr>
 				@endforeach

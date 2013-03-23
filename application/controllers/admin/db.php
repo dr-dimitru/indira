@@ -33,18 +33,44 @@ class Admin_Db_Controller extends Base_Controller {
 				{
 					return View::make('admin.db.table_info')
 								->with('table_name', $table)
-								->with('table', $table::all());
+								->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
 				}else{
 					return View::make('admin.assets.no_ajax')
 								->with('page', 'admin.db.table_info')
 								->with('table_name', $table)
-								->with('table', $table::all());
+								->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
 				}
-
 			}
-
 		}
 	}
+
+
+	public function action_sort($table, $field, $order=null)
+	{	
+		if(!Admin::check()){
+
+			return View::make('admin.login_area');
+
+		}else{
+
+			Session::put('href.previous', URL::current());
+
+			if (Request::ajax())
+			{
+				return View::make('admin.db.table_info')
+							->with('table_name', $table)
+							->with('order', array('field' => $field, 'order' => $order))
+							->with('table', Filedb::object_to_array($table::order_by($field, $order)->get(), true));
+			}else{
+				return View::make('admin.assets.no_ajax')
+							->with('page', 'admin.db.table_info')
+							->with('table_name', $table)
+							->with('order', array('field' => $field, 'order' => $order))
+							->with('table', Filedb::object_to_array($table::order_by($field, $order)->get(), true));
+			}
+		}
+	}
+	
 
 	public function action_update($table){
 
@@ -62,7 +88,7 @@ class Admin_Db_Controller extends Base_Controller {
 			$table::update();
 			return View::make('admin.db.table_info')
 						->with('table_name', $table)
-						->with('table', $table::all());
+						->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
 		}
 	}
 
@@ -120,7 +146,7 @@ class Admin_Db_Controller extends Base_Controller {
 				$table::delete($id);
 				return View::make('admin.db.table_info')
 							->with('table_name', $table)
-							->with('table', $table::all());
+							->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
 
 			}else{
 
