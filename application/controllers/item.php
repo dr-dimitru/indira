@@ -26,21 +26,6 @@ class Item_Controller extends Base_Controller {
 			       
 			       Session::put('href.previous', URL::current());
 			       
-			       if(!$post->qr_code)
-			       {
-						$filename = Filedb::add_qrcode($item);
-
-						Posts::where('id', '=', $item)->update(array('qr_code' => '.'.$filename));
-
-						$qr_code_filename = '<img src="'.Config::get('application.url').substr($filename, 1).'" alt="'.Lang::line('content.site_title')->get(Session::get('lang')).' · '.$post->title.'" title="'.Lang::line('content.site_title')->get(Session::get('lang')).' · '.$post->title.'" />';
-			       }
-			       else
-			       {
-				       	$qr_code_filename = '<img src="'.Config::get('application.url').substr($post->qr_code, 1).'" alt="'.Lang::line('content.site_title')->get(Session::get('lang')).' · '.$post->title.'" title="'.Lang::line('content.site_title')->get(Session::get('lang')).' · '.$post->title.'" />';
-			       }
-			       
-			       $post->qr_code_filename = $qr_code_filename;
-			       
 			       return View::make('item.index')
 			       			->with('post', $post)
 			        		->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());

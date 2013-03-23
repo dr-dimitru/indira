@@ -230,6 +230,7 @@ class Admin_Post_Area_Controller extends Base_Controller {
 			}
 			
 			if($errors == null){
+
 				$newId = Posts::insert(array(	'title' 	=> 	$post->title,
 												'text' 		=> 	$post->text,
 												'access' 	=> 	$post->access,
@@ -238,6 +239,10 @@ class Admin_Post_Area_Controller extends Base_Controller {
 												'qr_code'	=> 	null,
 												'lang' 		=> 	$post->lang,
 												'tags' 		=> 	$post->tags));
+
+				$post->qr_code = Utilites::qrcode(URL::to($newId), $newId.'_post', 2);
+
+				Posts::where('id', '=', $newId)->update(array('qr_code' => str_replace('public/', '', $post->qr_code)));
 
 				if($newId !== 0){
 

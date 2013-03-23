@@ -10,7 +10,8 @@
 		>
 				<i class="icon-plus" style="color: #5bb75b"></i> {{ Lang::line('content.add_new_word')->get(Session::get('lang')) }}
 		</a>
-	</small></h3>
+	</small>
+</h3>
 <hr>
 @section('sections')
 	<table class="table table-condensed table-bordered table-hover">
