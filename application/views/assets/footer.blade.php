@@ -10,14 +10,8 @@
 		{{ HTML::link('http://www.apache.org/licenses/LICENSE-2.0', 'Apache License v2.0', array('target' => '_blank')) }}. 
 		Documentation licensed under 
 		{{ HTML::link('http://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0', array('target' => '_blank')) }}.</p>
-		<p>Icons from 
-		{{ HTML::link('http://glyphicons.com', 'Glyphicons Free', array('target' => '_blank')) }}, licensed under 
-		{{ HTML::link('http://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0', array('target' => '_blank')) }}.</p>
 		<p>Код распространяется под лицензией {{ HTML::link('http://www.apache.org/licenses/LICENSE-2.0', 'Apache License v2.0', array('target' => '_blank')) }}.
 		 Документация распространяется под лицензией {{ HTML::link('http://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0', array('target' => '_blank')) }}.</p>
-		<p>Иконки нарисованы и предоставлены 
-		{{ HTML::link('http://glyphicons.com', 'Glyphicons Free', array('target' => '_blank')) }}, под лицензией 
-		{{ HTML::link('http://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0', array('target' => '_blank')) }}.</p>
 	</div>
 	
 	{{ HTML::script('js/bootstrap.min.js') }}
@@ -27,6 +21,17 @@
 </footer>
 </div>
 
+
+@if(Config::get('application.google_analytics'))
+
+<script>
+  var _gaq=[['_setAccount','{{ Config::get('application.google_analytics') }}'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+@endif
 <!--
 Copyright 2012 Veliov Group: Dmitriy A. Golev
 
