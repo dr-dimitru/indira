@@ -2,17 +2,19 @@
 
 class Admin_Blog_Area_Controller extends Base_Controller {
 
-	public $restful = true;
-
-	public function post_index()
+	public function action_index($id=null)
 	{	
 		if(!Admin::check()){
 			
 			return View::make('admin.login_area');
 		
 		}else{
-			
-			$id 	= 	stripcslashes(Input::get('data'));
+
+			if(is_null($id)){
+				return Redirect::to('admin/blog_list');
+			}
+
+			Session::put('href.previous', URL::current());
 
 			if (Request::ajax())
 			{
@@ -25,7 +27,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 		}
 	}
 
-	public function get_new()
+	public function action_new()
 	{	
 		if(!Admin::check()){
 			
@@ -61,7 +63,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 		}
 	}
 
-	public function post_save()
+	public function action_save()
 	{	
 		
 		if(!Admin::check()){
@@ -89,6 +91,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			$blog->access 		= 	$json_arr["access"];
 			$blog->tags 		= 	rawurldecode($json_arr["tags"]);
 			$blog->lang 		= 	$json_arr["lang"];
+			$blog->published 	= 	$json_arr["published"];
 
 
 			if(	empty($blog->title) || empty($blog->text) || empty($blog->access))
@@ -111,7 +114,15 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 										->get(Session::get('lang')).'</li>';
 				}
 				
-				$errors = '<div class="alert alert-error compact"><ul>'.$errors.'</ul></div>';
+				$error_area = '<div class="alert alert-error compact"><ul>'.$errors.'</ul></div>';
+
+				$blog_default 		= 	Blog::find($blog->id);
+				$blog->created_at 	= 	$blog_default->created_at;
+				$blog->updated_at 	= 	$blog_default->updated_at;
+
+				return View::make('admin.blog.blog_area')
+							->with('post', $blog)
+							->with('status', $error_area);
 			
 			}else{
 
@@ -119,24 +130,42 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 																			'text' 		=> 	$blog->text,
 																			'access' 	=> 	$blog->access,
 																			'tags' 		=> 	$blog->tags,
+																			'published' => 	$blog->published,
 																			'lang' 		=> 	$blog->lang));
 
 				if($status !== 0){
 					
-					return Lang::line('content.saved_word')
-							->get(Session::get('lang'));
+					if (Request::ajax())
+					{
+						return View::make('admin.blog.blog_area')
+									->with('post', Blog::find($blog->id ))
+									->with('status', Lang::line('content.saved_word')->get(Session::get('lang')));
+					}else{
+						return View::make('admin.assets.no_ajax')
+									->with('post', Blog::find($blog->id ))
+									->with('status', Lang::line('content.saved_word')->get(Session::get('lang')))
+									->with('page', 'admin.blog.blog_area');
+					}
 				
 				}else{
-				
-					return Lang::line('forms.undefined_err_word')
-							->get(Session::get('lang'));
-				
+
+					if (Request::ajax())
+					{
+						return View::make('admin.blog.blog_area')
+									->with('post', Blog::find($blog->id ))
+									->with('status', Lang::line('forms.undefined_err_word')->get(Session::get('lang')));
+					}else{
+						return View::make('admin.assets.no_ajax')
+									->with('post', Blog::find($blog->id ))
+									->with('status', Lang::line('forms.undefined_err_word')->get(Session::get('lang')))
+									->with('page', 'admin.blog.blog_area');
+					}			
 				}
 			}
 		}
 	}
 
-	public function post_add()
+	public function action_add()
 	{	
 		if(!Admin::check()){
 			
@@ -241,7 +270,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 	}
 
 
-	public function post_publish(){
+	public function action_publish(){
 
 		if(!Admin::check()){
 			
@@ -278,7 +307,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 	}
 
 
-	public function post_delete(){
+	public function action_delete(){
 
 		if(!Admin::check()){
 			

@@ -8,6 +8,8 @@ Route::get('admin/lang/(:any)', array('as' => 'admin_lang', 'uses' => 'lang@inde
 
 Route::get('admin/db/(:any)', array('uses' => 'admin.db@index'));
 
+Route::get('admin/blog_area/(:num)', array('uses' => 'admin.blog_area@index'));
+
 
 Route::controller(Controller::detect());
 

@@ -124,7 +124,7 @@
 			type="button"
 			disabled="disabled" 
 			onclick="showerp('<?= htmlspecialchars($json_save_publish) ?>', '{{ URL::to('admin/blog_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
-				<i class="icon-save"></i> & <i class="icon-cloud-upload"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
+				<i class="icon-save"></i> & <i class="icon-cloud-upload"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }} & {{ Lang::line('content.publish')->get(Session::get('lang')) }}
 		</button>
 		<span id="status_{{ $post->id }}" class="btn disabled">
 			@if(isset($status))
@@ -141,7 +141,10 @@
 		<div
 			class="input-block-level"
 			id="text_{{ $post->id }}" 
-			rows="20" placeholder="{{ Lang::line('placeholders.text')->get(Session::get('lang')) }}">{{ $post->text }}</div>
+			rows="20" 
+			placeholder="{{ Lang::line('placeholders.text')->get(Session::get('lang')) }}" 
+			onkeypress="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);" 
+		>{{ $post->text }}</div>
 	</div>
 </div>
 <script>
