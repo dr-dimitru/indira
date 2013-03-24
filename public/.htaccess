@@ -10,7 +10,7 @@
 RewriteEngine On
 RewriteBase /
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
-RewriteRule ^index\.php$ http://yourdomen.com/ [R=301,L]
+RewriteRule ^index\.php$ http://yourdomain.com/ [R=301,L]
  
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -18,7 +18,7 @@ RewriteRule . / [L]
 
 
 #Error 404
-ErrorDocument 404 http://yourdomen.com/
+ErrorDocument 404 ttp://yourdomain.com/
 # compress the files
 AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript text/x-component application/x-javascript application/javascript image/x-icon image/gif image/png image/jpg image/jpeg
 
