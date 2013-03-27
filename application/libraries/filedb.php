@@ -1366,7 +1366,7 @@ $file 		.= 	");";
 
     		}
 
-    		$result .= file_put_contents($file_dir, $file);
+    		$result .= File::put($file_dir, $file);
 		}
  
 		return $result;
@@ -1426,7 +1426,7 @@ $file 		.= 	");";
 
 		}
 
-		file_put_contents($file_dir, $file);
+		File::put($file_dir, $file);
 
 		return $new_id;
 	}
@@ -1457,13 +1457,13 @@ $file 		.= 	");";
 				
 				foreach($ids as $id){
 				
-					return unlink($this->dir."/".static::$table."/".$id.".php");
+					return File::delete($this->dir."/".static::$table."/".$id.".php");
 
 				}
 
 			}else{
 
-				return unlink($this->dir."/".static::$table."/".$ids.".php");
+				return File::delete($this->dir."/".static::$table."/".$ids.".php");
 
 			}
 		}
