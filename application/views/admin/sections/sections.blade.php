@@ -20,10 +20,10 @@
 				<th>
 					{{ Lang::line('content.title_word')->get(Session::get('lang')) }}
 				</th>
-				<th>
+				<th style="width: 140px">
 					{{ Lang::line('content.language_word')->get(Session::get('lang')) }}
 				</th>
-				<th>
+				<th style="width: 100px">
 					{{ Lang::line('content.action_word')->get(Session::get('lang')) }}
 				</th>
 			</tr>

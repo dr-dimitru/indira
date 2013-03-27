@@ -21,13 +21,13 @@
 					<th>
 						{{ Lang::line('content.title_word')->get(Session::get('lang')) }}
 					</th>
-					<th>
+					<th style="width: 140px">
 						{{ Lang::line('content.access_level_word')->get(Session::get('lang')) }}
 					</th>
-					<th>
+					<th style="width: 200px">
 						{{ Lang::line('content.tags_word')->get(Session::get('lang')) }}
 					</th>
-					<th>
+					<th style="width: 140px">
 						{{ Lang::line('content.action_word')->get(Session::get('lang')) }}
 					</th>
 				</tr>

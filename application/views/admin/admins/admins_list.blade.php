@@ -28,13 +28,13 @@
 					<th>
 						{{ Lang::line('content.password_word')->get(Session::get('lang')) }}
 					</th>
-					<th>
+					<th style="width: 100px">
 						{{ Lang::line('content.access_level_word')->get(Session::get('lang')) }}
 					</th>
 					<th>
 						Email
 					</th>
-					<th>
+					<th style="width: 81px">
 						{{ Lang::line('content.action_word')->get(Session::get('lang')) }}
 					</th>
 				</tr>

@@ -4,16 +4,16 @@
 ?>
 <tr>
 	<td>
-		<input id="name_{{ $admin->id }}" class="input" type="text" value="{{ $admin->name }}" />
+		<input id="name_{{ $admin->id }}" class="input span12" type="text" value="{{ $admin->name }}" />
 	</td>
 	<td>
-		<input id="password_{{ $admin->id }}" class="input" type="password" value="" placeholder="Type new password" />
+		<input id="password_{{ $admin->id }}" class="input span12" type="password" value="" placeholder="Type new password" />
 	</td>
 	<td>
-		<input id="access_{{ $admin->id }}" class="input input-mini" maxlength="3" min="1" max="777" type="number" value="{{ $admin->access }}" />
+		<input id="access_{{ $admin->id }}" class="input span12" maxlength="3" min="1" max="777" type="number" value="{{ $admin->access }}" />
 	</td>
 	<td>
-		<input id="email_{{ $admin->id }}" class="input" type="email" value="<? if(isset($admin->email)){ echo $admin->email; } ?>" />
+		<input id="email_{{ $admin->id }}" class="input span12" type="email" value="<? if(isset($admin->email)){ echo $admin->email; } ?>" />
 	</td>
 	<td>
 		<div class="btn-group">

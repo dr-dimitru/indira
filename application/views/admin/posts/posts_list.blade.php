@@ -34,10 +34,10 @@
 							{{ $section->title }}
 						</a>
 					</th>
-					<th>
+					<th style="width: 160px">
 						{{ Lang::line('content.access_level_word')->get(Session::get('lang')) }}
 					</th>
-					<th>
+					<th style="width: 140px">
 						{{ Lang::line('content.action_word')->get(Session::get('lang')) }}
 					</th>
 				</tr>
