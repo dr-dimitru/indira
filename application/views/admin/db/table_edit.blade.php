@@ -26,21 +26,36 @@
 
 	@foreach ($columns as $key => $column)
 		<?php
-			$save_json['data_arr'][$key] = "'+encodeURI($('#".$key."_".$columns->id."').val())+'";
+			if($key == 'id'){
+				$save_json['data_arr'][$key] = $column;
+			}else{
+				$save_json['data_arr'][$key] = "'+encodeURI($('#".$key."_".$columns->id."').val())+'";
+			}
 		?>
-		<div class="row-fluid">
-			<div class="span2" style="text-align:right">
-				<h6>{{ $key }}</h6>
+		@if($key == 'id')
+			<div class="row-fluid">
+				<div class="span2" style="text-align:right">
+					<h6>{{ $key }}</h6>
+				</div>
+				<div class="span10">
+					<h6>{{ $column }}</h6>
+				</div>
 			</div>
-			<div class="span10">
-				<textarea 
-					id="{{ $key }}_{{ $columns->id }}"
-					rows="2"
-					placeholder="Put data here" 
-					class="span10"  
-				>{{ htmlspecialchars(stripslashes($column)) }}</textarea>
+		@else
+			<div class="row-fluid">
+				<div class="span2" style="text-align:right">
+					<h6>{{ $key }}</h6>
+				</div>
+				<div class="span10">
+					<textarea 
+						id="{{ $key }}_{{ $columns->id }}"
+						rows="2"
+						placeholder="Put data here" 
+						class="span10"  
+					>{{ htmlspecialchars(stripslashes($column)) }}</textarea>
+				</div>
 			</div>
-		</div>
+		@endif
 	@endforeach
 
 	<div class="row-fluid">
