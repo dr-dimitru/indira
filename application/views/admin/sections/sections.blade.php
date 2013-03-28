@@ -38,8 +38,7 @@
 					<td>
 						<a 	
 							id="go_to_section_{{ $section->id }}" 
-							href="{{ URL::to('admin/section_area') }}" 
-							data-post="{{ $section->id }}" 
+							href="{{ URL::to('admin/section_area/'.$section->id) }}" 
 							data-out="work_area"
 							data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }} · {{ $section->title }}"
 						>
@@ -53,8 +52,7 @@
 						<div class="btn-group">
 							<a 
 								id="go_to_btn_section_{{ $section->id }}"
-								href="{{ URL::to('admin/section_area') }}" 
-								data-post="{{ $section->id }}" 
+								href="{{ URL::to('admin/section_area/'.$section->id) }}" 
 								data-out="work_area"
 								data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }} · {{ $section->title }}"
 								class="btn" 

@@ -18,7 +18,8 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 
 			if (Request::ajax())
 			{
-				return View::make('admin.blog.blog_area')->with('post', Blog::find($id));
+				return View::make('admin.blog.blog_area')
+							->with('post', Blog::find($id));
 			}else{
 				return View::make('admin.assets.no_ajax')
 							->with('post', Blog::find($id))
@@ -135,31 +136,15 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 
 				if($status !== 0){
 					
-					if (Request::ajax())
-					{
-						return View::make('admin.blog.blog_area')
-									->with('post', Blog::find($blog->id ))
-									->with('status', Lang::line('content.saved_word')->get(Session::get('lang')));
-					}else{
-						return View::make('admin.assets.no_ajax')
-									->with('post', Blog::find($blog->id ))
-									->with('status', Lang::line('content.saved_word')->get(Session::get('lang')))
-									->with('page', 'admin.blog.blog_area');
-					}
+					return View::make('admin.blog.blog_area')
+								->with('post', Blog::find($blog->id ))
+								->with('status', Lang::line('content.saved_word')->get(Session::get('lang')));
 				
 				}else{
 
-					if (Request::ajax())
-					{
-						return View::make('admin.blog.blog_area')
-									->with('post', Blog::find($blog->id ))
-									->with('status', Lang::line('forms.undefined_err_word')->get(Session::get('lang')));
-					}else{
-						return View::make('admin.assets.no_ajax')
-									->with('post', Blog::find($blog->id ))
-									->with('status', Lang::line('forms.undefined_err_word')->get(Session::get('lang')))
-									->with('page', 'admin.blog.blog_area');
-					}			
+					return View::make('admin.blog.blog_area')
+								->with('post', Blog::find($blog->id ))
+								->with('status', Lang::line('forms.undefined_err_word')->get(Session::get('lang')));		
 				}
 			}
 		}

@@ -2,9 +2,7 @@
 
 class Admin_Section_Area_Controller extends Base_Controller {
 
-	public $restful = true;
-
-	public function post_index()
+	public function action_index($id=null)
 	{	
 		if(!Admin::check()){
 			
@@ -12,7 +10,11 @@ class Admin_Section_Area_Controller extends Base_Controller {
 		
 		}else{
 
-			$id = stripcslashes(Input::get('data'));
+			if(is_null($id)){
+				return Redirect::to('admin/sections');
+			}
+
+			Session::put('href.previous', URL::current());
 
 			if (Request::ajax())
 			{
@@ -20,14 +22,14 @@ class Admin_Section_Area_Controller extends Base_Controller {
 							->with('section', Sections::find($id));
 			}else{
 				return View::make('admin.assets.no_ajax')
-							->with('sections', Sections::find($id))
+							->with('section', Sections::find($id))
 							->with('page', 'admin.sections.section_area');
 			}
 		}
 	}
 
 
-	public function get_new()
+	public function action_new()
 	{	
 		if(!Admin::check()){
 			
@@ -54,7 +56,7 @@ class Admin_Section_Area_Controller extends Base_Controller {
 	}
 
 
-	public function post_save()
+	public function action_save()
 	{	
 		
 		if(!Admin::check()){
@@ -107,7 +109,7 @@ class Admin_Section_Area_Controller extends Base_Controller {
 	}
 
 
-	public function post_add()
+	public function action_add()
 	{	
 		if(!Admin::check()){
 			
@@ -184,7 +186,7 @@ class Admin_Section_Area_Controller extends Base_Controller {
 
 
 
-	public function post_delete(){
+	public function action_delete(){
 
 		if(!Admin::check()){
 			

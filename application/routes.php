@@ -10,6 +10,10 @@ Route::get('admin/db/(:any)', array('uses' => 'admin.db@index'));
 
 Route::get('admin/blog_area/(:num)', array('uses' => 'admin.blog_area@index'));
 
+Route::get('admin/post_area/(:num)', array('uses' => 'admin.post_area@index'));
+
+Route::get('admin/section_area/(:num)', array('uses' => 'admin.section_area@index'));
+
 
 Route::controller(Controller::detect());
 

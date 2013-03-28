@@ -160,7 +160,10 @@
 		<div
 			class="input-block-level"
 			id="text_{{ $post->id }}" 
-			rows="20" placeholder="{{ Lang::line('placeholders.text')->get(Session::get('lang')) }}">{{ $post->text }}</div>
+			rows="20" 
+			placeholder="{{ Lang::line('placeholders.text')->get(Session::get('lang')) }}" 
+			onkeypress="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);"
+		>{{ $post->text }}</div>
 	</div>
 </div>
 <script>

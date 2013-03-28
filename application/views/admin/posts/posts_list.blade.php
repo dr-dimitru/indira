@@ -27,9 +27,8 @@
 						{{ Lang::line('content.section_word')->get(Session::get('lang')) }}: 
 						<a 
 							id="go_to_section_{{ $section->id }}"
-							href="{{ URL::to('admin/section_area') }}" 
+							href="{{ URL::to('admin/section_area/'.$section->id) }}" 
 							data-title="Indira CMS · {{ Lang::line('content.sections_word')->get(Session::get('lang')) }} · {{ $section->title }}" 
-							data-post="{{ $section->id }}" 
 						>
 							{{ $section->title }}
 						</a>
@@ -55,9 +54,8 @@
 						<tr>
 							<td>
 								<a 	id="go_to_post_{{ $post->id }}" 
-									href="{{ URL::to('admin/post_area') }}" 
-									data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }} · {{ $post->title }}" 
-									data-post="{{ $post->id }}"
+									href="{{ URL::to('admin/post_area/'.$post->id) }}" 
+									data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }} · {{ $post->title }}"
 								>
 									{{ $post->title }}
 								</a>
@@ -68,10 +66,9 @@
 							<td>
 								<div class="btn-group">
 									<a 	id="go_to_btn_post_{{ $post->id }}" 
-										href="{{ URL::to('admin/post_area') }}" 
+										href="{{ URL::to('admin/post_area/'.$post->id) }}" 
 										class="btn" 
-										data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }} · {{ $post->title }}" 
-										data-post="{{ $post->id }}"
+										data-title="Indira CMS · {{ Lang::line('content.post_word')->get(Session::get('lang')) }} · {{ $post->title }}"
 									>
 											<i class="icon-edit icon-large"></i>
 									</a> 

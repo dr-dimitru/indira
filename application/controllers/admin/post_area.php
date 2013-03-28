@@ -2,17 +2,19 @@
 
 class Admin_Post_Area_Controller extends Base_Controller {
 
-	public $restful = true;
-
-	public function post_index()
+	public function action_index($id=null)
 	{	
 		if(!Admin::check()){
 			
 			return View::make('admin.login_area');
 		
 		}else{
-			
-			$id 	= 	stripcslashes(Input::get('data'));
+
+			if(is_null($id)){
+				return Redirect::to('admin/posts_list');
+			}
+
+			Session::put('href.previous', URL::current());
 
 			if (Request::ajax())
 			{
@@ -26,7 +28,7 @@ class Admin_Post_Area_Controller extends Base_Controller {
 		}
 	}
 
-	public function get_new()
+	public function action_new()
 	{	
 		if(!Admin::check()){
 			
@@ -63,7 +65,7 @@ class Admin_Post_Area_Controller extends Base_Controller {
 		}
 	}
 
-	public function post_save()
+	public function action_save()
 	{	
 		
 		if(!Admin::check()){
@@ -157,7 +159,7 @@ class Admin_Post_Area_Controller extends Base_Controller {
 		}
 	}
 
-	public function post_add()
+	public function action_add()
 	{	
 		if(!Admin::check()){
 			
@@ -274,7 +276,7 @@ class Admin_Post_Area_Controller extends Base_Controller {
 	}
 
 
-	public function post_delete(){
+	public function action_delete(){
 
 		if(!Admin::check()){
 			
