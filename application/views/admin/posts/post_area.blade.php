@@ -1,3 +1,5 @@
+@layout('admin.posts.template')
+
 <h3>{{ stripslashes($post->title) }}
 	<small>
 		<button 

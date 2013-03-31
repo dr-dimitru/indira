@@ -52,12 +52,24 @@ ________________________________________________________________________________
 
 				$('a[id^="go_to_"]').bind('click', function(){
 
-					var load_el, out_el, q, link;
+					var load_el, out_el, q, link, title, append, restore;
 
 					if($(this).attr('data-load')){
 						load_el = $(this).attr('data-load');
 					}else{
 						load_el = $(this).attr('id');
+					}
+
+					if($(this).attr('data-append')){
+						append = $(this).attr('data-append');
+					}else{
+						append = false;
+					}
+
+					if($(this).attr('data-restore')){
+						restore = $(this).attr('data-restore');
+					}else{
+						restore = false;
 					}
 
 					if($(this).attr('data-out')){
@@ -72,21 +84,43 @@ ________________________________________________________________________________
 						title = '';
 					}
 
+					if($(this).attr('data-post')){
+						q = $(this).attr('data-post');
+					}else{
+						q = '';
+					}
+
+					if($(this).attr('data-message')){
+						message = $(this).attr('data-message');
+					}
+
 					link = $(this).attr('href');
 
-					if($(this).attr('data-post')){
+					if($(this).attr('data-message')){
+
+						showerp_alert(q, link, load_el, out_el, message, append, restore);
+
+					}else if($(this).attr('data-post')){
 						
-						q = $(this).attr('data-post');
-						showerp(q, link, load_el, out_el, false);
+						showerp(q, link, load_el, out_el, append, restore);
 					
 					}else{
 
-						q = '';
-						shower(link, load_el, out_el, false);
+						shower(link, load_el, out_el, append, restore);
 
 					}
 
-					History.pushState({query:q, load_element:load_el, out_element:out_el},title,link);
+					if($(this).attr('data-title')){
+						title = $(this).attr('data-title');
+					}else{
+						title = '';
+					}
+
+					if($(this).attr('data-prevent-follow') !== 'true'){
+
+						History.pushState({query:q, load_element:load_el, out_element:out_el},title,link);
+
+					}
 					return false;
 				});
 
@@ -102,7 +136,9 @@ ________________________________________________________________________________
 			});
 
 			function shower(p, load_el, out_el, append, restore){
-				
+				append = eval(append);
+				restore = eval(restore);
+
 				if(append || restore)
 				{
 					var prev_load_el = $('#super_logo').html();
@@ -135,7 +171,9 @@ ________________________________________________________________________________
 			}
 
 			function showerp(q, p, load_el, out_el, append, restore){
-				
+				append = eval(append);
+				restore = eval(restore);
+
 				q = q.replace(/\n/g, '<br>');
 				
 				if(append || restore)
@@ -170,6 +208,9 @@ ________________________________________________________________________________
 			}
 
 			function showerp_alert(q, p, load_el, out_el, message, append, restore){
+				append = eval(append);
+				restore = eval(restore);
+				
 				var message = confirm(message);
 				if (message==true)
 				{
@@ -207,18 +248,6 @@ ________________________________________________________________________________
 				}
 			}
 
-		</script>
-
-		<script type="text/javascript">
-			// $(document).ready(
-			// 	function(){
-			// 		$('#admin_nav').find('li').click(function(){
-			// 			console.log($('#admin_nav').find('li'));
-			// 			$('#admin_nav').find('li').removeClass('active');
-			// 			$(this).addClass('active');
-			// 		});
-			// 	}
-			// );
 		</script>
 		
 		<meta charset="UTF-8" />

@@ -1,3 +1,5 @@
+@layout('admin.posts.template')
+
 <h3>{{ Lang::line('content.add_new_word')->get(Session::get('lang')) }}
 	<small>
 		<button 

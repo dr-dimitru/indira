@@ -52,10 +52,15 @@
 								>{{ $post->title }}</a>
 
 
-								<button 
-									id="pub_{{ $post->id }}"
+								<a  data-post="{{ htmlspecialchars($json_pub) }}" 
+									href="{{ URL::to('admin/blog_area/publish') }}" 
+									id="go_to_pub_{{ $post->id }}" 
+									data-restore="true" 
+									data-out="work_area" 
+									data-load="super_logo" 
+									data-prevent-follow="true" 
 									class="btn btn-mini"  
-									onclick="showerp('{{ htmlspecialchars($json_pub) }}','{{ URL::to('admin/blog_area/publish') }}', 'pub_{{ $post->id }}', 'work_area', false, true)">
+								>
 										@if($post->published == 1)
 											<i class="icon-minus-sign"></i>
 											{{ Lang::line('content.unpublish')->get(Session::get('lang')) }}
@@ -63,7 +68,7 @@
 											<i class="icon-cloud-upload"></i>
 											{{ Lang::line('content.publish')->get(Session::get('lang')) }}
 										@endif
-								</button> 
+								</a> 
 							</td>
 							<td>
 								<span class="badge badge-info">{{ $post->access }}</span>
@@ -82,13 +87,25 @@
 									>
 											<i class="icon-edit icon-large"></i>
 									</a> 
-									<a href="{{ URL::to('/blog/'.$post->id.'?edit=true') }}" class="btn btn-inverse"><i class="icon-lemon" style="color: rgb(255, 194, 0);"></i></a>
-									<button 
-										id="delete_{{ $post->id }}"
-										class="btn btn-danger"  
-										onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/blog_area/delete') }}', 'delete_{{ $post->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($post->title) )) }}', false, true)">
+
+									<a 	href="{{ URL::to('/blog/'.$post->id.'?edit=true') }}" 
+										class="btn btn-inverse"
+									>
+										<i class="icon-lemon" style="color: rgb(255, 194, 0);"></i>
+									</a>
+
+									<a  id="go_to_delete_{{ $post->id }}"
+										href="{{ URL::to('admin/blog_area/delete') }}" 
+										data-post="{{ htmlspecialchars($json_delete) }}" 
+										data-restore="true" 
+										data-message="{{ sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($post->title) ) }}" 
+										data-out="work_area" 
+										data-load="super_logo"
+										data-prevent-follow="true" 
+										class="btn btn-danger" 
+										>
 											<i class="icon-trash icon-large"></i>
-									</button> 
+									</a> 
 								</div>
 							</td>
 						</tr>
