@@ -1,6 +1,5 @@
 @include('admin.head')
 	<body id="body" class="admin">
-		<input hidden style="display:none" id="loader" name="loader" value="{{ rawurlencode(Config::get('application.default_loader')) }}" />
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="span4">

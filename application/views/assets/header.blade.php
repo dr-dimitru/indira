@@ -7,12 +7,12 @@
 						<ul class="quick-links" onclick=" _gaq.push(['_trackEvent', 'github', 'go_to_github', 'View on GitHub']);">
 							<li>
 							    <a class="btn" href="https://github.com/dr-dimitru/indira" target="_blank"><i class="icon-github-alt icon-large"></i> Watched by</a>
-      							<a id="watchers" class="count btn" href="https://github.com/FortAwesome/Font-Awesome">9000+</a>
+      							<a id="watchers" class="count btn" href="#">10+</a>
           
 							</li>
 							<li>
 						       <a class="btn" href="https://github.com/dr-dimitru/indira" target="_blank"><i class="icon-github icon-large"></i> Forked by</a>
-						       <a id="forks" class="count btn" href="#">800+</a>
+						       <a id="forks" class="count btn" href="#">20+</a>
 							</li>
 						</ul>
 						<ul class="quick-links">
