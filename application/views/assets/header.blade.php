@@ -1,7 +1,7 @@
 <header>
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span9">
+			<div class="span8">
 				<div class="pull-left">
 					<div class="bs-links">
 						<ul class="quick-links" onclick=" _gaq.push(['_trackEvent', 'github', 'go_to_github', 'View on GitHub']);">
@@ -43,7 +43,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="span3">
+			<div class="span4">
 				<div class="pull-right" onclick="location.href='{{ URL::to('/', '') }}'">
 					<h1>indira<sup><i class="icon-lemon"></i></sup></h1>
 				</div>
