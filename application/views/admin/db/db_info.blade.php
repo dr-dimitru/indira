@@ -76,7 +76,7 @@
 			<p>
 				We hope you'll enjoy using Filedb as driver for your content, cause:
 					<ul>
-						<li>When insalling Indira CMS you don't need to take care about dumping, exporting, importing, installing, connecting your DB - <strong>Filedb is working out of box</strong> as soon as you upload your project on server.</li>
+						<li>When installing Indira CMS you don't need to take care about dumping, exporting, importing, installing, connecting your DB - <strong>Filedb is working out of box</strong> as soon as you upload your project on server.</li>
 						<li>Easy dumping or reserve copying content</li>
 						<li>JSON ready - All data saved in arrays and already URI (RAW) encoded</li>
 						<li>Laravel friendly - Filedb supports all Laravel's fluent queries and Eloquent ready</li>
