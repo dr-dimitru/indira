@@ -457,3 +457,61 @@ i.blue{
 	white-space: nowrap;
 	max-width: 100px;
 }
+
+#dropbox{
+	position: relative;
+	min-height: 290px;
+	overflow: scroll;
+}
+
+#gallery{
+	position: relative;
+	overflow: scroll;
+	max-height: 200px;
+}
+
+#gallery .preview, #dropbox .preview {
+	max-width: 195px;
+	height: 195px;
+	float: left;
+	margin: 15px 0 0 20px;
+	position: relative;
+	text-align: center;
+}
+
+#gallery .preview img, #dropbox .preview img{	
+	max-width: 180px;
+	height: 180px;
+	border:3px solid #fff;	
+	display: block;		
+	box-shadow:0 0 2px #000;
+}
+#gallery .imageHolder, #dropbox .imageHolder{	
+	display: inline-block;	
+	position: relative;
+}
+.uploaded:before {	
+	position: absolute;	
+	top:85px;
+	left:0;	
+	height:100%;	
+	width:100%;	
+	font-size: 7em;
+	display: none;
+	font-family: FontAwesome;
+	content: "\f058";
+	text-decoration: inherit;
+	display: inline-block;
+	speak: none;
+	color: rgba(91, 183, 91, 0.0);
+
+}
+#gallery .preview.done .uploaded:before, #dropbox .preview.done .uploaded:before{	
+	display: block;
+	color: rgba(91, 183, 91, 0.5);
+}
+#progresser{
+	height: 10px;
+	position: relative;
+	top: -100px;
+}

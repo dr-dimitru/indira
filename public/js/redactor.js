@@ -269,9 +269,12 @@ var RLANG = {
 					'<input type="text" name="btn redactor_file_link" id="redactor_file_link" class="redactor_input"  />' +
 				'</div>' +
 				'</div>' +
+				'<div id="gallery">' +
+				'</div>' +
 				'<div id="redactor_modal_footer">' +
 					'<a href="javascript:void(null);" class="btn redactor_modal_btn redactor_btn_modal_close">' + RLANG.cancel + '</a> ' +
 					'<input type="button" name="upload" class="btn" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
+					'<a href="#" class="btn" onclick="shower(\'/admin/imgupload/select\', \'super_logo\', \'gallery\', false, true)">Gallery</a>' +
 				'</div>',
 
 			modal_link: String() +

@@ -115,4 +115,6 @@ return array(
 	'publish' => 'Publish',
 	'unpublish' => 'Unpublish',
 	'unpublished' => 'Unpublished',
+	'media_lib' => 'Media Library',
+	'drop_box_message' => '<h5 class="alert-heading">Drag&amp;Drop images here to upload.</h5> You may upload up to 9 files simultaneously',
 );

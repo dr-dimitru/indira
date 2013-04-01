@@ -9,11 +9,11 @@ $(function(){
 		
 		maxfiles: 100,
     	maxfilesize: 4,
-		url: 'post_file.php',
+		url: '../../../admin/imgupload',
 		
 		uploadFinished:function(i,file,response){
 			$.data(file).addClass('done');
-			$.data(file).find('#progresser').removeClass('progress-striped active');
+			$.data(file).find('#progresser').hide();
 			// response is the JSON object that post_file.php returns
 		},
 		

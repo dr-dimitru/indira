@@ -89,6 +89,14 @@
 						{{ Lang::line('content.sections_word')->get(Session::get('lang')) }}
 					</a>
 				</li>
+				<li>
+					<a 	id="go_to_meida_lib" 
+						href="{{ URL::to('admin/imgupload') }}" 
+						data-title="Indira CMS · {{ Lang::line('content.media_lib')->get(Session::get('lang')) }}"
+					>
+						{{ Lang::line('content.media_lib')->get(Session::get('lang')) }}
+					</a>
+				</li>
 			</ul>
 		</li>
 	</ul>

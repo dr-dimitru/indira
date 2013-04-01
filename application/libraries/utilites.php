@@ -1,6 +1,21 @@
 <?php
 
 class Utilites{
+
+	public static function exit_status($str){
+
+		echo json_encode(array('status'=>$str));
+		exit;
+	}
+
+	public static function get_extension($file_name){
+
+		$ext = explode('.', $file_name);
+		$ext = array_pop($ext);
+
+		return strtolower($ext);
+	}
+
 	public static function send_email($email, $message, $subject)
 	{
 		$default_files_encoding = Config::get('application.encoding');
