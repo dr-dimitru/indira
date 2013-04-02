@@ -1095,6 +1095,8 @@ return array( %s );";
 
 		if(is_object($data)){
 
+			$result = new stdClass;
+
 			foreach ($data as $key => $value) {
 
 				if(is_array($value) || is_object($value)){
@@ -1102,9 +1104,13 @@ return array( %s );";
 					$result->{$key} = static::_rawurlencode($value);
 
 				}else{
+
 					if(!empty($value)){
+
 						$result->{$key} = rawurlencode($value);
+
 					}else{
+
 						$result->{$key} = '';
 					}
 				
@@ -1113,6 +1119,8 @@ return array( %s );";
 
 		}elseif(is_array($data)){
 
+			$result = array();
+
 			foreach ($data as $key => $value) {
 
 				if(is_array($value) || is_object($value)){
@@ -1120,10 +1128,15 @@ return array( %s );";
 					$result[$key] = static::_rawurlencode($value);
 
 				}else{
+					
 					if(!empty($value)){
+
 						$result[$key] = rawurlencode($value);
+
 					}else{
+
 						$result[$key] = '';
+
 					}	
 				}
 			}
@@ -1144,6 +1157,8 @@ return array( %s );";
 
 		if(is_object($data)){
 
+			$result = new stdClass;
+
 			foreach ($data as $key => $value) {
 
 				if(is_array($value) || is_object($value)){
@@ -1152,12 +1167,21 @@ return array( %s );";
 
 				}else{
 
-					$result->{$key} = rawurldecode($value);
+					if(!empty($value)){
+
+						$result->{$key} = rawurldecode($value);
+
+					}else{
+
+						$result->{$key} = '';
+					}
 				
 				}
 			}
 
 		}elseif(is_array($data)){
+
+			$result = array();
 
 			foreach ($data as $key => $value) {
 
@@ -1167,7 +1191,15 @@ return array( %s );";
 
 				}else{
 
-					$result[$key] = rawurldecode($value);
+					if(!empty($value)){
+
+						$result[$key] = rawurldecode($value);
+
+					}else{
+
+						$result[$key] = '';
+
+					}
 				
 				}
 			}
@@ -1270,7 +1302,7 @@ $file 		.= 	");";
 
 	public static function _row($key, $value, $timestamp=null){
 
-		if(is_array($value)){
+		if(is_array($value) || is_object($value)){
 
 			return static::_row_array($key, $value, $timestamp);
 
