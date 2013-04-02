@@ -181,7 +181,7 @@ class Admin_Db_Controller extends Base_Controller {
 
 			foreach($data_arr as $key => $value){
 
-				$data_arr[$key] = rawurldecode($value);
+				$data_arr[$key] = Filedb::_rawurldecode($value);
 
 			}
 			

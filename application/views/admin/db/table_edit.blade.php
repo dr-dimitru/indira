@@ -35,10 +35,31 @@
 		@if($key == 'id')
 			<div class="row-fluid">
 				<div class="span2" style="text-align:right">
-					<h6>{{ $key }}</h6>
+					<h6>{{ $key }} <small>(<strong>Uneditable</strong>)</small></h6>
 				</div>
 				<div class="span10">
 					<h6>{{ $column }}</h6>
+				</div>
+			</div>
+		@elseif(is_object($column))
+
+			<?php $save_json['data_arr'][$key] = $column; ?>
+
+			<div class="row-fluid">
+				<div class="span2" style="text-align:right">
+					<h6>{{ $key }} <small>(<strong>Object</strong>)</small></h6>
+				</div>
+				<div class="span10">
+					@foreach($column as $k => $col)
+						<div class="row-fluid">
+							<div class="span2" style="text-align:right">
+								{{ $k }} :
+							</div>
+							<div class="span10">
+								{{ $col }}
+							</div>
+						</div>
+					@endforeach
 				</div>
 			</div>
 		@else
