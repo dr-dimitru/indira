@@ -6,6 +6,7 @@ class Admin_Login_Controller extends Base_Controller {
 	
 	public function get_index()
 	{	
+        Session::put('href.previous', URL::current());
 		return View::make('admin.not_logged_in');
 	}
 
