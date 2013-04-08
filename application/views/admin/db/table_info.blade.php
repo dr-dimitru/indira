@@ -61,7 +61,7 @@
 										</a>
 									@endif
 								@elseif($key == 'id')
-									<a 	href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/asc') }}" 
+									<a 	href="{{ URL::to('admin/db/sort/'.$table_name.'/'.$key.'/desc') }}" 
 										style="cursor: pointer;" 
 										id="go_to_order_asc_{{ $key }}"
 									>
