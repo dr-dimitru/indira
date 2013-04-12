@@ -3,6 +3,8 @@
 class Users extends Filedb
 {
 
+	public static $table = 'users';
+
 	public static $model = array(	'id' => '', 
 									'name' => '', 
 									'email' => '', 

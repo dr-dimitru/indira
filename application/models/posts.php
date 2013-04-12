@@ -3,6 +3,8 @@
 class Posts extends Filedb
 {
 
+	public static $table = 'posts';
+
 	public static $model = array(	'id' => '', 
 									'created_at' => '0000-00-00 00:00:00', 
 									'updated_at' => '0000-00-00 00:00:00', 
