@@ -15,7 +15,7 @@ class Admin_Db_Controller extends Base_Controller {
 		
 		}else{
 
-			Session::put('href.previous', URL::current());
+			Session::put('href.previous', URL::full());
 
 			if(!$table){
 
@@ -29,16 +29,52 @@ class Admin_Db_Controller extends Base_Controller {
 
 			}else{
 
+				if($take = Input::get('show')){
+
+				}else{
+					$take = 10;
+				}
+				$page = Input::get('page');
+
+				if($page == 'all'){
+
+					$table_content = $table::order_by('id')->get();
+					$pag = null;
+
+				}elseif($page < 2 || !$page){
+				
+					$pag = $table::paginate($take);
+					$page = 1;
+					$start = 0;
+					$table_content = $table::order_by('id')->limit($start, $take)->get();
+				
+				}else{
+
+					$pag = $table::paginate($take);
+					$start = ($page - 1) * $take;
+					$table_content = $table::order_by('id')->limit($start, $take)->get();
+
+				}
+
+				$query = null;
+				if(Input::get('show') || Input::get('page')){
+					$query = '?'.http_build_query(Input::all());
+				}
+
 				if (Request::ajax())
 				{
 					return View::make('admin.db.table_info')
 								->with('table_name', $table)
-								->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
+								->with('pag_res', $pag)
+								->with('query', $query)
+								->with('table', Filedb::object_to_array($table_content, true));
 				}else{
 					return View::make('admin.assets.no_ajax')
 								->with('page', 'admin.db.table_info')
 								->with('table_name', $table)
-								->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
+								->with('pag_res', $pag)
+								->with('query', $query)
+								->with('table', Filedb::object_to_array($table_content, true));
 				}
 			}
 		}
@@ -53,20 +89,56 @@ class Admin_Db_Controller extends Base_Controller {
 
 		}else{
 
-			Session::put('href.previous', URL::current());
+			Session::put('href.previous', URL::full());
+
+			if($take = Input::get('show')){
+
+			}else{
+				$take = 10;
+			}
+			$page = Input::get('page');
+
+			if($page == 'all'){
+
+				$table_content = $table::order_by($field, $order)->get();
+				$pag = null;
+
+			}elseif($page < 2 || !$page){
+			
+				$pag = $table::paginate($take);
+				$page = 1;
+				$start = 0;
+				$table_content = $table::order_by($field, $order)->limit($start, $take)->get();
+			
+			}else{
+
+				$pag = $table::paginate($take);
+				$start = ($page - 1) * $take;
+				$table_content = $table::order_by($field, $order)->limit($start, $take)->get();
+
+			}
+
+			$query = null;
+			if(Input::get('show') || Input::get('page')){
+				$query = '?'.http_build_query(Input::all());
+			}
 
 			if (Request::ajax())
 			{
 				return View::make('admin.db.table_info')
 							->with('table_name', $table)
+							->with('pag_res', $pag)
+							->with('query', $query)
 							->with('order', array('field' => $field, 'order' => $order))
-							->with('table', Filedb::object_to_array($table::order_by($field, $order)->get(), true));
+							->with('table', Filedb::object_to_array($table_content, true));
 			}else{
 				return View::make('admin.assets.no_ajax')
 							->with('page', 'admin.db.table_info')
 							->with('table_name', $table)
+							->with('pag_res', $pag)
+							->with('query', $query)
 							->with('order', array('field' => $field, 'order' => $order))
-							->with('table', Filedb::object_to_array($table::order_by($field, $order)->get(), true));
+							->with('table', Filedb::object_to_array($table_content, true));
 			}
 		}
 	}
@@ -86,9 +158,7 @@ class Admin_Db_Controller extends Base_Controller {
 		}else{
 
 			$table::update();
-			return View::make('admin.db.table_info')
-						->with('table_name', $table)
-						->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
+			return Redirect::to(Session::get('href.previous'));
 		}
 	}
 
@@ -144,9 +214,7 @@ class Admin_Db_Controller extends Base_Controller {
 			if($delete == 'delete'){
 
 				$table::delete($id);
-				return View::make('admin.db.table_info')
-							->with('table_name', $table)
-							->with('table', Filedb::object_to_array($table::order_by('id')->get(), true));
+				return Redirect::to(Session::get('href.previous'));
 
 			}else{
 
