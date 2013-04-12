@@ -23,7 +23,6 @@ header{
 	-moz-box-shadow: inset rgba(0, 0, 0, .85) 0 0px 10px 3px;
 	-webkit-box-shadow: inset rgba(0, 0, 0, .85) 0 0px 10px 3px;
 	box-shadow: inset rgba(0, 0, 0, .85) 0 0px 10px 3px;
-	cursor: pointer;
 }
 header h1{
 	font-size: 90px;
@@ -44,6 +43,10 @@ header h1:hover{
 	color: #D14;
 	text-shadow: 0px -1px #333, 0px 1px #FAFAFA;
 	text-shadow: 0px -1px rgba(0, 0, 0, 0.20), 0px 1px rgba(255, 255, 255, 0.15);
+}
+
+header .logo{
+	cursor: pointer;
 }
 
 .welcome_text .row{
