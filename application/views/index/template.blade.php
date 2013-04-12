@@ -1,6 +1,5 @@
 @include('assets.head')
 <body>
-	<input hidden style="display:none" id="loader" name="loader" value="{{ rawurlencode(Config::get('application.default_loader')) }}" />
 	@section('header')
 		@include('assets.header')
 	<div class="content_container">
