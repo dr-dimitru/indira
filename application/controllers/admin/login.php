@@ -7,7 +7,19 @@ class Admin_Login_Controller extends Base_Controller {
 	public function get_index()
 	{	
         Session::put('href.previous', URL::current());
-		return View::make('admin.not_logged_in');
+
+        $admin = array();
+        $admin["admin_login"] = null;
+        $admin["admin_password"] = null;
+
+        if(Cookie::get('admin_login')){
+            $admin["admin_login"] = trim(Crypter::decrypt(Cookie::get('admin_login', null)));
+        }
+        if(Cookie::get('admin_password')){
+            $admin["admin_password"] = trim(Crypter::decrypt(Cookie::get('admin_password', null)));
+        }
+
+		return View::make('admin.not_logged_in', $admin);
 	}
 
 	public function post_index()
@@ -27,7 +39,9 @@ class Admin_Login_Controller extends Base_Controller {
 			
 		if($login){
 
-                	$admin_data = Admin::where('name', '=', $login)->or_where('email', '=', $login)->get();
+                	$admin_data = Admin::where('name', '=', $login)
+                                        ->or_where('email', '=', $login)
+                                        ->get();
 
                 	if(!empty($admin_data))
                 	{

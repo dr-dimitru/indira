@@ -1,13 +1,6 @@
-<? $login_query = '{ "login": "\'+$(\'#admin_login\').val()+\'", "password": "\'+$(\'#admin_password\').val()+\'", "remember": "\'+$(\'#remember-me\').val()+\'" }'; 
-$admin_login = null;
-$admin_password = null;
-
-if(Cookie::get('admin_login')){
-	$admin_login = trim(Crypter::decrypt(Cookie::get('admin_login', null)));
-}
-if(Cookie::get('admin_password')){
-	$admin_password = trim(Crypter::decrypt(Cookie::get('admin_password', null)));
-}
+<? 
+	$json_query = '{ "login": $(\'#admin_login\').val(), "password": $(\'#admin_password\').val(), "remember": $(\'#remember-me\').val() }'; 
+	$login_query = '{ "login": "\'+$(\'#admin_login\').val()+\'", "password": "\'+$(\'#admin_password\').val()+\'", "remember": "\'+$(\'#remember-me\').val()+\'" }';
 ?>
 <h6>{{ Lang::line('content.login_word')->get(Session::get('lang')) }}</h6>
 <div class="form-inline">
@@ -34,10 +27,16 @@ if(Cookie::get('admin_password')){
 	</div>
 
 	<button 
-		style="min-width: 60px" 
-		id="login_button" 
-		onclick="showerp('{{ htmlspecialchars($login_query) }}', '{{ URL::to('admin/login') }}', 'status', 'status', false)" 
-		class="btn btn-primary" 
+		style="min-width: 60px"
+		id="login_button"
+		class="ajax_login_button btn btn-primary"
+		type="button"
+		data-link="{{ URL::to('admin/login') }}" 
+		data-post="{{ htmlspecialchars($json_query) }}"
+		data-out="status"
+		data-restore="true" 
+		data-load="super_logo" 
+		data-prevent-follow="true"
 		type="submit">{{ Lang::line('content.login_action_word')->get(Session::get('lang')) }}
 	</button>
 </div>
@@ -72,7 +71,7 @@ if(Cookie::get('admin_password')){
 <script type="text/javascript">
 $(document).keypress(function(e) {
     if(e.which == 13 && $('#admin_login').is(":focus") || e.which == 13 && $('#admin_password').is(":focus")) {
-        showerp('{{ $login_query }}', '{{ URL::to("admin/login") }}', 'status', 'status', false);
+        showerp('{{ $login_query }}', '{{ URL::to("admin/login") }}', 'super_logo', 'status', false);
     }
 });
 </script>
