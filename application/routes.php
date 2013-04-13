@@ -14,26 +14,15 @@ Route::get('admin/post_area/(:num)', array('uses' => 'admin.post_area@index'));
 
 Route::get('admin/section_area/(:num)', array('uses' => 'admin.section_area@index'));
 
-
 Route::controller(Controller::detect());
 
 Route::group(array('before' => 'auth'), function()
 {
 	// Do stuff before auth
-    Route::get('admin', function()
+    Route::get('admin/(:any?)', function()
     {
         //
     });
-
-    Route::get('admin/(:any)', function()
-    {
-        //
-    });
-});
-
-Route::get('calculate/(:all)', function(){
-
-	return Utilites::calculate_route(URL::full());
 
 });
 
@@ -96,7 +85,5 @@ Route::filter('auth', function()
 {
 	if (!Admin::check()){
 		return Redirect::to('admin/login');
-	}else{
-		return Redirect::to('admin/home');
 	}
 });

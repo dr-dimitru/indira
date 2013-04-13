@@ -6,7 +6,14 @@ class Admin_Login_Controller extends Base_Controller {
 	
 	public function get_index()
 	{	
-        Session::put('href.previous', URL::current());
+        if (Admin::check()){
+            return Redirect::to('admin/home');
+        }
+
+        if(strpos(Session::get('href.previous'), 'admin') === false)
+        {
+            Session::put('href.previous', URL::current());
+        }
 
         $admin = array();
         $admin["admin_login"] = null;
@@ -19,8 +26,13 @@ class Admin_Login_Controller extends Base_Controller {
             $admin["admin_password"] = trim(Crypter::decrypt(Cookie::get('admin_password', null)));
         }
 
-		return View::make('admin.not_logged_in', $admin);
+        if (Request::ajax()){
+            return View::make('admin.login_session_ended', $admin);
+        }else{
+            return View::make('admin.not_logged_in', $admin);
+        }
 	}
+
 
 	public function post_index()
 	{
@@ -39,43 +51,43 @@ class Admin_Login_Controller extends Base_Controller {
 			
 		if($login){
 
-                	$admin_data = Admin::where('name', '=', $login)
-                                        ->or_where('email', '=', $login)
-                                        ->get();
+        	$admin_data = Admin::where('name', '=', $login)
+                                ->or_where('email', '=', $login)
+                                ->get();
 
-                	if(!empty($admin_data))
-                	{
-                		//FETCH USER DATA
-                		foreach($admin_data as $admin){
+        	if(!empty($admin_data))
+        	{
+        		//FETCH USER DATA
+        		foreach($admin_data as $admin){
 
-                			$admin_password = $admin->password;
-                			$admin_level = $admin->access;
-                		}
+        			$admin_password = $admin->password;
+        			$admin_level = $admin->access;
+        		}
 
-                	}else{
-                		die(View::make('assets.errors')->with('uni_error', 'incorrect_login_message'));
-                	}
+        	}else{
+        		die(View::make('assets.errors')->with('uni_error', 'incorrect_login_message'));
+        	}
 
-                }else{
-        	       
-                       die( View::make('assets.errors')->with('uni_error', 'empty_login_message'));;
-                }
-
-
-                //CHECK PASSWORD
-                if($password){
-                	
-                        if($password !== $admin_password){
-                                
-                		die( View::make('assets.errors')->with('uni_error', 'incorrect_pass_message'));
-                	}
-                }else{
-                	
-                        die( View::make('assets.errors')->with('uni_error', 'incorrect_pass_message'));
-                }
+        }else{
+	       
+               die( View::make('assets.errors')->with('uni_error', 'empty_login_message'));;
+        }
 
 
-                Utilites::adminLogin($login, $remember); //PROCEED LOGIN
+        //CHECK PASSWORD
+        if($password){
+        	
+                if($password !== $admin_password){
+                        
+        		die( View::make('assets.errors')->with('uni_error', 'incorrect_pass_message'));
+        	}
+        }else{
+        	
+                die( View::make('assets.errors')->with('uni_error', 'incorrect_pass_message'));
+        }
+
+
+        Utilites::adminLogin($login, $remember); //PROCEED LOGIN
 			
 		return View::make('assets.errors')->with('uni_error', 'admin_success_login');
 
