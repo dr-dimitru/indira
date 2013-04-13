@@ -46,41 +46,53 @@
 	</div>
 </div>
 
-<div class="row-fluid">
-	<div class="span12">
-		<ul class="thumbnails">
-			@if($media)
-				@foreach($media as $image)
-				<li class="span2">
-					<div class="thumbnail">
-						<img style="max-height: 180px; height: 180px;" src="{{ $image->url }}" alt="{{ htmlspecialchars($image->name) }}">
-						<h6 class="ellipsis" style="max-width: 180px">{{ htmlspecialchars($image->name) }}</h6>
-						<input type="url" class="span12 input" value="{{ $image->url }}" />
-						<p>
-							<?
-								$json_delete = '{"id": '.$image->id.', "delete": "delete"}';
-							?>
-							<a  id="go_to_delete_{{ $image->id }}"
-								href="{{ URL::to('admin/imgupload/delete') }}" 
-								data-post="{{ htmlspecialchars($json_delete) }}" 
-								data-restore="true" 
-								data-message="{{ sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes(htmlspecialchars($image->name)) ) }}" 
-								data-out="work_area" 
-								data-load="super_logo"
-								data-prevent-follow="true" 
-								class="btn btn-danger" 
-								>
-									<i class="icon-trash icon-large"></i> {{ Lang::line('content.delete_word')->get(Session::get('lang')) }}
-							</a>
-						</p>
-					</div>
-				</li>
-				@endforeach
-			@else
-				<center>
-					<h6>No Images Uploaded Yet :(</h6>
-				</center>
-			@endif
-		</ul>
-	</div>
-</div>
+@if($media)
+	<?php $i = 1; ?>
+	@foreach($media as $image)
+		@if($i == 1)
+			<div class="row-fluid">
+				<div class="span12">
+					<ul class="thumbnails">
+		@endif
+						<li class="span2">
+							<div class="thumbnail">
+								<img style="max-height: 180px; height: 180px;" src="{{ $image->url }}" alt="{{ htmlspecialchars($image->name) }}">
+								<h6 class="ellipsis" style="max-width: 180px">{{ htmlspecialchars($image->name) }}</h6>
+								<input type="url" class="span12 input" value="{{ $image->url }}" />
+								<p>
+									<?
+										$json_delete = '{"id": '.$image->id.', "delete": "delete"}';
+									?>
+									<a  id="go_to_delete_{{ $image->id }}"
+										href="{{ URL::to('admin/imgupload/delete') }}" 
+										data-post="{{ htmlspecialchars($json_delete) }}" 
+										data-restore="true" 
+										data-message="{{ sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes(htmlspecialchars($image->name)) ) }}" 
+										data-out="work_area" 
+										data-load="super_logo"
+										data-prevent-follow="true" 
+										class="btn btn-danger" 
+										>
+											<i class="icon-trash icon-large"></i> {{ Lang::line('content.delete_word')->get(Session::get('lang')) }}
+									</a>
+								</p>
+							</div>
+						</li>
+		@if($i == 6)
+					</ul>
+				</div>
+			</div>
+		@endif
+	<?php 
+		if($i >= 6){
+			$i = 1;
+		}else{
+			$i++;
+		}
+	?>
+	@endforeach
+@else
+	<center>
+		<h6>No Images Uploaded Yet :(</h6>
+	</center>
+@endif

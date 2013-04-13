@@ -56,6 +56,12 @@ class Admin_Imgupload_Controller extends Base_Controller {
 					{
 						return Redirect::to('admin/imgupload');
 
+					}elseif(Input::get('viaredactor') == 'true'){
+
+						$json = array();
+						$json['filelink'] = URL::to('uploads/'.$img_name);
+
+						return Response::json($json, 200);
 					}else{
 						Utilites::exit_status('File was uploaded successfuly!');
 					}
