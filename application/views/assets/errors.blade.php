@@ -17,7 +17,7 @@
 @endif
 
 @if($uni_error == 'admin_success_login')
-    {{ Lang::line('content.user_success_login')->get(Session::get('lang')) }}<script type="text/javascript">location.replace('/admin');</script>
+    {{ Lang::line('content.user_success_login')->get(Session::get('lang')) }}<script type="text/javascript">location.replace('{{ Session::get('href.previous') }}');</script>
 @endif
 
 

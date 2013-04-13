@@ -4,7 +4,10 @@ class Admin_Home_Controller extends Base_Controller {
 
 	public function action_index()
 	{	
-		Session::put('href.previous', URL::current());
+		if(strpos(Session::get('href.previous'), 'admin') === false)
+        {
+            Session::put('href.previous', URL::current());
+        }
 
 		if(!Admin::check()){
 
