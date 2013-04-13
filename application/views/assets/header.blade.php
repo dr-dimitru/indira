@@ -45,7 +45,7 @@
 			</div>
 			<div class="span4">
 				<div class="pull-right logo" onclick="location.href='{{ URL::to('/', '') }}'">
-					<h1>indira<sup><i class="icon-lemon"></i></sup></h1>
+					<h1>indira<sup id="super_logo"><i class="icon-lemon"></i></sup></h1>
 				</div>
 			</div>
 		</div>

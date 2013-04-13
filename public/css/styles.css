@@ -177,6 +177,10 @@ h1 sup{
 	left:-8px;
 }
 
+h1 sup i.icon-2x{
+	font-size: 35px;	
+}
+
 .h6 {
   font-size: 9px;
   color: #999;

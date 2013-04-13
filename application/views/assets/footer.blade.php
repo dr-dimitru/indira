@@ -13,8 +13,7 @@
 		<p>Код распространяется под лицензией {{ HTML::link('http://www.apache.org/licenses/LICENSE-2.0', 'Apache License v2.0', array('target' => '_blank')) }}.
 		 Документация распространяется под лицензией {{ HTML::link('http://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0', array('target' => '_blank')) }}.</p>
 	</div>
-	
-	{{ HTML::script('js/bootstrap.min.js') }}
+
 	<script>
 		$('a').tooltip();
 	</script>

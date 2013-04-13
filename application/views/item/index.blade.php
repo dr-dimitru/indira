@@ -14,8 +14,11 @@
 					<img src="{{ $post->qr_code }}" alt="{{ Lang::line('content.site_title')->get(Session::get('lang')) }} · {{ $post->title }}" title="{{ Lang::line('content.site_title')->get(Session::get('lang')) }} · {{ $post->title }}" />
 					<small class="time">{{ $post->updated_at }}</small>
 					{{ $post->title }}
-					<small class="tweet-btn"><a class="btn btn-mini" href="http://twitter.com/home?status=<?= urlencode($post->title.': '.URL::current()) ?>" target="_blank"><i class="icon-twitter icon-large"></i> Tweet</a> <a class="btn btn-mini" href="https://plus.google.com/share?url=<?= urlencode(URL::current()); ?>" target="_blank"><i class="icon-google-plus icon-large"></i> +1</a></small>
-
+					<small class="tweet-btn"><a class="btn btn-mini" href="http://twitter.com/home?status=<?= urlencode($post->title.': '.URL::current()) ?>" target="_blank"><i class="icon-twitter icon-large"></i> Tweet</a> <a class="btn btn-mini" href="https://plus.google.com/share?url=<?= urlencode(URL::current()); ?>" target="_blank"><i class="icon-google-plus icon-large"></i> +1</a>
+						@if (Admin::check())
+							<span id="status" class="btn btn-mini btn-success disabled"></span>
+						@endif
+					</small>
 				</h1>
 			</div>
 			<div class="row">
@@ -23,6 +26,7 @@
 					@if (Admin::check())
 						<div
 							id="text_{{ $post->id }}" 
+							onkeypress="$('button[id^={{ htmlspecialchars('"save_button"') }}]').attr('disabled', false);" 
 						>
 								{{ $post->text }}
 						</div>

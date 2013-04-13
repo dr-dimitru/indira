@@ -26,20 +26,22 @@ ________________________________________________________________________________
 		{{ HTML::style('css/bootstrap-responsive.css') }}
 		{{ HTML::style('css/styles.css') }}
 		{{ HTML::style('css/font-awesome.min.css') }}
-		{{ HTML::style('js/css/redactor.css') }}
 		<!--[if lt IE 9]>
 		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		{{ HTML::script('https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js') }}
+		{{ HTML::script('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') }}
 		{{ HTML::script('js/modernizr-2.5.3.min.js') }}
-		{{ HTML::script('js/indira.js') }}
+		{{ HTML::script('js/bootstrap.min.js') }}
+		{{ HTML::script('js/history/jquery.history.js') }}
+		{{ HTML::script('js/indira.min.js') }}
 		
 		@if (Admin::check() && isset($post->id))
+			{{ HTML::style('js/css/redactor.css') }}
 			{{ HTML::script('js/redactor.js') }}
 			<? $json_save = '{"id": "'.$post->id.'", "title": "\'+encodeURI(\''.$post->title.'\')+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "'.$post->access.'", "media": "'.$post->media.'", "section": "'.$post->section.'", "tags": "\'+encodeURI(\''.$post->tags.'\')+\'", "lang": "'.$post->lang.'"}'; ?>
 			<script>
 				function save_btn(){
-					showerp('<?= $json_save ?>', '../admin/post_area/save', 'save_button_{{ $post->id }}', 'status', false, true);
+					showerp('<?= $json_save ?>', '../admin/post_area/save', 'super_logo', 'status', false, true);
 				}
 			</script>
 			@if(isset($_GET['edit']) == 'true')
