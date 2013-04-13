@@ -5,9 +5,9 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 	public function action_index($id=null)
 	{	
 		if(!Admin::check()){
-			
-			return View::make('admin.login_area');
-		
+
+			return Redirect::to('admin/login');
+
 		}else{
 
 			if(is_null($id)){
@@ -31,9 +31,9 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 	public function action_new()
 	{	
 		if(!Admin::check()){
-			
-			return View::make('admin.login_area');
-		
+
+			return Redirect::to('admin/login');
+
 		}else{
 			
 			Session::put('href.previous', URL::current());

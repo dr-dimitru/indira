@@ -6,7 +6,7 @@ class Admin_Db_Controller extends Base_Controller {
 	{	
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			
@@ -85,7 +85,7 @@ class Admin_Db_Controller extends Base_Controller {
 	{	
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}else{
 
@@ -148,7 +148,7 @@ class Admin_Db_Controller extends Base_Controller {
 
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			
@@ -166,7 +166,7 @@ class Admin_Db_Controller extends Base_Controller {
 
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			
@@ -193,7 +193,7 @@ class Admin_Db_Controller extends Base_Controller {
 
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			
@@ -229,7 +229,7 @@ class Admin_Db_Controller extends Base_Controller {
 
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			

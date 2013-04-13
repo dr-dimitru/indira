@@ -7,9 +7,9 @@ class Admin_Admins_Action_Controller extends Base_Controller {
 	public function post_save()
 	{	
 		if(!Admin::check()){
-			
-			return View::make('admin.login_area');
-		
+
+			return Redirect::to('admin/login');
+
 		}elseif(Admin::check() != '777'){
 			
 			return Lang::line('content.permissions_denied')
@@ -87,7 +87,7 @@ class Admin_Admins_Action_Controller extends Base_Controller {
 
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}elseif(Admin::check() != '777'){
 			

@@ -6,7 +6,7 @@ class Admin_Posts_List_Controller extends Base_Controller {
 	{	
 		if(!Admin::check()){
 
-			return View::make('admin.login_area');
+			return Redirect::to('admin/login');
 
 		}else{
 
