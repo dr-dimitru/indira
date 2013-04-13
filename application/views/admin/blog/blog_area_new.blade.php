@@ -106,24 +106,36 @@
 	</div>
 	<div class="span8">
 
-<? $json_save = '{"title": "\'+encodeURI($(\'#title_'.$post->id.'\').val())+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "\'+$(\'#post_access_'.$post->id.'\').val()+\'", "tags": "\'+encodeURI($(\'#tags_'.$post->id.'\').val())+\'", "lang": "\'+$(\'#lang_'.$post->id.'\').val()+\'", "published": 0}'; ?>
+<? $json_save = '{"title": encodeURI($(\'#title_'.$post->id.'\').val()), "text": encodeURI($(\'#text_'.$post->id.'\').html()), "access": $(\'#post_access_'.$post->id.'\').val(), "tags": encodeURI($(\'#tags_'.$post->id.'\').val()), "lang": $(\'#lang_'.$post->id.'\').val(), "published": 0}'; ?>
 
-<? $json_save_publish = '{"title": "\'+encodeURI($(\'#title_'.$post->id.'\').val())+\'", "text": "\'+encodeURI($(\'#text_'.$post->id.'\').html())+\'", "access": "\'+$(\'#post_access_'.$post->id.'\').val()+\'", "tags": "\'+encodeURI($(\'#tags_'.$post->id.'\').val())+\'", "lang": "\'+$(\'#lang_'.$post->id.'\').val()+\'", "published": 1}'; ?>
+<? $json_save_publish = '{"title": encodeURI($(\'#title_'.$post->id.'\').val()), "text": encodeURI($(\'#text_'.$post->id.'\').html()), "access": $(\'#post_access_'.$post->id.'\').val(), "tags": encodeURI($(\'#tags_'.$post->id.'\').val()), "lang": $(\'#lang_'.$post->id.'\').val(), "published": 1}'; ?>
 
 		<button 
 			id="save_button_{{ $post->id }}"
-			class="btn"
+			class="ajax_save_button_{{ $post->id }} btn"
 			type="button"
 			disabled="disabled" 
-			onclick="showerp('<?= htmlspecialchars($json_save) ?>', '{{ URL::to('admin/blog_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
+			data-link="{{ URL::to('admin/blog_area/add') }}" 
+			data-post="{{ htmlspecialchars($json_save) }}"
+			data-out="work_area"
+			data-restore="true" 
+			data-load="super_logo" 
+			data-prevent-follow="true"
+		>
 				<i class="icon-save" style="color:#5bb75b"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
 		</button>
 		<button 
 			id="save_button_publish_{{ $post->id }}"
-			class="btn btn-success"
+			class="ajax_save_button_publish_{{ $post->id }} btn btn-success"
 			type="button"
 			disabled="disabled" 
-			onclick="showerp('<?= htmlspecialchars($json_save_publish) ?>', '{{ URL::to('admin/blog_area/add') }}', 'save_button_{{ $post->id }}', 'work_area', false, true); ">
+			data-link="{{ URL::to('admin/blog_area/add') }}" 
+			data-post="{{ htmlspecialchars($json_save_publish) }}"
+			data-out="work_area"
+			data-restore="true" 
+			data-load="super_logo" 
+			data-prevent-follow="true"
+		>
 				<i class="icon-save"></i> & <i class="icon-cloud-upload"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }} & {{ Lang::line('content.publish')->get(Session::get('lang')) }}
 		</button>
 		<span id="status_{{ $post->id }}" class="btn disabled">
@@ -151,9 +163,4 @@
 	$(function(){
 		$('#text_{{ $post->id }}').redactor();
 	});
-</script>
-<script>
-	function save_btn(){
-		showerp('<?= $json_save ?>', '{{ URL::to("admin/blog_area/add") }}', 'save_button_{{ $post->id }}', 'work_area', false, false);
-	}
 </script>

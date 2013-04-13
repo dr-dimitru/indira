@@ -14,10 +14,10 @@ class Admin_Blog_List_Controller extends Base_Controller {
 			
 			if (Request::ajax())
 			{
-				return View::make('admin.blog.blog_list')->with('posts', Blog::all());
+				return View::make('admin.blog.blog_list')->with('posts', Blog::order_by('created_at', 'DESC')->get());
 			}else{
 				return View::make('admin.assets.no_ajax')
-							->with('posts', Blog::all())
+							->with('posts', Blog::order_by('created_at', 'DESC')->get())
 							->with('page', 'admin.blog.blog_list');
 			}
 

@@ -227,19 +227,15 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 
 				if($newId !== 0){
 
-					return View::make('admin.blog.blog_area')
-							->with('post', Blog::find($newId))
-							->with('status', Lang::line('content.saved_word')
-								->get(Session::get('lang'))
-							);
+					return Redirect::to('admin/blog_area/'.$newId);
 
 				}else{
 
 					return View::make('admin.blog.blog_area_new')
 							->with('post', $blog)
-							->with('status', Lang::line('content.saved_word')
-								->get(Session::get('lang'))
-							);
+							->with('status', Lang::line('forms.undefined_err_word')
+													->get(Session::get('lang'))
+								);
 
 				}
 
@@ -286,7 +282,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 			}
 
 
-			return View::make('admin.blog.blog_list')->with('posts', Blog::all());
+			return View::make('admin.blog.blog_list')->with('posts', Blog::order_by('created_at', 'DESC')->get());
 		}
 
 	}
@@ -319,7 +315,7 @@ class Admin_Blog_Area_Controller extends Base_Controller {
 
 				if($status){
 
-					return View::make('admin.blog.blog_list')->with('posts', Blog::all());
+					return View::make('admin.blog.blog_list')->with('posts', Blog::order_by('created_at', 'DESC')->get());
 
 				}else{
 
