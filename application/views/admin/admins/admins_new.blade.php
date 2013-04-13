@@ -34,7 +34,7 @@
 	<tbody>
 
 		<? 
-			$json_save = '{"name": "\'+encodeURI($(\'#name_'.$admin->id.'\').val())+\'", "password": "\'+encodeURI($(\'#password_'.$admin->id.'\').val())+\'", "access": "\'+$(\'#access_'.$admin->id.'\').val()+\'", "email": "\'+encodeURI($(\'#email_'.$admin->id.'\').val())+\'" }';
+			$json_save = '{ "name": encodeURI($(\'#name_'.$admin->id.'\').val()), "password": encodeURI($(\'#password_'.$admin->id.'\').val()), "access": $(\'#access_'.$admin->id.'\').val(), "email": encodeURI($(\'#email_'.$admin->id.'\').val()) }';
 		?>
 		<tr>
 			<td>
@@ -51,13 +51,17 @@
 			</td>
 			<td>
 				<div class="btn-group">
-					<button 
-						id="edit_{{ $admin->id }}"
+					<a 	href="{{ URL::to('admin/admins_action/add') }}" 
+						id="go_to_edit_{{ $admin->id }}" 
+						data-post="{{ htmlspecialchars($json_save) }}" 
+						data-out="work_area"
+						data-restore="true" 
+						data-load="super_logo" 
+						data-prevent-follow="true" 
 						class="btn" 
-						onclick="showerp('{{ htmlspecialchars($json_save) }}', '{{ URL::to('admin/admins_action/add') }}', 'edit_{{ $admin->id }}', 'work_area', false, true)"
 					>
 							<i class="icon-save" style="color:#5bb75b"></i> {{ Lang::line('content.save_word')->get(Session::get('lang')) }}
-					</button> 
+					</a>
 				</div>
 			</td>
 		</tr>

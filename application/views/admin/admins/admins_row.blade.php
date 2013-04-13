@@ -1,8 +1,12 @@
 <? 
 	$json_delete = '{ "id": "'.$admin->id.'", "delete": "delete"}';
-	$json_save = '{ "id": "'.$admin->id.'", "name": "\'+encodeURI($(\'#name_'.$admin->id.'\').val())+\'", "password": "\'+encodeURI($(\'#password_'.$admin->id.'\').val())+\'", "access": "\'+$(\'#access_'.$admin->id.'\').val()+\'", "email": "\'+encodeURI($(\'#email_'.$admin->id.'\').val())+\'" }';
+	$json_save = '{ "id": "'.$admin->id.'", "name": encodeURI($(\'#name_'.$admin->id.'\').val()), "password": encodeURI($(\'#password_'.$admin->id.'\').val()), "access": $(\'#access_'.$admin->id.'\').val(), "email": encodeURI($(\'#email_'.$admin->id.'\').val()) }';
 ?>
-<tr>
+<tr class="
+@if(isset(${'saved_'.$admin->id}))
+	{{ ${'saved_'.$admin->id} }}
+@endif
+">
 	<td>
 		<input id="name_{{ $admin->id }}" class="input span12" type="text" value="{{ $admin->name }}" />
 	</td>
@@ -17,19 +21,30 @@
 	</td>
 	<td>
 		<div class="btn-group">
-			<button 
-				id="edit_{{ $admin->id }}"
+			<a 	href="{{ URL::to('admin/admins_action/save') }}" 
+				id="go_to_edit_{{ $admin->id }}" 
+				data-post="{{ htmlspecialchars($json_save) }}" 
+				data-out="work_area"
+				data-restore="true" 
+				data-load="super_logo" 
+				data-prevent-follow="true" 
 				class="btn" 
-				onclick="showerp('{{ htmlspecialchars($json_save) }}', '{{ URL::to('admin/admins_action/save') }}', 'edit_{{ $admin->id }}', 'work_area', false, true)"
 			>
 					<i class="icon-save" style="color:#5bb75b"></i>
-			</button> 
-			<button 
-				id="delete_{{ $admin->id }}"
-				class="btn btn-danger"  
-				onclick="showerp_alert('{{ htmlspecialchars($json_delete) }}','{{ URL::to('admin/admins_action/delete') }}', 'delete_{{ $admin->id }}', 'work_area', '{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), $admin->name )) }}', false, true)">
+			</a> 
+			<a 
+				class="btn btn-danger" 
+				href="{{ URL::to('admin/admins_action/delete') }}" 
+				id="go_to_delete_{{ $admin->id }}" 
+				data-post="{{ htmlspecialchars($json_delete) }}" 
+				data-out="work_area"
+				data-restore="true" 
+				data-load="super_logo" 
+				data-prevent-follow="true" 
+				data-message="{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes($admin->name) )) }}"
+			>
 					<i class="icon-trash icon-large"></i>
-			</button> 
+			</a> 
 		</div>
 	</td>
 </tr>

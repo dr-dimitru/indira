@@ -50,7 +50,8 @@ class Admin_Admins_Action_Controller extends Base_Controller {
 				$errors = '<tr><td colspan="5"><div class="alert alert-error compact"><ul>'.$errors.'</ul></div></td></tr>';
 
 				return View::make('admin.admins.admins_list')
-						->with('error'.$admin->id, $errors);
+							->with('error'.$admin->id, $errors)
+							->with('saved_'.$admin->id, 'error');
 			
 			}else{
 
@@ -68,7 +69,8 @@ class Admin_Admins_Action_Controller extends Base_Controller {
 
 				if($status !== 0){
 					
-					return View::make('admin.admins.admins_list');
+					return View::make('admin.admins.admins_list')
+								->with('saved_'.$admin->id, 'success');
 				
 				}else{
 				
