@@ -57,7 +57,7 @@ return array(
 	'no_page' => 'Такой страницы не существует',
 	'meta_description' => 'Indira CMS: Мы совместили Bootstrap front-end toolkit и систему управления сайтом от Veliov Group. Indira - это легко изменяемая и адаптируемая система управления сайтом',
 	'site_title' => 'Indira CMS',
-	'footer_text' => '<h6><a href="./lang/ru">Русская Версия</a> | <a href="./lang/en">English Version</a></h6> 	<h6>© <a href="http://veliovgroup.com">Veliov Group</a> '.date("Y").'. Все права защищены.</h6> 	<h6>Абсолютные права принадлежат владельцу сайта.</h6> 	<h6>Напишите нам: info(AT)veliov.com</h6> 	<h6>Наши web-проекты прекрасно выглядят на вашем iPad\'е | Разработка под Webkit и полезные сервисы</h6> 	<h6><a href="http://indira.veliovgroup.com">Indira<sup><i class="icon-lemon"></i></sup>.VeliovGroup.com</a></h6>',
+	'footer_text' => '<h6><a href="./lang/ru">Русская Версия</a> | <a href="./lang/en">English Version</a></h6> 	<h6>© <a href="http://veliovgroup.com">Veliov Group</a> '.date("Y").'. Все права защищены.</h6> 	<h6>Абсолютные права принадлежат владельцу сайта.</h6> 	<h6>Email: '.HTML::mailto('info@veliov.com', 'Напишите нам').'</h6> 	<h6>Наши web-проекты прекрасно выглядят на вашем iPad\'е | Разработка под Webkit и полезные сервисы</h6> 	<h6><a href="http://indira.veliovgroup.com">Indira<sup><i class="icon-lemon"></i></sup>.VeliovGroup.com</a></h6>',
 	'deleted_word' => 'Удалено',
 	'permissions_denied' => 'У Вас не достаточно прав на совершение этого действия',
 	'success_login' => 'Вы успешно вошли!',
@@ -115,4 +115,5 @@ return array(
 	'unpublished' => 'Скрытый',
 	'media_lib' => 'Медиатека',
 	'drop_box_message' => '<h5 class="alert-heading">Перетащите картинки в это поле</h5> Для загрузки картинок перетащите их в это поле, одновременно можно загрузить до 9 файлов',
+	'footer_sign' => 'Под капотом: © <a href="http://indira-cms.com">Indira</a>',
 );

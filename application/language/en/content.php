@@ -59,7 +59,7 @@ return array(
 	'meta_description' => 'We\'re combine Bootstrap frontend toolkit from Twitter and CMS by Veliov Group. And we\'re got Adminizer CMS: Most easily customizable Content Management System in the world',
 
 	'site_title' => 'Indira CMS',
-	'footer_text' => '<h6><a href="./lang/ru">Русская Версия</a> | <a href="./lang/en">English Version</a></h6> 	<h6>© <a href="http://veliovgroup.com">Veliov Group</a> '.date("Y").'. All Rights Reserved.</h6> 	<h6>Absolute rights belongs to site owner.</h6> 	<h6>Email us: info(AT)veliov.com</h6> 	<h6>Our web-projects is perfect for your iPad | Webkit development and useful services</h6> 	<h6><a href="http://indira.veliovgroup.com">Indira.VeliovGroup.com</a></h6>',
+	'footer_text' => '<h6><a href="./lang/ru">Русская Версия</a> | <a href="./lang/en">English Version</a></h6> 	<h6>© <a href="http://veliovgroup.com">Veliov Group</a> '.date("Y").'. All Rights Reserved.</h6> 	<h6>Absolute rights belongs to site owner.</h6> 	<h6>Contact: '.HTML::mailto('info@veliov.com', 'Email us').'</h6> 	<h6>Our web-projects is perfect for your iPad | Webkit development and useful services</h6> 	<h6><a href="http://indira.veliovgroup.com">Indira.VeliovGroup.com</a></h6>',
 	'deleted_word' => 'DELETED',
 	'permissions_denied' => 'Permission denied',
 	'success_login' => 'Successfully logged in!',
@@ -117,4 +117,5 @@ return array(
 	'unpublished' => 'Unpublished',
 	'media_lib' => 'Media Library',
 	'drop_box_message' => '<h5 class="alert-heading">Drag&amp;Drop images here to upload.</h5> You may upload up to 9 files simultaneously',
+	'footer_sign' => 'Powered by © <a href="http://indira-cms.com">Indira</a>',
 );
