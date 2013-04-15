@@ -1,3 +1,4 @@
+@if($posts_preview)
 <div class="row">
 	<div class="span12">
 		<div class="page-header">
@@ -15,3 +16,4 @@
 		</ul>
 	</div>
 </div>
+@endif
