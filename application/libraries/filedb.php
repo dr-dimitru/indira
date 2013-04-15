@@ -223,79 +223,6 @@ return array( %s );";
 		return $this->limit(0,1)->get();
 	}
 
-
-
-	private function where_id($id){
-
-		$id = intval($id);
-
-		foreach ($this->_t() as $file_id => $row) {
-
-			if(is_array($id)){
-
-				if(in_array($row->id, $id)){
-
-					$res[$file_id] = $row;
-
-				}
-
-			}else{
-
-				if($row->id == $id){
-
-					$res[$file_id] = $row;
-
-				}
-
-			}
-		
-		}
-		
-		if(isset($res)){
-			$this->result = $res;
-		}else{
-			$this->result = '';
-		}
-		return $this;
-	}
-
-
-
-	private function where_not_id($id){
-
-		$id = intval($id);
-
-		foreach ($this->_t() as $file_id => $row) {
-
-			if(is_array($id)){
-
-				if(!in_array($file_id, $id)){
-
-					$res[$file_id] = $row;
-
-				}
-
-			}else{
-
-				if($file_id !== $id){
-
-					$res[$file_id] = $row;
-
-				}
-
-			}
-		
-		}
-		
-		if(isset($res)){
-			$this->result = $res;
-		}else{
-			$this->result = '';
-		}
-		return $this;
-	}
-
-
 	private function paginate($per_page, $array_data=null){
 
 		$qty = $this->count();
@@ -560,6 +487,26 @@ return array( %s );";
 	private function or_where_not_null($column){
 
 		$this->_switch_select($column, '!=', null, false, true);
+
+		return $this;
+
+	}
+
+	private function where_id($id){
+
+		$id = intval($id);
+
+		$this->_switch_select('id', '=', $id, false, false);
+
+		return $this;
+
+	}
+
+	private function where_not_id($id){
+
+		$id = intval($id);
+
+		$this->_switch_select('id', '!=', $id, false, false);
 
 		return $this;
 
