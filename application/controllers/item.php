@@ -11,55 +11,44 @@ class Item_Controller extends Base_Controller {
 		    
 		    if($post){
 
-			    if(Session::get('user.access_level') < $post->access)
-			    {
-			        return View::make('item.no_access')
-			        			->with('id', null)
-			        			->with('title', Lang::line('content.permissions_denied')->get(Session::get('lang')))
-			        			->with('post', $post)
-			        			->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());
+		    	$data = array();
+		    	$data["post"] = $post;
+		    	$data["posts_preview"] = Posts::where('lang', '=', Session::get('lang'))->where('id', '!=', $post->id)->get();
+
+			    if(Session::get('user.access_level') < $post->access){	
+
+			    	$data["id"] = null;
+			    	$data["title"] = Lang::line('content.permissions_denied')->get(Session::get('lang'));
+
+			        return View::make('item.no_access', $data);
 
 			        Session::put('href.previous', URL::current());
-			    }
-			    elseif ($post) 
-				{
+
+			    }else{
 			       
 			       Session::put('href.previous', URL::current());
 			       
-			       return View::make('item.index')
-			       			->with('post', $post)
-			        		->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());
-			    }
-			    else {
+			       return View::make('item.index', $data);
 
-			    	$post = new stdClass;
-					$post->id = null;
-
-			        return View::make('item.no_item')
-			        			->with('post', $post)
-			        			->with('title', Lang::line('content.no_page')->get(Session::get('lang')))
-			        			->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());
 			    }
 
 			}else{
+
 				$post = new stdClass;
 				$post->id = null;
 
-				return View::make('item.no_item')
-							->with('post', $post)
-							->with('title', Lang::line('content.no_page')->get(Session::get('lang')))
-			        		->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());
+				$data = array();
+				$data["post"] = $post;
+				$data["title"] = Lang::line('content.no_page')->get(Session::get('lang'));
+				$data["posts_preview"] = Posts::where('lang', '=', Session::get('lang'))->where('id', '!=', $post->id)->get();
+
+				return Response::view_with_status('item.no_item', 404, $data);
 			}
 			
 			
 		}else{
-			$post = new stdClass;
-			$post->id = null;
 
-			return View::make('item.no_item')
-						->with('post', $post)
-						->with('title', Lang::line('content.no_page')->get(Session::get('lang')))
-			        	->with('posts_preview', Posts::where('lang', '=', Session::get('lang'))->where_not_id($post->id)->get());
+			return Response::error(404);
 		}
 	}
 
