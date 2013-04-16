@@ -60,6 +60,20 @@ return array( %s );";
 
 
 
+	private function max_id(){
+
+		$rows = scandir($this->dir.'/'.static::$table);
+			
+		foreach ($rows as $value) {
+			$row[] = str_replace('.php', '', $value);
+		}
+
+		return intval(max($row));
+
+	}
+
+
+
 	static function get_tables(){
 
 		$tables_by_model = array_diff(scandir(static::$models_dir), array('..', '.'));
@@ -1310,104 +1324,137 @@ $file 		.= 	");";
 
 
 
-	private function update($data=array()){
+	private function update($data){
 
-		$result = "";
-		$table_dir = $this->dir."/".static::$table;
+		if(is_array($data) || is_object($data)){
 
-		foreach ($this->_t() as $row) {
+			if(is_object($data)){
 
-			$file_dir 	= 	$this->dir."/".static::$table."/".$row->id.".php";
-			$file = "";
-
-			foreach (static::$model as $model_key => $default_value) {
-
-				if(array_key_exists($model_key, $data)){
-
-					$file .= static::_row($model_key, $data[$model_key], 'updated_at');
-
-				}elseif(isset($row->$model_key)){
-
-					$file .= static::_row($model_key, $row->$model_key, 'updated_at');
-
-				}else{
-
-					$file .= static::_row($model_key, $default_value);
-
- 				}			
+				$data = static::object_to_array($data);
 			}
 
-			$file = sprintf(static::$file_pattern, $file);
-			
-			if(!is_dir($table_dir)){
-    			
-    			mkdir($table_dir, 0755, true);
+			if(!isset($this->result) && isset($data["id"]) || empty($this->result) && isset($data["id"])){
 
-    		}
+				$current_table = $this->table();
 
-    		$result .= File::put($file_dir, $file);
+				if(!$current_table::where('id', '=', $data["id"])->get()){
+
+					die('Nothing to update! -> Trying to update -> '.$current_table.'::update(...) with data: <pre><code> "id" => '.htmlspecialchars($data["id"]).'</pre>');
+
+				}
+
+			}
+
+			$result = "";
+			$table_dir = $this->dir."/".static::$table;
+
+			foreach ($this->_t() as $row) {
+
+				$file_dir 	= 	$this->dir."/".static::$table."/".$row->id.".php";
+				$file = "";
+
+				foreach (static::$model as $model_key => $default_value) {
+
+					if(array_key_exists($model_key, $data)){
+
+						$file .= static::_row($model_key, $data[$model_key], 'updated_at');
+
+					}elseif(isset($row->$model_key)){
+
+						$file .= static::_row($model_key, $row->$model_key, 'updated_at');
+
+					}else{
+
+						$file .= static::_row($model_key, $default_value);
+
+	 				}			
+				}
+
+				$file = sprintf(static::$file_pattern, $file);
+				
+				if(!is_dir($table_dir)){
+	    			
+	    			mkdir($table_dir, 0755, true);
+
+	    		}
+
+	    		$result .= File::put($file_dir, $file);
+			}
+	 
+			return $result;
+
+		}else{
+
+			return 'To update row use array or object ONLY!';
 		}
- 
-		return $result;
 	}
 
 
 
-	private function insert($data=array()){
+	private function insert($data){
 
-		$table_dir = $this->dir."/".static::$table;
-		$file = "";
+		if(is_array($data) || is_object($data)){
 
-		if(!is_dir($table_dir)){
+			if(is_object($data)){
+
+				$data = static::object_to_array($data);
+			}
+
+			$table_dir = $this->dir."/".static::$table;
+			$file = "";
+
+			if(!is_dir($table_dir)){
+				
+				mkdir($table_dir, 0755, true);
+
+			}
+
 			
-			mkdir($table_dir, 0755, true);
+			$new_id 	= 	$this->max_id();
+			$file_dir 	= 	$this->dir."/".static::$table."/".++$new_id.".php";
 
-		}
-
-		$rows = scandir($this->dir.'/'.static::$table);
-		
-		foreach ($rows as $value) {
-			$rows_1[] = str_replace('.php', '', $value);
-		}
-
-		$max_id = intval(max($rows_1));
-		$new_id = ++$max_id;
-		$file_dir 	= 	$this->dir."/".static::$table."/".$new_id.".php";
-
-		foreach (static::$model as $model_key => $default_value) {
-
-			if(array_key_exists($model_key, $data)){
-
-				$file .= static::_row($model_key, $data[$model_key], 'created_at');
-
-			}else{
+			foreach (static::$model as $model_key => $default_value) {
 
 				if($model_key == 'id'){
 
 					$file .= static::_row($model_key, $new_id);
 
-				}elseif($model_key == 'created_at'){
+				}elseif(array_key_exists($model_key, $data)){
 
-					$file .= static::_row($model_key, null, 'created_at');
+					$file .= static::_row($model_key, $data[$model_key], 'created_at');
 
 				}else{
 
-					$file .= static::_row($model_key, $default_value, 'created_at');
-				}
-			}			
+					if($model_key == 'id'){
+
+						$file .= static::_row($model_key, $new_id);
+
+					}elseif($model_key == 'created_at'){
+
+						$file .= static::_row($model_key, null, 'created_at');
+
+					}else{
+
+						$file .= static::_row($model_key, $default_value, 'created_at');
+					}
+				}			
+			}
+
+			$file = sprintf(static::$file_pattern, $file);
+				
+			if(!is_dir($table_dir)){
+				
+				mkdir($table_dir, 0755, true);
+
+			}
+
+			File::put($file_dir, $file);
+
+			return $new_id;
+		}else{
+
+			return 'To insert a new row use array or object ONLY!';
 		}
-
-		$file = sprintf(static::$file_pattern, $file);
-			
-		if(!is_dir($table_dir)){
-			
-			mkdir($table_dir, 0755, true);
-
-		}
-
-		File::put($file_dir, $file);
-
-		return $new_id;
 	}
 
 
