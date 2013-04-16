@@ -20,9 +20,7 @@ class Item_Controller extends Base_Controller {
 			    	$data["id"] = null;
 			    	$data["title"] = Lang::line('content.permissions_denied')->get(Session::get('lang'));
 
-			        return View::make('item.no_access', $data);
-
-			        Session::put('href.previous', URL::current());
+			        return Response::view_with_status('item.no_access', 401, $data);
 
 			    }else{
 			       
