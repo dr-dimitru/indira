@@ -1,0 +1,16 @@
+RewriteEngine On
+
+RewriteBase /
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond /public/%{REQUEST_URI} -d
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ /public/$1/
+
+RewriteBase /
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1
+
+RewriteBase /
+RewriteRule ^(/)?$ /public/index.php [L]

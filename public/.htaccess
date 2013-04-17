@@ -1,4 +1,3 @@
-# ----------------------------------------------------------------------
 # Turning on the rewrite engine is necessary for the following rules and
 # features. "+FollowSymLinks" must be enabled for this to work symbolically.
 
@@ -11,12 +10,11 @@
 RewriteEngine On
 RewriteBase /
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
-RewriteRule ^index\.php$ http://yourdomainname.com/ [R=301,L]
+RewriteRule ^index\.php$ / [R=301,L] 
  
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . / [L]
-
 
 AddDefaultCharset utf-8
 AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
