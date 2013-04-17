@@ -389,46 +389,146 @@ return array( %s );";
 
 	private function increment($field){
 
-		$num = $this->only($field);
+		if(is_array($field)){
 
-		if(isset($num)){
-
-			if(is_numeric($num)){
-
-				$this->update(array($field => ++$num));
-
-				return $num;
-
-			}else{
-
-				die('Non numeric field "'.$field.'" is provided! Or select has many results');
-			}
+			$this->increment_array($field);
 
 		}else{
-			die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
+
+			$num = $this->only($field);
+
+			if(isset($num)){
+
+				if(is_numeric($num)){
+
+					$this->update(array($field => ++$num));
+
+					return $num;
+
+				}else{
+
+					die('Non numeric field "'.$field.'" is provided! Or select has many results');
+				}
+
+			}else{
+				die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
+			}
+		}
+	}
+
+	public function increment_array($fields=array()){
+
+		$select = $this->only($fields);
+		
+		if($select){
+
+			$nums = array();
+
+			foreach ($select as $file_id => $row) {
+
+				$update_{$file_id} = array();
+				
+				foreach ($row as $field => $num) {
+
+					if(isset($num)){
+
+						if(is_numeric($num)){
+
+							$update[$field] = ++$num;
+							$nums[$file_id][$field] = $num;
+
+						}else{
+
+							die('Non numeric field "'.$field.'" is provided!');
+						}
+
+					}else{
+
+						die('Select has no results on column - '.$field.' or row record is empty! In table - '.$this->table());
+					}
+				}
+
+				$this->update($update);
+			}
+
+			return $nums;
+
+		}else{
+
+			die('Nothing to increment! -> Columns: '.$fields.' is not found in table: '.$this->table());
 		}
 	}
 
 
 	private function decrement($field){
 
-		$num = $this->only($field);
+		if(is_array($field)){
 
-		if(isset($num)){
-
-			if(is_numeric($num)){
-
-				$this->update(array($field => --$num));
-
-				return $num;
-
-			}else{
-
-				die('Non numeric field "'.$field.'" is provided! Or select has many results');
-			}
+			$this->decrement_array($field);
 
 		}else{
-			die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
+
+			$num = $this->only($field);
+
+			if(isset($num)){
+
+				if(is_numeric($num)){
+
+					$this->update(array($field => --$num));
+
+					return $num;
+
+				}else{
+
+					die('Non numeric field "'.$field.'" is provided! Or select has many results');
+				}
+
+			}else{
+				die('Nothing to decrement! -> Column: '.$field.' is not found in table: '.$this->table());
+			}
+		}
+	}
+
+	public function decrement_array($fields=array()){
+
+		$select = $this->only($fields);
+		
+		if($select){
+
+			$nums = array();
+
+			foreach ($select as $file_id => $row) {
+
+				$update_{$file_id} = array();
+				
+				foreach ($row as $field => $num) {
+
+					if(isset($num)){
+
+						if(is_numeric($num)){
+
+							$update[$field] = --$num;
+							$nums[$file_id][$field] = $num;
+
+						}else{
+
+							die('Non numeric field "'.$field.'" is provided!');
+						}
+
+					}else{
+
+						die('Select has no results on column - '.$field.' or row record is empty! In table - '.$this->table());
+					}
+				}
+
+				$this->update($update);
+			}
+
+			return $nums;
+
+		}else{
+
+			die('Nothing to increment! -> Columns: '.$fields.' is not found in table: '.$this->table());
 		}
 	}
 
@@ -1370,25 +1470,31 @@ $file 		.= 	");";
 
 
 
-	private function update($data){
+	private function update($data=null){
 
-		if(is_array($data) || is_object($data)){
+		if(is_array($data) || is_object($data) || is_null($data)){
 
-			if(is_object($data)){
+			if(!is_null($data) || !empty($data)){
 
-				$data = static::object_to_array($data);
-			}
+				if(is_object($data)){
 
-			if(!isset($this->result) && isset($data["id"]) || empty($this->result) && isset($data["id"])){
+					$data = static::object_to_array($data);
+				}
 
-				$current_table = $this->table();
+				if(!isset($this->result) && isset($data["id"]) || empty($this->result) && isset($data["id"])){
 
-				if(!$current_table::where('id', '=', $data["id"])->get()){
+					$current_table = $this->table();
 
-					die('Nothing to update! -> Trying to update -> '.$current_table.'::update(...) with data: <pre><code> "id" => '.htmlspecialchars($data["id"]).'</pre>');
+					if(!$current_table::where('id', '=', $data["id"])->get()){
+
+						die('Nothing to update! -> Trying to update -> '.$current_table.'::update(...) with data: <pre><code> "id" => '.htmlspecialchars($data["id"]).'</pre>');
+
+					}
 
 				}
 
+			}else{
+				$data = array();
 			}
 
 			$result = "";
