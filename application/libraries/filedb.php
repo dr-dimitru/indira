@@ -387,6 +387,52 @@ return array( %s );";
 	}
 
 
+	private function increment($field){
+
+		$num = $this->only($field);
+
+		if(isset($num)){
+
+			if(is_numeric($num)){
+
+				$this->update(array($field => ++$num));
+
+				return $num;
+
+			}else{
+
+				die('Non numeric field "'.$field.'" is provided! Or select has many results');
+			}
+
+		}else{
+			die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
+		}
+	}
+
+
+	private function decrement($field){
+
+		$num = $this->only($field);
+
+		if(isset($num)){
+
+			if(is_numeric($num)){
+
+				$this->update(array($field => --$num));
+
+				return $num;
+
+			}else{
+
+				die('Non numeric field "'.$field.'" is provided! Or select has many results');
+			}
+
+		}else{
+			die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
+		}
+	}
+
+
 	private function order_by($field, $type='ASC'){
 
 		if($this->_t()){
