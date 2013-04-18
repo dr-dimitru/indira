@@ -17,7 +17,7 @@ header{
 	height: 120px;
 	z-index: 10;
 	background-color: #EBEBEB;
-	background-image: url('../img/nav_bg.png');
+	background-image: url('/img/nav_bg.png');
 	background-repeat: repeat;
 	background-position: center center;
 	-moz-box-shadow: inset rgba(0, 0, 0, .85) 0 0px 10px 3px;
@@ -76,7 +76,7 @@ header h1:hover sup{
 }
 
 .admin .inner{
-	background: #fafafa url(../img/code_background.gif) repeat;
+	background: #fafafa url(/img/code_background.gif) repeat;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	-ms-border-radius: 5px;
@@ -90,7 +90,7 @@ header h1:hover sup{
 }
 
 body.admin{
-	background: #fafafa url(../img/diagonal-noise.png) repeat;
+	background: #fafafa url(/img/diagonal-noise.png) repeat;
 }
 
 .admin h1{	
@@ -274,7 +274,7 @@ margin-bottom: -0px;
 	margin-bottom: 15px;
 	padding: 20px;
 	
-	background: #EBEBEB url('../img/footer_bg.png') repeat;
+	background: #EBEBEB url('/img/footer_bg.png') repeat;
 	color: rgba(0, 0, 0, 0.90);
 	text-shadow: 0px -1px #000, 0px 1px #fff;
 	text-shadow: 0px -1px rgba(0, 0, 0, 0.10), 0px 1px rgba(255, 255, 255, 0.20);
