@@ -107,18 +107,18 @@ return array( %s );";
 
 	static function get_table_size($table){
 
-		if(!is_dir('storage/db/'.$table)){
+		if(!is_dir(static::$storage_dir.'/'.$table)){
 
-			mkdir('storage/db/'.$table, 0755, true);
+			mkdir(static::$storage_dir.'/'.$table, 0755, true);
 
 		}
 
 		$size = 0;
-		$records = array_diff(scandir('storage/db/'.$table), array('..', '.'));
+		$records = array_diff(scandir(static::$storage_dir.'/'.$table), array('..', '.'));
 		
 		foreach ($records as $record) {
 			
-			$size += filesize('storage/db/'.$table.'/'.$record);
+			$size += filesize(static::$storage_dir.'/'.$table.'/'.$record);
 		
 		}
 
@@ -128,7 +128,7 @@ return array( %s );";
 
 	static function get_table_records($table){
 
-		return count(array_diff(scandir('storage/db/'.$table), array('..', '.')));
+		return count(array_diff(scandir(static::$storage_dir.'/'.$table), array('..', '.')));
 
 	}
 
@@ -225,10 +225,15 @@ return array( %s );";
 
 			if($row->id == $id){
 
-				return $this->get_file($id);
+				foreach ($row as $key => $value) {
+					
+					$this->$key = $value;
 
+				}
 			}
 		}
+
+		return $this;
 	}
 
 
@@ -401,16 +406,17 @@ return array( %s );";
 
 				if(is_numeric($num)){
 
-					$this->update(array($field => ++$num));
+					$this->update(array($field => $num + 1));
 
-					return $num;
+					return $num + 1;
 
 				}else{
 
-					die('Non numeric field "'.$field.'" is provided! Or select has many results');
+					die('Non numeric column "'.$field.'" is provided! Or select has many results');
 				}
 
 			}else{
+
 				die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
 			}
 		}
@@ -434,12 +440,12 @@ return array( %s );";
 
 						if(is_numeric($num)){
 
-							$update[$field] = ++$num;
-							$nums[$file_id][$field] = $num;
+							$update[$field] = $num + 1;
+							$nums[$file_id][$field] = $num + 1;
 
 						}else{
 
-							die('Non numeric field "'.$field.'" is provided!');
+							die('Non numeric column "'.$field.'" is provided!');
 						}
 
 					}else{
@@ -474,13 +480,13 @@ return array( %s );";
 
 				if(is_numeric($num)){
 
-					$this->update(array($field => --$num));
+					$this->update(array($field => $num - 1));
 
-					return $num;
+					return $num - 1;
 
 				}else{
 
-					die('Non numeric field "'.$field.'" is provided! Or select has many results');
+					die('Non numeric column "'.$field.'" is provided! Or select has many results');
 				}
 
 			}else{
@@ -507,12 +513,12 @@ return array( %s );";
 
 						if(is_numeric($num)){
 
-							$update[$field] = --$num;
-							$nums[$file_id][$field] = $num;
+							$update[$field] = $num - 1;
+							$nums[$file_id][$field] = $num - 1;
 
 						}else{
 
-							die('Non numeric field "'.$field.'" is provided!');
+							die('Non numeric column "'.$field.'" is provided!');
 						}
 
 					}else{
@@ -547,14 +553,16 @@ return array( %s );";
 				arsort($res);
 			}
 
-
 			$table = $this->_t();
 			foreach ($res as $id => $value) {
+
 				$res[$id] = $table[$id];
 			}
 
 			$this->result = $res;
+
 		}else{
+
 			$this->result = '';
 		}
 
@@ -1468,7 +1476,29 @@ $file 		.= 	");";
 	}
 
 
+	public function save(){
 
+		$data = array();
+
+		foreach (static::$model as $model_key => $default_value) {
+
+			if(isset($this->$model_key)){
+
+				$data[$model_key] = $this->$model_key;
+
+			}			
+		}
+
+		if(isset($data["id"])){
+
+			$this->update($data);
+
+		}else{
+
+			$this->create($data);
+
+		}
+	}
 
 	private function update($data=null){
 
@@ -1541,7 +1571,18 @@ $file 		.= 	");";
 		}
 	}
 
+	private function create($data){
 
+		$id = $this->insert($data);
+
+		return $id;
+		// THINK ABOUT HOW TO RETURN NEWLY CREATED INSTANCE
+		// $current_table = static::$table;
+		// die(var_dump($current_table::where('id', '=', $id)->get()));
+		// $new_instance = $current_table::where('id', '=', $id)->get();
+
+		// return $new_instance;
+	}
 
 	private function insert($data){
 
