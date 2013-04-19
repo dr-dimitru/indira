@@ -29,6 +29,12 @@ function ajaxify(){
 			restore = true;
 		}
 
+		if($(this).attr('data-encode')){
+			encode = $(this).attr('data-encode');
+		}else{
+			encode = 'true';
+		}
+
 		if($(this).attr('data-out')){
 			out_el = $(this).attr('data-out');
 		}else{
@@ -49,26 +55,14 @@ function ajaxify(){
 
 		if($(this).attr('data-message')){
 			message = $(this).attr('data-message');
+		}else{
+			message = null;
 		}
 
 		if($(this).attr('href')){
 			link = $(this).attr('href');
 		}else{
 			link = $(this).attr('data-link');
-		}
-
-		if($(this).attr('data-message')){
-
-			showerp_alert(q, link, load_el, out_el, message, append, restore);
-
-		}else if($(this).attr('data-post')){
-			
-			showerp(q, link, load_el, out_el, append, restore);
-		
-		}else{
-
-			shower(link, load_el, out_el, append, restore);
-
 		}
 
 		if($(this).attr('data-title')){
@@ -79,20 +73,43 @@ function ajaxify(){
 
 		if($(this).attr('data-prevent-follow') !== 'true'){
 
-			History.pushState({query:q, load_element:load_el, out_element:out_el, appnd:append, rstr:restore},title,link);
+			History.pushState({query:q, load_element:load_el, out_element:out_el, msg:message, appnd:append, rstr:restore, enc:encode},title, link);
 
+		}else{
+
+			if(message){
+
+				showerp_alert(q, link, load_el, out_el, message, append, restore, encode);
+
+			}else if(q){
+				
+				showerp(q, link, load_el, out_el, append, restore, encode);
+			
+			}else{
+
+				shower(link, load_el, out_el, append, restore, encode);
+
+			}
 		}
+		
 		return false;
 	});
 
 }
 
 History.Adapter.bind(window,'statechange',function(){ 
-    var State = History.getState();     
-    if(State.data.query){
-    	showerp(State.data.query, State.url, State.data.load_element, State.data.out_element, State.data.appnd, State.data.rstr);
+    var State = History.getState();   
+    if(State.data.msg){
+    	
+    	showerp_alert(State.data.query, State.url, State.data.load_element, State.data.out_element, State.data.msg, State.data.appnd, State.data.rstr, State.data.enc);  
+
+    }else if(State.data.query){
+
+    	showerp(State.data.query, State.url, State.data.load_element, State.data.out_element, State.data.appnd, State.data.rstr, State.data.enc);
+
     }else{
-    	shower(State.url, State.data.load_element, State.data.out_element, false, true);
+
+    	shower(State.url, State.data.load_element, State.data.out_element, State.data.appnd, State.data.rstr, State.data.rstr);
     }
 });
 
@@ -130,23 +147,33 @@ function shower(p, load_el, out_el, append, restore){
 	$('#'+load_el).html('<i class="icon-cog icon-2x icon-spin"></i>');
 }
 
-function showerp(q, p, load_el, out_el, append, restore){
+function showerp(q, p, load_el, out_el, append, restore, encode){
 	append = eval(append);
 	restore = eval(restore);
 
-	q = eval('(' + q + ')');
-	q = JSON.stringify(q);
-	q = q.replace(/\n/g, '<br>');
+	if(!encode){
+		encode = true;
+	}else{
+		encode = eval(encode);
+	}
 	
 	if(append || restore)
 	{
 		var prev_load_el = $('#'+load_el).html();
 	}
+
+	if(encode)
+	{
+		q = eval('(' + q + ')');
+		q = JSON.stringify(q);
+		q = q.replace(/\n/g, '<br>');
+		q = 'data='+encodeURIComponent(q);
+	}
 	
 	$.ajax({
 	  type: "POST",
 	  url: p,
-	  data: 'data='+encodeURIComponent(q),
+	  data: q,
 	}).done(function( html ) {
 		if(append)
 		{
@@ -168,16 +195,27 @@ function showerp(q, p, load_el, out_el, append, restore){
 	$('#'+load_el).html('<i class="icon-cog icon-2x icon-spin"></i>');
 }
 
-function showerp_alert(q, p, load_el, out_el, message, append, restore){
+function showerp_alert(q, p, load_el, out_el, message, append, restore, encode){
 	append = eval(append);
 	restore = eval(restore);
+
+	if(!encode){
+		encode = true;
+	}else{
+		encode = eval(encode);
+	}
+	
 	
 	var message = confirm(message);
 	if (message==true)
 	{
-		q = eval('(' + q + ')');
-		q = JSON.stringify(q);
-		q = q.replace(/\n/g, '<br>');
+		if(encode)
+		{
+			q = eval('(' + q + ')');
+			q = JSON.stringify(q);
+			q = q.replace(/\n/g, '<br>');
+			q = 'data='+encodeURIComponent(q);
+		}
 		
 		if(append || restore)
 		{
@@ -187,7 +225,7 @@ function showerp_alert(q, p, load_el, out_el, message, append, restore){
 		$.ajax({
 		  type: "POST",
 		  url: p,
-		  data: 'data='+encodeURIComponent(q),
+		  data: q,
 		}).done(function( html ) {
 			if(append)
 			{
