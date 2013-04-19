@@ -1,3 +1,6 @@
+//Specify your own
+var loading_element = '<i class="icon-cog icon-2x icon-spin"></i>';
+
 $(function(){
 	ajaxify();
 });
@@ -128,12 +131,12 @@ function shower(p, load_el, out_el, append, restore){
 	}).done(function( html ) {
 		if(append)
 		{
-			$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+			$('#'+load_el).html(prev_load_el);
 			$('#'+out_el).append(html);
 		}
 		else if(restore)
 		{
-			$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+			$('#'+load_el).html(prev_load_el);
 			$('#'+out_el).html(html);
 		}
 		else
@@ -144,7 +147,7 @@ function shower(p, load_el, out_el, append, restore){
 	});
 	
 	
-	$('#'+load_el).html('<i class="icon-cog icon-2x icon-spin"></i>');
+	$('#'+load_el).html(loading_element);
 }
 
 function showerp(q, p, load_el, out_el, append, restore, encode){
@@ -177,12 +180,12 @@ function showerp(q, p, load_el, out_el, append, restore, encode){
 	}).done(function( html ) {
 		if(append)
 		{
-			$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+			$('#'+load_el).html(prev_load_el);
 			$('#'+out_el).append(html);
 		}
 		else if(restore)
 		{
-			$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+			$('#'+load_el).html(prev_load_el);
 			$('#'+out_el).html(html);
 		}
 		else
@@ -192,7 +195,7 @@ function showerp(q, p, load_el, out_el, append, restore, encode){
 		ajaxify();
 	});
 
-	$('#'+load_el).html('<i class="icon-cog icon-2x icon-spin"></i>');
+	$('#'+load_el).html(loading_element);
 }
 
 function showerp_alert(q, p, load_el, out_el, message, append, restore, encode){
@@ -229,12 +232,12 @@ function showerp_alert(q, p, load_el, out_el, message, append, restore, encode){
 		}).done(function( html ) {
 			if(append)
 			{
-				$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+				$('#'+load_el).html(prev_load_el);
 				$('#'+out_el).append(html);
 			}
 			else if(restore)
 			{
-				$('#'+load_el).html('<i class="icon-lemon icon-2x"></i>');
+				$('#'+load_el).html(prev_load_el);
 				$('#'+out_el).html(html);
 			}
 			else
@@ -244,6 +247,6 @@ function showerp_alert(q, p, load_el, out_el, message, append, restore, encode){
 			ajaxify();
 		});
 	
-		$('#'+load_el).html('<i class="icon-cog icon-2x icon-spin"></i>');
+		$('#'+load_el).html(loading_element);
 	}
 }
