@@ -195,4 +195,59 @@ class Utilites{
 		return URL::to($filename);
 		
 	}
+
+	public static function echo_object($object){
+
+		$file = '<div class="well span10">';
+		foreach($object as $key => $value){
+
+			$file .= '<table class="table table-bordered"><tr>';
+				$file .= '<td style="width: 60px">';
+					 $file .= $key.' :';
+				$file .= '</td>';
+				$file .= '<td>';
+					
+					if(is_object($value) || is_array($value)){
+						
+						$file .= static::echo_object($value);
+					}else{
+
+						$file .= $value;
+					}
+
+				$file .= '</td>';
+			$file .= '</tr></table>';
+
+		}
+		$file .= '</div>';
+		return $file;
+	}
+
+	public static function print_type($value){
+
+		if(is_bool($value)){
+
+			return 'boolean';
+		}
+
+		if(is_string($value)){
+
+			return 'string';
+		}
+
+		if(is_numeric($value)){
+
+			return 'int';
+		}
+
+		if(is_object($value)){
+
+			return 'object';
+		}
+
+		if(is_array($value)){
+
+			return 'array';
+		}
+	}
 }

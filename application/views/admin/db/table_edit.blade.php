@@ -32,7 +32,9 @@
 				$save_json['data_arr'][$key] = "'+encodeURI($('#".$key."_".$columns->id."').val())+'";
 			}
 		?>
+
 		@if($key == 'id')
+
 			<div class="row-fluid">
 				<div class="span2" style="text-align:right">
 					<h6>{{ $key }} <small>(<strong>Uneditable</strong>)</small></h6>
@@ -41,39 +43,29 @@
 					<h6>{{ $column }}</h6>
 				</div>
 			</div>
-		@elseif(is_object($column))
 
-			<?php $save_json['data_arr'][$key] = $column; ?>
-
-			<div class="row-fluid">
-				<div class="span2" style="text-align:right">
-					<h6>{{ $key }} <small>(<strong>Object</strong>)</small></h6>
-				</div>
-				<div class="span10">
-					@foreach($column as $k => $col)
-						<div class="row-fluid">
-							<div class="span2" style="text-align:right">
-								{{ $k }} :
-							</div>
-							<div class="span10">
-								{{ $col }}
-							</div>
-						</div>
-					@endforeach
-				</div>
-			</div>
 		@else
+
 			<div class="row-fluid">
 				<div class="span2" style="text-align:right">
-					<h6>{{ $key }}</h6>
+					<h6>{{ $key }} <small>(<strong>{{ Utilites::print_type($column) }}</strong>)</small></h6>
 				</div>
 				<div class="span10">
-					<textarea 
-						id="{{ $key }}_{{ $columns->id }}"
-						rows="2"
-						placeholder="Put data here" 
-						class="span10"  
-					>{{ htmlspecialchars(stripslashes($column)) }}</textarea>
+					@if(is_object($column) || is_array($column))
+					
+						<?php $save_json['data_arr'][$key] = $column; ?>
+						{{ Utilites::echo_object($column) }}
+
+					@else
+
+						<textarea 
+							id="{{ $key }}_{{ $columns->id }}"
+							rows="2"
+							placeholder="Put data here" 
+							class="span10"  
+						>{{ htmlspecialchars(stripslashes($column)) }}</textarea>
+
+					@endif
 				</div>
 			</div>
 		@endif
