@@ -1423,13 +1423,13 @@ $file 		.= 	");";
 
 		}else{
 
-			if($key == $timestamp){
+			if($key === $timestamp){
 
 				return "'".$key."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', 
 ";
-			}elseif($key == 'id'){
+			}elseif(is_numeric($value) || is_bool($value)){
 
-				return "'".$key."' => ".intval($value).", 
+				return "'".$key."' => ".$value.", 
 ";
 			}else{
 
@@ -1449,29 +1449,16 @@ $file 		.= 	");";
 
 				if(is_array($val)){
 
-					$file .= "'".$key1."' => '".static::_row_array($key1, $val, $timestamp)."', ";
+					$file .= static::_row_array($key1, $val, $timestamp);
 
 				}else{
 
-					if($key == $timestamp){
-
-						$file .= "'".$key1."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', ";
-
-					}elseif($key == 'id'){
-
-						$file .= "'".$key1."' => ".intval($val).", ";
-
-					}else{
-
-						$file .= "'".$key1."' => '".static::_rawurlencode($val)."', ";
-
-					}
+					$file .= static::_row($key1, $val, $timestamp);
 				}
 			}
 
 		$file .= "),
 ";
-
 		return $file;
 	}
 
@@ -1618,18 +1605,7 @@ $file 		.= 	");";
 
 				}else{
 
-					if($model_key == 'id'){
-
-						$file .= static::_row($model_key, $new_id);
-
-					}elseif($model_key == 'created_at'){
-
-						$file .= static::_row($model_key, null, 'created_at');
-
-					}else{
-
-						$file .= static::_row($model_key, $default_value, 'created_at');
-					}
+					$file .= static::_row($model_key, $default_value, 'created_at');
 				}			
 			}
 
