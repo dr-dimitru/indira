@@ -319,15 +319,12 @@ h2 a{
 	font-size: 50px;
 	color: #D14;
 	color: rgba(221, 17, 68, 0.98);
+	margin-bottom: 0px;
 }
 
 .page-header p{
 	text-shadow: 0px 1px #fff;
 	text-shadow: 0px 1px rgba(255, 255, 255, 0.95);
-}
-
-.page-header h1 img{
-	margin-bottom: 13px;
 }
 
 .page-header h1 small{
@@ -343,7 +340,7 @@ h2 a{
 	font-size: 10px;
 	position: absolute;
 	top: 75px;
-	left: 10px;
+	left: 90px;
 }
 
 h1, h2{
