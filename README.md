@@ -13,10 +13,24 @@ Part of Veliov Group project - http://veliovgroup.com
 
 ## Quick insallation guide
 
+###Requirements (Laravel)
+
+ - Apache, nginx, or another compatible web server.
+ - Laravel takes advantage of the powerful features that have become available in PHP 5.3. Consequently, PHP 5.3 is a requirement.
+ - Laravel uses the FileInfo library to detect files' mime-types. This is included by default with PHP 5.3. However, Windows users may need to add a line to their php.ini file before the Fileinfo module is enabled. For more information check out the installation / configuration details on PHP.net.
+ - Laravel uses the Mcrypt library for encryption and hash generation. Mcrypt typically comes pre-installed. If you can't find Mcrypt in the output of phpinfo() then check the vendor site of your LAMP installation or check out the installation / configuration details on PHP.net.
+
+Find out more in [Laravel's official website](http://laravel.com/docs/install).
+
+After you meet all Laravel's requirements, please proceed to next step:
+
+--
+
 ####Download sources
  - Go to GitHub
  - Download source code from master branch
 
+--
 
 ####Setting up your Application
  - Go to downloaded folder from GitHub (indira-master)
@@ -33,6 +47,7 @@ Part of Veliov Group project - http://veliovgroup.com
   - key - Secret application key. It's extremely important that you change the application key option before working on your site. This key is used throughout the framework for encryption, hashing, etc.
   - All other setting may be set up in accordance with Laravel's documentation 
 
+--
 
 ####Upload to server
 
@@ -42,6 +57,7 @@ To upload downloaded and edited files you may use build-in functionality of your
  - Go to root-folder of server, root-folder will sounds like www , home , home/username , html or http | Attention! Name of root-folder depends from server and hosting settings
  - Drag'n'Drop, copy&past or upload all downloaded and files from GitHub
 
+--
 
 ####Setting up the server side
 
@@ -69,6 +85,7 @@ If you have no idea or no possibility to edit server's settings (for example at 
 
 If you will expect anu issues with routing to /public at first try to remove .htaccess from root folder
 
+--
 
 ####First login /admin
 
