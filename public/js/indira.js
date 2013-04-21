@@ -112,7 +112,7 @@ History.Adapter.bind(window,'statechange',function(){
 
     }else{
 
-    	shower(State.url, State.data.load_element, State.data.out_element, State.data.appnd, State.data.rstr, State.data.rstr);
+    	shower(State.url, State.data.load_element, State.data.out_element, State.data.appnd, State.data.rstr);
     }
 });
 
