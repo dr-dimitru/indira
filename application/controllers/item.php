@@ -9,7 +9,7 @@ class Item_Controller extends Base_Controller {
 		    
 		    $post = Posts::find($item);
 		    
-		    if($post){
+		    if(isset($post->id)){
 
 		    	$data = array();
 		    	$data["post"] = $post;
