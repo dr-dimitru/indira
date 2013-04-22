@@ -56,27 +56,30 @@
 		@endif
 						<li class="span2">
 							<div class="thumbnail">
-								<img style="max-height: 180px; height: 180px;" src="{{ $image->url }}" alt="{{ htmlspecialchars($image->name) }}">
+								<a href="{{ $image->url }}">
+									<img class="lazy" style="max-height: 190px; height: 190px;" src="http://indira-cms.com/uploads/b142c9b4bad9122442d4af344d32ceaf.gif" data-original="{{ $image->thumbnail }}" alt="{{ htmlspecialchars($image->name) }}" />
+								</a>
+
 								<h6 class="ellipsis" style="max-width: 180px">{{ htmlspecialchars($image->name) }}</h6>
 								<input type="url" class="span12 input" value="{{ $image->url }}" />
 								<p>
-									<?
+									<?php
 										$json_delete = '{"id": '.$image->id.', "delete": "delete"}';
 									?>
 									<a  id="go_to_delete_{{ $image->id }}"
 										href="{{ URL::to('admin/imgupload/delete') }}" 
 										data-post="{{ htmlspecialchars($json_delete) }}" 
 										data-restore="true" 
-										data-message="{{ sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes(htmlspecialchars($image->name)) ) }}" 
+										data-message="{{ htmlspecialchars(sprintf(Lang::line('content.delete_warning')->get(Session::get('lang')), addslashes(htmlspecialchars($image->name)))) }}" 
 										data-out="work_area" 
 										data-load="super_logo"
 										data-prevent-follow="true" 
 										class="btn btn-danger" 
-										>
+									>
 											<i class="icon-trash icon-large"></i> {{ Lang::line('content.delete_word')->get(Session::get('lang')) }}
 									</a>
 								</p>
-							</div>
+							</a>
 						</li>
 		@if($i == 6)
 					</ul>

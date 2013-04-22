@@ -16,62 +16,33 @@ class Admin_Imgupload_Controller extends Base_Controller {
 		
 		}else{
 
-			$demo_mode = false;
-			$upload_dir = 'public/uploads/';
-			$allowed_ext = array('jpg','jpeg','png','gif');
+			$result = Utilites::uploadimage();
+
+			if($result["move_uploaded_file"]){
+
+				Media::insert(array('url' => URL::to('uploads/'.$result["img_name"]), 'thumbnail'=> URL::to('uploads/thumbnail_'.$result["img_name"]), 'name' => $result["pic"]["name"], 'route' => 'uploads/'.$result["img_name"]));
 
 
-			if(strtolower($_SERVER['REQUEST_METHOD']) != 'post'){
-				Utilites::exit_status('Error! Wrong HTTP method!');
-			}
+				$thumbnail = Utilites::resize_image('public/uploads/'.$result["img_name"], $result["img_name"], 190, 190, true);
 
-
-			if(array_key_exists('pic',$_FILES) && $_FILES['pic']['error'] == 0 ){
+				imagepng($thumbnail, 'public/uploads/thumbnail_'.$result["img_name"], 9);
 				
-				$pic = $_FILES['pic'];
+				if(Input::get('viabutton') == 'true'){
 
-				if(!in_array(Utilites::get_extension($pic['name']),$allowed_ext)){
-					Utilites::exit_status('Only '.implode(',',$allowed_ext).' files are allowed!');
-				}	
+					return Redirect::to('admin/imgupload');
 
-				if($demo_mode){
-					
-					// File uploads are ignored. We only log them.
-					
-					$line = implode('		', array( date('r'), $_SERVER['REMOTE_ADDR'], $pic['size'], $pic['name']));
-					file_put_contents('log.txt', $line.PHP_EOL, FILE_APPEND);
-					
-					Utilites::exit_status('Uploads are ignored in demo mode.');
+				}elseif(Input::get('viaredactor') == 'true'){
+
+					$json = array();
+					$json["filelink"] = URL::to('uploads/'.$result["img_name"]);
+
+					return Response::json($json, 200);
+
+				}else{
+
+					Utilites::exit_status('File was uploaded successfuly!');
 				}
-				
-				
-				// Move the uploaded file from the temporary 
-				// directory to the uploads folder:
-				$img_name = md5($pic['name'].mt_rand()).'.'.Utilites::get_extension($pic['name']);
-				
-				if(move_uploaded_file($pic['tmp_name'], $upload_dir.$img_name)){
-					Media::insert(array('url' => URL::to('uploads/'.$img_name), 'name' => $pic['name'], 'route' => 'uploads/'.$img_name));
-					
-					if(Input::get('viabutton') == 'true')
-					{
-						return Redirect::to('admin/imgupload');
-
-					}elseif(Input::get('viaredactor') == 'true'){
-
-						$json = array();
-						$json['filelink'] = URL::to('uploads/'.$img_name);
-
-						return Response::json($json, 200);
-					}else{
-						Utilites::exit_status('File was uploaded successfuly!');
-					}
-
-				}
-				
 			}
-
-			Utilites::exit_status('Something went wrong with your upload!');
-
 		}
 	}
 

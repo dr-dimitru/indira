@@ -2,6 +2,116 @@
 
 class Utilites{
 
+	public static function resize_image($file, $file_name, $w, $h, $crop=false) {
+
+	    list($width, $height) = getimagesize($file);
+
+	    $r = $width / $height;
+
+	    if ($crop) {
+
+	        if ($width > $height) {
+
+	            //$width = ceil($width-($width*($r-$w/$h)));
+	            $width = $height;
+	        } else {
+
+	            //$height = ceil($height-($height*($r-$w/$h)));
+	            $height = $width;
+	        }
+
+	        $newwidth = $w;
+	        $newheight = $h;
+
+	    } else {
+
+	        if ($w/$h > $r) {
+
+	            $newwidth = $h*$r;
+	            $newheight = $h;
+
+	        } else {
+
+	            $newheight = $w/$r;
+	            $newwidth = $w;
+
+	        }
+	    }
+
+		$extension = Utilites::get_extension($file_name);
+
+	    if($extension == 'jpg' || $extension == 'jpeg'){
+
+	    	$src = imagecreatefromjpeg($file);
+
+	    }elseif($extension == 'png'){
+
+	    	$src = imagecreatefrompng($file);
+
+	    }elseif($extension == 'gif'){
+
+	    	$src = imagecreatefromgif($file);
+
+	    }
+
+	    $dst = imagecreatetruecolor($newwidth, $newheight);
+	    imagealphablending($dst, false);
+	    imagesavealpha($dst, true);
+
+	    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+	    return $dst;
+	}
+
+	public static function uploadimage(){
+
+		$result 		= 	array();
+		$demo_mode 		= 	false;
+		$upload_dir 	= 	'public/uploads/';
+		$allowed_ext 	= 	array('jpg','jpeg','png','gif');
+
+
+		if(strtolower($_SERVER['REQUEST_METHOD']) != 'post'){
+
+			Utilites::exit_status('Error! Wrong HTTP method!');
+
+		}
+
+		if(array_key_exists('pic',$_FILES) && $_FILES['pic']['error'] == 0 ){
+			
+			$result["pic"] = $_FILES['pic'];
+
+			if(!in_array(Utilites::get_extension($result["pic"]['name']),$allowed_ext)){
+
+				Utilites::exit_status('Only '.implode(',',$allowed_ext).' files are allowed!');
+			}	
+
+			if($demo_mode){
+				
+				// File uploads are ignored. We only log them.
+				
+				$line = implode('		', array( date('r'), $_SERVER['REMOTE_ADDR'], $result["pic"]['size'], $result["pic"]['name']));
+				file_put_contents('log.txt', $line.PHP_EOL, FILE_APPEND);
+				
+				Utilites::exit_status('Uploads are ignored in demo mode.');
+			}
+			
+			
+			// Move the uploaded file from the temporary 
+			// directory to the uploads folder:
+			$result["img_name"] = md5($result["pic"]['name'].mt_rand()).'.'.Utilites::get_extension($result["pic"]['name']);
+			
+			$result["move_uploaded_file"] = move_uploaded_file($result["pic"]['tmp_name'], $upload_dir.$result["img_name"]);
+
+			return $result;
+			
+		}
+
+		Utilites::exit_status('Something went wrong with your upload!');
+
+	}
+
+
 	public static function exit_status($str){
 
 		echo json_encode(array('status'=>$str));
