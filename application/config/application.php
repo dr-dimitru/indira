@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://yourdomain.com',
+	'url' => '',
 	
 	'name' => 'Indira CMS',
 
