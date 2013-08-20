@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 31, 'created_at' => '2013-06-08%2001%3A53%3A33', 'updated_at' => '1371087951', 'type' => 'cache', 'param' => 'database', 'value' => array('table' => 'laravel_cache', ),  );

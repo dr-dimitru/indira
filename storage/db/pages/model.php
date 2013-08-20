@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 1, 'created_at' => '', 'updated_at' => '', 'title' => '', 'content' => '', 'published' => 'false', 'lang' => 'en', 'main' => 'false', 'template' => '', 'template_mobile' => '', 'link' => '', 'access' => '', 'tags' => '', 'pattern' => '', 'is_mobile' => 'false',  );

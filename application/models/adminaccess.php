@@ -1,0 +1,1 @@
+<?php class Adminaccess extends Filedb{ public static $table = "adminaccess"; public static $model; public static $encrypt = false; }

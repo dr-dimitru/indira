@@ -1,0 +1,1 @@
+<?php class Qrcodegen extends Filedb{ public static $table = "qrcodegen"; public static $model; public static $encrypt = false; }

@@ -20,7 +20,7 @@ class Error {
 		// For Laravel view errors we want to show a prettier error:
 		$file = $exception->getFile();
 
-		if (str_contains($exception->getFile(), 'eval()') and str_contains($exception->getFile(), 'laravel/view.php'))
+		if (str_contains($exception->getFile(), 'eval()') and str_contains($exception->getFile(), 'laravel'.DS.'view.php'))
 		{
 			$message = 'Error rendering view: ['.View::$last['name'].']'.PHP_EOL.PHP_EOL.$message;
 
@@ -54,7 +54,7 @@ class Error {
 		// Using events gives the developer more freedom.
 		else
 		{
-			$response = Event::first('500');
+			$response = Event::first('500', array($exception));
 
 			$response = Response::prepare($response);
 		}

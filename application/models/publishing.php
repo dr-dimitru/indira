@@ -1,0 +1,1 @@
+<?php class Publishing extends Filedb{ public static $table = "publishing"; public static $model; public static $encrypt = false; }

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 1, 'created_at' => '1377004540', 'updated_at' => '1377005484', 'title' => 'Indira%20CMS%20-%20Demo%20page', 'content' => '', 'published' => 'true', 'lang' => 'en', 'main' => 'true', 'template' => 'false', 'template_mobile' => 'false', 'link' => 'demo_page', 'access' => '1', 'tags' => 'demo%2Cpage%2Cindira%2Ccms', 'pattern' => 'main', 'is_mobile' => 'false',  );

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 12, 'created_at' => '2013-05-27%2003%3A27%3A26', 'updated_at' => '1371087966', 'type' => 'meta', 'name' => 'viewport', 'value' => 'width%3Ddevice-width%2C%20maximum-scale%3D1.0', 'additions' => '', 'order' => '4',  );

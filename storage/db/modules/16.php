@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 16, 'created_at' => '1376915560', 'updated_at' => '', 'name' => 'settings', 'active' => 'true', 'settings' => '', 'default_settings' => '', 'link' => 'false', 'access' => '777', 'view_access' => '777',  );

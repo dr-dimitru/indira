@@ -49,21 +49,6 @@ Laravel\Autoloader::$aliases = $aliases;
 
 /*
 |--------------------------------------------------------------------------
-| Auto-Loader Mappings
-|--------------------------------------------------------------------------
-|
-| Registering a mapping couldn't be easier. Just pass an array of class
-| to path maps into the "map" function of Autoloader. Then, when you
-| want to use that class, just use it. It's simple!
-|
-*/
-
-Autoloader::map(array(
-	'Base_Controller' => path('app').'controllers/base.php',
-));
-
-/*
-|--------------------------------------------------------------------------
 | Auto-Loader Directories
 |--------------------------------------------------------------------------
 |
@@ -76,6 +61,24 @@ Autoloader::map(array(
 Autoloader::directories(array(
 	path('app').'models',
 	path('app').'libraries',
+));
+
+Indira::start(array('session', 'application', 'database', 'indira', 'cache', 'auth'));
+
+/*
+|--------------------------------------------------------------------------
+| Auto-Loader Mappings
+|--------------------------------------------------------------------------
+|
+| Registering a mapping couldn't be easier. Just pass an array of class
+| to path maps into the "map" function of Autoloader. Then, when you
+| want to use that class, just use it. It's simple!
+|
+*/
+
+Autoloader::map(array(
+	'Base_Controller' => path('app').'controllers/base.php',
+	'Templates_Base_Controller' => Bundle::path('templates').'controllers/base.php',
 ));
 
 /*

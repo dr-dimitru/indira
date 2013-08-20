@@ -1,12 +1,2 @@
 <?php 
-return array( 'id' => 1, 
-'created_at' => '2013-02-24%2000%3A32%3A25', 
-'updated_at' => '2013-03-16%2000%3A40%3A58', 
-'title' => 'Blog%20post%3A%20site%2C%20blog%2C%20test1', 
-'text' => '%3Cp%3ESome%20text%20here%20%3A%29%29%3C%2Fp%3E%0A', 
-'access' => '1', 
-'qr_code' => '', 
-'lang' => 'ru', 
-'tags' => 'site%2C%20blog%2C%20test%2C%20veliov%2C%20%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9', 
-'published' => '1', 
- );
+return array( 'id' => 1, 'created_at' => '1376994462', 'updated_at' => '1377004444', 'title' => 'Demo%20Blog%20Post', 'text' => '%3Ch2%3EHi%21%3C%2Fh2%3E%3Cp%3EThis%20is%20demo%20blog%20post.%3C%2Fp%3E%3Cp%3EIf%20you%20are%20logged%20in%20as%20admin%20you%20may%20find%20lemon%20icon%20above%2C%20try%20to%20click%20it%20to%20edit%20this%20text.%E2%80%8B%3C%2Fp%3E', 'access' => '1', 'qr_code' => '%2Fuploads%2F1_blog.png', 'lang' => 'en', 'tags' => 'demo%2Cindira%2Ccms', 'published' => 'true', 'order' => '2', 'short' => 'This%20is%20demo%20blog%20post', 'link' => 'pretty_url', 'image' => '',  );

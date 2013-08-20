@@ -148,4 +148,13 @@ class Memory extends Sectionable {
 		return "section#{$section}.{$key}";
 	}
 
+	/**
+	 * Count cache records.
+	 *
+	 * @return string
+	 */
+	public function count()
+	{
+		return count($this->storage);
+	}
 }

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 8, 'created_at' => '2013-05-27%2003%3A23%3A45', 'updated_at' => '1371087966', 'type' => 'meta', 'name' => 'description', 'value' => 'Most%20easily%20customizable%20CMS%20in%20the%20world.%20Based%20on%20Laravel.%20Powered%20by%20NoSQL.', 'additions' => '', 'order' => '4',  );

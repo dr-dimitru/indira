@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 6, 'created_at' => '2013-05-27%2003%3A18%3A58', 'updated_at' => '1376946164', 'type' => 'shortcut%20icon', 'name' => 'image%2Fx-icon', 'value' => 'uploads%2Ffavicon.ico', 'additions' => '16x16%2C%2024x24%2C%2032x32%2C%2057x57%2C%2064x64%2C%2072x72%2C%20128x128', 'order' => '2',  );

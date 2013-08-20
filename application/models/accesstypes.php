@@ -1,0 +1,1 @@
+<?php class Accesstypes extends Filedb{ public static $table = "accesstypes"; public static $model; public static $encrypt = false; }

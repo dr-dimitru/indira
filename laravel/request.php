@@ -196,7 +196,7 @@ class Request {
 	 */
 	public static function cli()
 	{
-		return defined('STDIN');
+		return defined('STDIN') || (PHP_SAPI != "cgi-fcgi" && substr(PHP_SAPI, 0, 3) == 'cgi' && getenv('TERM'));
 	}
 
 	/**

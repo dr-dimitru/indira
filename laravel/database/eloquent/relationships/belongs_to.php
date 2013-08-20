@@ -110,7 +110,20 @@ class Belongs_To extends Relationship {
 	 */
 	public function foreign_value()
 	{
-		return $this->base->get_attribute($this->foreign);
+		return $this->base->{$this->foreign};
+	}
+	
+	/**
+	* Bind an object over a belongs-to relation using its id.
+	*
+	* @return Eloquent
+	*/
+	
+	public function bind($id)
+	{
+		$this->base->fill(array($this->foreign => $id))->save();
+
+		return $this->base;
 	}
 
 }

@@ -182,13 +182,15 @@ class Form {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function label($name, $value, $attributes = array())
+	public static function label($name, $value, $attributes = array(), $escape_html = true)
 	{
 		static::$labels[] = $name;
 
 		$attributes = HTML::attributes($attributes);
 
-		$value = HTML::entities($value);
+		if ($escape_html) {
+			$value = HTML::entities($value);
+		}
 
 		return '<label for="'.$name.'"'.$attributes.'>'.$value.'</label>';
 	}
@@ -338,6 +340,19 @@ class Form {
 	}
 
 	/**
+	 * Create a HTML date input element.
+	 *
+	 * @param  string  $name
+	 * @param  string  $value
+	 * @param  array   $attributes
+	 * @return string
+	 */
+	public static function datetime($name, $value = null, $attributes = array())
+	{
+		return static::input('datetime-local', $name, $value, $attributes);
+	}
+
+	/**
 	 * Create a HTML file input element.
 	 *
 	 * @param  string  $name
@@ -398,8 +413,15 @@ class Form {
 		foreach ($options as $value => $display)
 		{
 			if (is_array($display))
-			{
-				$html[] = static::optgroup($display, $value, $selected);
+			{	
+				if(isset($display["display"]) && isset($display["attributes"])){
+
+					$html[] = static::option($value, (isset($display["display"])) ? $display["display"] : $display, $selected, (isset($display["attributes"])) ? $display["attributes"] : array());
+
+				}else{
+
+					$html[] = static::optgroup($display, $value, $selected);
+				}
 			}
 			else
 			{
@@ -438,7 +460,7 @@ class Form {
 	 * @param  string  $selected
 	 * @return string
 	 */
-	protected static function option($value, $display, $selected)
+	protected static function option($value, $display, $selected, $attributes = array())
 	{
 		if (is_array($selected))
 		{
@@ -449,7 +471,7 @@ class Form {
 			$selected = ((string) $value == (string) $selected) ? 'selected' : null;
 		}
 
-		$attributes = array('value' => HTML::entities($value), 'selected' => $selected);
+		$attributes = array_merge(array('value' => HTML::entities($value), 'selected' => $selected), $attributes);
 
 		return '<option'.HTML::attributes($attributes).'>'.HTML::entities($display).'</option>';
 	}

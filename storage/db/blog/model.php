@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => '', 'created_at' => '0000-00-00%2000%3A00%3A00', 'updated_at' => '0000-00-00%2000%3A00%3A00', 'title' => '', 'text' => '', 'access' => '1', 'qr_code' => '', 'lang' => 'en', 'tags' => '', 'published' => 'false', 'order' => '1', 'short' => '', 'link' => '', 'image' => '',  );

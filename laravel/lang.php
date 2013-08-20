@@ -143,6 +143,10 @@ class Lang {
 				$line = str_replace(':'.$key, $value, $line);
 			}
 		}
+		else
+		{
+			$line = $this->key;
+		}
 
 		return $line;
 	}

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 23, 'created_at' => '2013-06-07%2019%3A24%3A49', 'updated_at' => '1371087951', 'type' => 'database', 'param' => 'redis', 'value' => array('default' => array('host' => '127.0.0.1', 'port' => '6379', 'database' => '', ), ),  );

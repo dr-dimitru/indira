@@ -122,4 +122,23 @@ class Database extends Driver {
 		return $connection->table(Config::get('cache.database.table'));
 	}
 
+	/**
+	 * Flush the entire cache.
+	 *
+	 * @return void
+	 */
+	public function flush()
+	{
+		$this->table()->delete();
+	}
+
+	/**
+	 * Count cache records.
+	 *
+	 * @return string
+	 */
+	public function count()
+	{
+		return $this->table()->count();
+	}
 }

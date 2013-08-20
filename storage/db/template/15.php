@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 15, 'created_at' => '1371870564', 'updated_at' => '1372031667', 'type' => 'logo', 'name' => '', 'value' => 'Indira%3Csup%3E%3Ci%20class%3D%22icon-lemon%20gold%22%3E%3C%2Fi%3E%3C%2Fsup%3E%3Csub%3ECMS%3C%2Fsub%3E', 'additions' => '', 'order' => '6',  );

@@ -31,17 +31,18 @@ the HTTP specification.
 Loading
 -------
 
-If you are using PHP 5.3.x you must add the following to your autoloader:
+If you are not using Composer but are using PHP 5.3.x, you must add the following to your autoloader:
 
     // SessionHandlerInterface
     if (!interface_exists('SessionHandlerInterface')) {
         $loader->registerPrefixFallback(__DIR__.'/../vendor/symfony/src/Symfony/Component/HttpFoundation/Resources/stubs');
     }
 
-
 Resources
 ---------
 
-Unit tests:
+You can run the unit tests with the following command:
 
-https://github.com/symfony/symfony/tree/master/tests/Symfony/Tests/Component/HttpFoundation
+    $ cd path/to/Symfony/Component/HttpFoundation/
+    $ composer.phar install --dev
+    $ phpunit

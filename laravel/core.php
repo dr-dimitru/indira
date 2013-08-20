@@ -154,7 +154,11 @@ if (magic_quotes())
 
 use Symfony\Component\HttpFoundation\LaravelRequest as RequestFoundation;
 
+RequestFoundation::enableHttpMethodParameterOverride();
+
 Request::$foundation = RequestFoundation::createFromGlobals();
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -213,7 +217,7 @@ if (isset($environment))
 |
 */
 
-if (defined('STDIN'))
+if (Request::cli())
 {
 	$console = CLI\Command::options($_SERVER['argv']);
 

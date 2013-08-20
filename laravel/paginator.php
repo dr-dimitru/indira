@@ -65,7 +65,7 @@ class Paginator {
 	 *
 	 * @var string
 	 */
-	protected $dots = '<li class="dots disabled"><a href="#">...</a></li>';
+	protected $dots = '<li class="dots disabled"><a id="go_to_ellepsis" href="#">...</a></li>';
 
 	/**
 	 * Create a new Paginator instance.
@@ -291,7 +291,7 @@ class Paginator {
 
 		if (is_null($text))
 		{
-			$text = Lang::line("pagination.{$element}")->get($this->language);
+			$text = Lang::line("pagination.{$element}")->get(Session::get('lang'));
 		}
 
 		// Each consumer of this method provides a "disabled" Closure which can
@@ -300,7 +300,7 @@ class Paginator {
 		// the "first" element should be a span instead of a link.
 		if ($disabled($this->page, $this->last))
 		{
-			return '<li'.HTML::attributes(array('class'=>"{$class} disabled")).'><a href="#">'.$text.'</a></li>';
+			return '<li'.HTML::attributes(array('class'=>"{$class} disabled")).'><a id="go_to_elepsis" href="#">'.$text.'</a></li>';
 		}
 		else
 		{
@@ -349,7 +349,7 @@ class Paginator {
 		{
 			if ($this->page == $page)
 			{
-				$pages[] = '<li class="active"><a href="#">'.$page.'</a></li>';
+				$pages[] = '<li class="active"><a id="go_to_current" href="#">'.$page.'</a></li>';
 			}
 			else
 			{
@@ -372,7 +372,7 @@ class Paginator {
 	{
 		$query = '?page='.$page.$this->appendage($this->appends);
 
-		return '<li'.HTML::attributes(array('class' => $class)).'>'. HTML::link(URI::current().$query, $text, array(), Request::secure()).'</li>';
+		return '<li'.HTML::attributes(array('class' => $class)).'>'. HTML::link(URI::current().$query, $text, array('id' => 'go_to_'.$page, 'data-load' => 'super_logo', 'data-out' => 'work_area', 'data-restore' => 'true'), Request::secure()).'</li>';
 	}
 
 	/**

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 2, 'created_at' => '2013-05-08%2008%3A42%3A25', 'updated_at' => '2013-05-23%2001%3A49%3A42', 'name' => 'guest', 'password' => '084e0343a0486ff05530df6c705c8bb4', 'access' => '400', 'email' => '',  );

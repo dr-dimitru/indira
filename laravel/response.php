@@ -59,28 +59,6 @@ class Response {
 	}
 
 	/**
-	 * Create a new response instance with status code.
-	 *
-	 * <code>
-	 *		// Create a response instance with a view
-	 *		return Response::view('home.no_such_page', 404);
-	 *
-	 *		// Create a response instance with a view and data
-	 *		return Response::view('item.no_such_page', 404, array('message' => 'Nothing found'), array('header' => 'value'));
-	 * </code>
-	 *
-	 * @param  string    $view
-	 * @param  int       $status
-	 * @param  array     $data
-	 * @param  array     $headers
-	 * @return Response
-	 */
-	public static function view_with_status($view, $status = 200, $data = array(), $headers = array())
-	{
-		return new static(View::make($view, $data), $status, $headers);
-	}
-
-	/**
 	 * Create a new response instance containing a view.
 	 *
 	 * <code>
@@ -111,14 +89,16 @@ class Response {
 	 * @param  mixed     $data
 	 * @param  int       $status
 	 * @param  array     $headers
+   * @param  int       $json_options
 	 * @return Response
 	 */
-	public static function json($data, $status = 200, $headers = array())
+	public static function json($data, $status = 200, $headers = array(), $json_options = 0)
 	{
 		$headers['Content-Type'] = 'application/json; charset=utf-8';
 
-		return new static(json_encode($data), $status, $headers);
+		return new static(json_encode($data, $json_options), $status, $headers);
 	}
+	
 
 	/**
 	 * Create a new JSONP response.
@@ -222,9 +202,14 @@ class Response {
 		// off to the HttpFoundation and let it create the header text.
 		$response = new static(File::get($path), 200, $headers);
 
-		$d = $response->disposition($name);
+		// If the Content-Disposition header has already been set by the
+		// merge above, then do not override it with out generated one.
+		if (!isset($headers['Content-Disposition'])) {
+			$d = $response->disposition($name);
+			$response = $response->header('Content-Disposition', $d);
+		}
 
-		return $response->header('Content-Disposition', $d);
+		return $response;
 	}
 
 	/**

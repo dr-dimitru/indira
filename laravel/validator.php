@@ -75,7 +75,7 @@ class Validator {
 	/**
 	 * Create a new validator instance.
 	 *
-	 * @param  array  $attributes
+	 * @param  mixed  $attributes
 	 * @param  array  $rules
 	 * @param  array  $messages
 	 * @return void
@@ -89,7 +89,7 @@ class Validator {
 
 		$this->rules = $rules;
 		$this->messages = $messages;
-		$this->attributes = $attributes;
+		$this->attributes = (is_object($attributes)) ? get_object_vars($attributes) : $attributes;
 	}
 
 	/**
@@ -302,7 +302,7 @@ class Validator {
 	 */
 	protected function validate_accepted($attribute, $value)
 	{
-		return $this->validate_required($attribute, $value) and ($value == 'yes' or $value == '1');
+		return $this->validate_required($attribute, $value) and ($value == 'yes' or $value == '1' or $value == 'on');
 	}
 
 	/**
@@ -317,7 +317,7 @@ class Validator {
 	{
 		$other = $parameters[0];
 
-		return isset($this->attributes[$other]) and $value == $this->attributes[$other];
+		return array_key_exists($other, $this->attributes) and $value == $this->attributes[$other];
 	}
 
 	/**
@@ -332,7 +332,7 @@ class Validator {
 	{
 		$other = $parameters[0];
 
-		return isset($this->attributes[$other]) and $value != $this->attributes[$other];
+		return array_key_exists($other, $this->attributes) and $value != $this->attributes[$other];
 	}
 
 	/**
@@ -486,7 +486,7 @@ class Validator {
 			$attribute = $parameters[1];
 		}
 
-		$query = $this->db()->table($parameters[0])->where($attribute, '=', $value);
+		$query = $this->db($parameters[0])->table($parameters[0])->where($attribute, '=', $value);
 
 		// We also allow an ID to be specified that will not be included in the
 		// uniqueness check. This makes updating columns easier since it is
@@ -495,7 +495,14 @@ class Validator {
 		{
 			$id = (isset($parameters[3])) ? $parameters[3] : 'id';
 
-			$query->where($id, '<>', $parameters[2]);
+			if(get_parent_class($this->db) == 'Filedb'){
+				
+				$query->and_where($id, '<>', $parameters[2]);
+
+			}else{
+
+				$query->where($id, '<>', $parameters[2]);
+			}
 		}
 
 		return $query->count() == 0;
@@ -518,7 +525,7 @@ class Validator {
 		// can just make sure the count is greater or equal to one.
 		$count = (is_array($value)) ? count($value) : 1;
 
-		$query = $this->db()->table($parameters[0]);
+		$query = $this->db($parameters[0])->table($parameters[0]);
 
 		// If the given value is an array, we will check for the existence of
 		// all the values in the database, otherwise we'll check for the
@@ -760,6 +767,19 @@ class Validator {
 	}
 
 	/**
+	 * Validate the date conforms to a given format.
+	 * 
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validate_date_format($attribute, $value, $parameters)
+	{
+		return date_create_from_format($parameters[0], $value) !== false;
+	}
+
+	/**
 	 * Get the proper error message for an attribute and rule.
 	 *
 	 * @param  string  $attribute
@@ -862,6 +882,20 @@ class Validator {
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Replace all place-holders for the required_with rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replace_required_with($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':field', $this->attribute($parameters[0]), $message);
 	}
 
 	/**
@@ -1186,11 +1220,18 @@ class Validator {
 	 *
 	 * @return Database\Connection
 	 */
-	protected function db()
+	protected function db($param=null)
 	{
-		if ( ! is_null($this->db)) return $this->db;
+		if(get_parent_class($param) !== 'Filedb')
+		{
+			if ( ! is_null($this->db)) return $this->db;
 
-		return $this->db = Database::connection();
+			return $this->db = Database::connection();
+		}
+		else
+		{
+			return $this->db = $param::init();
+		}
 	}
 
 	/**

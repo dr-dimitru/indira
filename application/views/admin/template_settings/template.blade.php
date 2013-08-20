@@ -1,0 +1,1 @@
+@yield('template_settings')

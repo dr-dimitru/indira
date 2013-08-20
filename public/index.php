@@ -3,9 +3,18 @@
  * Laravel - A PHP Framework For Web Artisans
  *
  * @package  Laravel
- * @version  3.2.3
+ * @version  3.2.14
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  * @link     http://laravel.com
+ */
+
+/**
+ * Laravel is flavored by Indira CMS
+ *
+ * @package  Indira CMS
+ * @version  1.0.1
+ * @author   Dmitriy A. Golev <ceo@veliovgroup.com>
+ * @link     http://indira-cms.com
  */
 
 // --------------------------------------------------------------

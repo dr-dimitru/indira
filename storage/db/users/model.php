@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => '', 'name' => '', 'email' => '', 'password' => '', 'access' => '1', 'created_at' => '', 'updated_at' => '', 'first_name' => '', 'last_name' => '', 'address_line_one' => '', 'address_line_two' => '', 'city' => '', 'region' => '', 'zip_code' => '', 'delivery_type' => '', 'phone' => '', 'country' => '', 'newsletter_subscription' => 'true',  );

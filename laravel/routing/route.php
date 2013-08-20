@@ -129,7 +129,7 @@ class Route {
 		// sure we have a valid Response instance.
 		$response = Response::prepare($response);
 
-		Filter::run($this->filters('after'), array($response));
+		Filter::run($this->filters('after'), array(&$response));
 
 		return $response;
 	}
@@ -328,6 +328,18 @@ class Route {
 	public static function put($route, $action)
 	{
 		Router::register('PUT', $route, $action);
+	}
+
+	/**
+	 * Register a PATCH route with the router.
+	 *
+	 * @param  string|array  $route
+	 * @param  mixed         $action
+	 * @return void
+	 */
+	public static function patch($route, $action)
+	{
+		Router::register('PATCH', $route, $action);
 	}
 
 	/**

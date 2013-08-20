@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 4, 'created_at' => '2013-05-15%2017%3A04%3A45', 'updated_at' => '1377014537', 'type' => 'indira', 'param' => 'email', 'value' => array('smtp' => array('host' => '', 'username' => '', 'password' => '', 'port' => '', ), 'admin' => 'admin%40yourdomainname.com', 'no-reply' => 'no-reply%40yourdomainname.com', ),  );

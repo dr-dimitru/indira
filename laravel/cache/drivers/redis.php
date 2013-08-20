@@ -88,4 +88,23 @@ class Redis extends Driver {
 		$this->redis->del($key);
 	}
 
+	/**
+	 * Flush the entire cache.
+	 *
+	 * @return void
+	 */
+	public function flush()
+	{
+		$this->redis->flushdb();
+	}
+
+	/**
+	 * Count cache records.
+	 *
+	 * @return string
+	 */
+	public function count()
+	{
+		return $this->redis->count();
+	}
 }

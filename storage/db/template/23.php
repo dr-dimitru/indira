@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 23, 'created_at' => '1376936246', 'updated_at' => '1376944360', 'type' => 'apple-touch-startup-image', 'name' => 'apple-touch-startup-image-1024x748', 'value' => 'uploads%2Fapple-touch-startup-image-1024x748.png', 'additions' => '1024x748%2C%20%28device-width%3A%20768px%29%20and%20%28device-height%3A%201024px%29%20and%20%28orientation%3A%20landscape%29%20and%20%28-webkit-device-pixel-ratio%3A%201%29', 'order' => '3',  );

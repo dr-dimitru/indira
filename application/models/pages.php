@@ -1,0 +1,1 @@
+<?php class Pages extends Filedb{ public static $table = "pages"; public static $model; public static $encrypt = false; }

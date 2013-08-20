@@ -1,28 +1,44 @@
-<?php
+<?php 
 
-class Admin extends Filedb
-{
-	public static $table = 'admin';
+class Admin extends Filedb{ 
 
-	public static $model = array(	'id' => '',
-									'created_at' => '0000-00-00 00:00:00', 
-									'updated_at' => '0000-00-00 00:00:00', 
-									'name' => '', 
-									'password' => '', 
-									'access' => '400', 
-									'email' => '');
+	public static $table = "admin"; 
+
+	public static $model; 
+
+	public static $encrypt = false;
+	
 
 	public static function check(){
 
-		if(Session::get('admin')){
+		if(Session::has('admin')){
 
-			return Session::get('admin.access');
+			return (int) Session::get('admin.access');
 
 		}else{
 
 			return false;
-
 		}
+	}
 
+	protected function login($admin, $remember){
+
+		$admin_check = $this->where('name', '=', $admin->name)->or_where('email', '=', $admin->name)->get();
+
+		if(empty($admin_check)){
+
+    		return Utilites::fail_message(Lang::line('content.incorrect_login_message'));
+    	}
+
+    	foreach($admin_check as $row => $admin_data)
+
+        if($admin_data->password != $admin->password){
+                
+    		return Utilites::fail_message(Lang::line('content.incorrect_pass_message'));
+    	}
+
+	    Utilites::admin_login($this->find($row), $remember);
+
+		return 'success';
 	}
 }

@@ -10,3 +10,7 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 sftp-config.json
+test.php
+tests.php
+test*
+/test

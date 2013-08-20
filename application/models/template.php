@@ -1,0 +1,1 @@
+<?php class Template extends Filedb{ public static $table = "template"; public static $model; public static $encrypt = false; }

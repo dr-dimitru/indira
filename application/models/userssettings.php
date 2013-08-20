@@ -1,0 +1,1 @@
+<?php class Userssettings extends Filedb{ public static $table = "userssettings"; public static $model; public static $encrypt = false; }

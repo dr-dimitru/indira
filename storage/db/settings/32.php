@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 32, 'created_at' => '2013-06-08%2001%3A56%3A36', 'updated_at' => '1371087951', 'type' => 'cache', 'param' => 'memcached', 'value' => array('0' => array('host' => '127.0.0.1', 'port' => '11211', 'weight' => '101', ), ),  );

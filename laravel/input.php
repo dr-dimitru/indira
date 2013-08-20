@@ -40,6 +40,8 @@ class Input {
 	 */
 	public static function has($key)
 	{
+		if (is_array(static::get($key))) return true;
+
 		return trim((string) static::get($key)) !== '';
 	}
 
@@ -158,6 +160,8 @@ class Input {
 	 */
 	public static function had($key)
 	{
+		if (is_array(static::old($key))) return true;
+
 		return trim((string) static::old($key)) !== '';
 	}
 
@@ -222,7 +226,7 @@ class Input {
 	 * @param  string  $key
 	 * @param  string  $directory
 	 * @param  string  $name
-	 * @return bool
+	 * @return Symfony\Component\HttpFoundation\File\File
 	 */
 	public static function upload($key, $directory, $name = null)
 	{

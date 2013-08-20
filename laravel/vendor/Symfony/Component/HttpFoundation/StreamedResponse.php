@@ -62,6 +62,8 @@ class StreamedResponse extends Response
      * Sets the PHP callback associated with this Response.
      *
      * @param mixed $callback A valid PHP callback
+     *
+     * @throws \LogicException
      */
     public function setCallback($callback)
     {
@@ -72,21 +74,17 @@ class StreamedResponse extends Response
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function prepare(Request $request)
     {
-        if ('1.0' != $request->server->get('SERVER_PROTOCOL')) {
-            $this->setProtocolVersion('1.1');
-        }
-
         $this->headers->set('Cache-Control', 'no-cache');
 
-        parent::prepare($request);
+        return parent::prepare($request);
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      *
      * This method only sends the content once.
      */
@@ -106,7 +104,7 @@ class StreamedResponse extends Response
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      *
      * @throws \LogicException when the content is not null
      */
@@ -118,7 +116,7 @@ class StreamedResponse extends Response
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      *
      * @return false
      */

@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 2, 'created_at' => '1377005985', 'updated_at' => '1377006047', 'title' => 'Indira%20CMS%20-%20Demo%20mobile%20Page', 'content' => '', 'published' => 'true', 'lang' => 'en', 'main' => 'true', 'template' => '2', 'template_mobile' => '2', 'link' => 'demo_main_mobile_page', 'access' => '1', 'tags' => 'page%2Cmobile%2Cphone%2Cindira%2Ccms', 'pattern' => 'main_mobile', 'is_mobile' => 'true',  );

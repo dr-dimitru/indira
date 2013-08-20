@@ -1,306 +1,417 @@
 <?php
 	
-class Filedb{
-	
-	private $dir = 'storage/db';
+class Filedb extends Filedbhelper{
 
-	public static $file_pattern = "<?php 
+
+	/**
+	 * Row's file pattern
+	 *
+	 * @var string
+	 */
+	protected static $file_pattern = "<?php 
 return array( %s );";
+	
 
-	public static $import_dir = 'storage/db';
+	/**
+	 * Model's file pattern.
+	 * Must be one line
+	 *
+	 * @var string
+	 */
+	protected static $model_pattern = '<?php class %1$s extends Filedb{ public static $table = "%2$s"; public static $model; %3$s}';
 
-	public static $table;
 
-	public static $models_dir = 'application/models';
+	/**
+	 * Directory for importing data from SQL, Postrgess etc. othet Laravel's drivers
+	 *
+	 * @var string
+	 */
+	private static $import_dir = 'storage/db';
 
-	public static $storage_dir = 'storage/db';
 
-	public static $model;
+	/**
+	 * Table name
+	 *
+	 * @var string
+	 */
+	protected static $table;
 
+
+	/**
+	 * Directory with models files usually application/models
+	 *
+	 * @var string
+	 */
+	protected static $models_dir = 'application/models';
+
+
+	/**
+	 * FileDB root directory
+	 *
+	 * @var string
+	 */
+	protected static $directory = 'storage/db';
+
+
+	/**
+	 * Model
+	 *
+	 * @var array
+	 */
+	private static $model;
+
+
+	/**
+	 * Is table encrypted?
+	 *
+	 * @var bool
+	 */
+	public static $encrypt = false;
+
+
+	/**
+	 * Instance
+	 *
+	 * @var this
+	 */
 	protected static $_inst = NULL;
 
 
-	public function __construct()
-	{
+	/**
+	 * Set table name and run Initialization.
+	 *
+	 * @return void
+	 */
+	public function __construct(){
 
 		if(!isset(static::$table)){
 
-			static::$table = $this->table();
-
+			$this->table();
 		}
-
-
+		
 		return $this->init();
 	}
 
 
-
-	public static function get_table($table=null){
-
-		if(!empty(static::$table)){
-
-			return static::$table;
-
-		}elseif($table != null){
-
-			return strtolower(Str::plural(class_basename($table)));
-
-		}
-
-	}
-
-
-
-	public function table()
-	{
+	/**
+	 * Find table name
+	 *
+	 * @param  string  $table  Set to change table on the fly.
+	 * @return void
+	 */
+	protected function table($table=null){
 		
-		return static::$table = strtolower(Str::plural(class_basename($this)));
+		($table) ? static::$table = strtolower($table) : static::$table = strtolower(Str::plural(class_basename($this)));
 
+		return (strtolower(get_called_class()) == static::$table) ? $this : $this->init();
 	}
 
 
+	/**
+	 * Initialize FileDB. Get all records from table to array.
+	 * Prepare model. Check if table exists.
+	 *
+	 * @return Filedb
+	 */	
+	private function init(){
 
-	private function max_id(){
+		$path = static::path(null, static::$table);
 
-		$rows = scandir($this->dir.'/'.static::$table);
+		if(!isset($this->{'full_table_'.static::$table}) || empty($this->{'full_table_'.static::$table})){
 			
-		foreach ($rows as $value) {
-			$row[] = str_replace('.php', '', $value);
-		}
+			if(is_dir($path)){
 
-		return intval(max($row));
+				$rows = static::_scandir($path);
 
-	}
+			}else{
 
+				return 'No such table ('.$path.')!';
 
-
-	static function get_tables(){
-
-		$tables_by_model = array_diff(scandir(static::$models_dir), array('..', '.'));
-
-		foreach ($tables_by_model as $table) {
-
-			$table_model_file = substr($table, 0, -4);
-
-			$tables[] = $table_model_file::get_table($table_model_file);
-
-		}
-		
-		return $tables;
-	}
-
-
-	static function get_db_size(){
-
-		$size = 0;
-		$tables = static::get_tables();
-
-		foreach ($tables as $table) {
-
-			$size += static::get_table_size($table);
-
-		}
-
-		return $size;
-	}
-
-
-	static function get_table_size($table){
-
-		if(!is_dir(static::$storage_dir.'/'.$table)){
-
-			mkdir(static::$storage_dir.'/'.$table, 0755, true);
-
-		}
-
-		$size = 0;
-		$records = array_diff(scandir(static::$storage_dir.'/'.$table), array('..', '.'));
-		
-		foreach ($records as $record) {
-			
-			$size += filesize(static::$storage_dir.'/'.$table.'/'.$record);
-		
-		}
-
-		return $size;
-
-	}
-
-	static function get_table_records($table){
-
-		return count(array_diff(scandir(static::$storage_dir.'/'.$table), array('..', '.')));
-
-	}
-
-
-	static function get_db_records(){
-
-		$records = 0;
-		$tables = static::get_tables();
-
-		foreach ($tables as $table) {
-
-			$records += static::get_table_records($table);
-
-		}
-
-		return $records;
-	}
-
-
-	
-	public function init(){
-
-		$this->full_table = array();
-		if(is_dir($this->dir.'/'.static::$table)){
-
-			$rows = scandir($this->dir.'/'.static::$table);
-
-		}else{
-
-			return 'No such table ('.$this->dir.'/'.static::$table.')!';
-
-		}
-
-		foreach ($rows as $key => $value) {
-			
-			if(strpos($value,'.php') !== false){
-				
-				$file_id = substr($value, 0, -4);
-
-				$this->full_table[$file_id] = $this->get_file($file_id);
-			
 			}
+		
+			foreach ($rows as $key => &$value) {
+				
+				if(strpos($value,EXT) !== false){
+					
+					$file_id = substr($value, 0, -4);
+
+					$this->{'full_table_'.static::$table}[$file_id] = static::get_file($file_id);
+				}
+
+				unset($key, $value);
+			}
+
+			unset($rows);
+		}
+
+		if(!isset(static::$model) || empty(static::$model) ){
+
+			static::$model = static::model_file();
 		}
 
 		return $this;
-
 	}
 
 
+	/**
+	 * Get full table
+	 *
+	 * @param  string $path
+	 * @return Filedb
+	 */
+	private function get_full_table($path){
 
-	public function get_file($id){
+		if(is_dir($path)){
 
-		return static::decode_obj(require $this->dir.'/'.static::$table.'/'.$id.'.php');
+			$rows = static::_scandir($path);
 
+		}else{
+
+			return 'No such table ('.$path.')!';
+
+		}
+	
+		foreach ($rows as $key => &$value) {
+			
+			if(strpos($value,EXT) !== false){
+				
+				$file_id = substr($value, 0, -4);
+
+				$table[$file_id] = static::get_file($file_id);
+			}
+
+			unset($key, $value);
+		}
+		
+
+		return $table;
 	}
 
 
+	/**
+	 * Set full table instead of result for further selection
+	 *
+	 * @return Filedb
+	 */
+	protected function use_all(){
 
+		$path = static::path(null, static::$table);
+		$this->_t_set($this->get_full_table($path));
+
+		return $this;
+	}
+
+
+	/**
+	 * Retreive array of rows from selection or full table
+	 *
+	 * @param  string|null 	$columns
+	 * @return array
+	 */
 	private function get($columns=null){
 
 		if($columns){
 
 			$this->_only($columns);
+		}
 
-			if($this->result){
+		if(isset($this->grouped)){
+					
+			return $this->grouped;
 
-				return static::array_to_object($this->result);
-			}else{
-
-				return $this->result;
-			}
+		}elseif(isset($this->result) && !empty($this->result)){ 
+					
+			return static::array_to_object($this->result);
 
 		}else{
 
-			if($this->result){
-
-				return static::array_to_object($this->result);
-			}else{
-
-				return '';
-			}
-
+			return $this->_t();
 		}
-
 	}
 
 
+	/**
+	 * Retreive JSON of rows from selection or full table
+	 *
+	 * @param  string|null 	$columns
+	 * @return array
+	 */
+	protected function json($columns=null){
 
-	private function find($id){
+		return json_encode($this->get($columns), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+	}
 
-		$id = intval($id);
 
-		foreach ($this->_t() as $file_id => $row) {
+	/**
+	 * Get row by id (or unuque field), and put data into object
+	 *
+	 * @param  int|string $id     unique value
+	 * @param  string     $field  field name
+	 * @return Filedb
+	 */
+	private function find($id = null, $field = null){
 
-			if($row->id == $id){
+		if(!$id){
 
-				foreach ($row as $key => $value) {
-					
-					$this->$key = $value;
-
-				}
-			}
+			die("Missing argument 1 for Filedb::find($id) OR provided $id is not numeric");
 		}
+
+		if(is_numeric($id)){
+
+			$id = intval($id);
+			$this->where_id($id);
+		
+		}elseif($field){
+
+			$this->where($field, '=', $id);
+		}
+
+		$this->add_to_object();
+
+		$this->{'find_'.Config::get('application.key')} = true;
+
+		self::__destruct();
 
 		return $this;
 	}
 
 
+	/**
+	 * Take first row from end of selection or full table.
+	 *
+	 * @param  string $columns
+	 * @return array 			Selected row
+	 */
+	public function first($columns=null){
 
-	private function first(){
-		return $this->limit(0,1)->get();
+		return ($columns) ? $this->limit(0,1)->add_to_object($columns) : $this->limit(0,1)->add_to_object();
 	}
 
+
+	/**
+	 * Prepare data for make() method of Laravel's Paginator class.
+	 * Retreive pagination from Laravel's Paginator class.
+	 *
+	 * @param  int 			$per_page 	Quantity of shown rows per page
+	 * @param  array|null 	$array_data
+	 * @return Paginator
+	 */
 	private function paginate($per_page, $array_data=null){
 
-		$qty = $this->count();
-		$table = static::$table;
-
-		if($array_data){
-			return Paginator::make($table::get($array_data), $qty, $per_page);
+		if(Input::get('page', 1) < 2){
+		
+			$start = 0;
+		
 		}else{
-			return Paginator::make($table::all(), $qty, $per_page);
+
+			$start = (Input::get('page') - 1) * $per_page;
 		}
 
+		if(isset($this->grouped)){
+
+			$groups = array_keys($this->grouped);
+			$groups_qty = count($groups);
+			$qty = count($this->grouped);
+			
+			ksort($this->grouped);
+			$this->grouped = array_slice($this->grouped, $start, $per_page);
+			
+
+		}else{
+
+			$qty = $this->count();
+			$this->limit($start, $per_page);
+		}
+
+		if($array_data){
+
+			return Paginator::make($this->get($array_data), $qty, $per_page);
+
+		}else{
+			
+			return Paginator::make($this->get(), $qty, $per_page);
+		}
 	}
 
 
-	private function limit($start, $take){
+	/**
+	 * Cut form start and end provided quantity of rows from selection of full table
+	 *
+	 * @param  int 	$start
+	 * @param  int 	$take
+	 * @return Filedb
+	 */
+	protected function limit($start, $take){
 
 		if($this->_t()){
+
 			$this->result = array_slice($this->_t(), $start, $take);
 		}
 
 		return $this;
-
 	}
 
-	private function skip($num){
+
+	/**
+	 * Cut form start provided quantity of rows from selection of full table
+	 *
+	 * @param  int 	$num
+	 * @return Filedb
+	 */
+	protected function skip($num){
+
 		$this->limit($num, null);
-
 		return $this;
 	}
 
-	private function take($num){
+
+	/**
+	 * Cut form end provided quantity of rows from selection of full table
+	 *
+	 * @param  int 	$num
+	 * @return Filedb
+	 */
+	protected function take($num){
+
 		$this->limit(0, $num);
-
 		return $this;
 	}
 
 
-	private function avg($field){
+	/**
+	 * Retreive average value of values in provided column in selection or full table
+	 *
+	 * @param  string 	$field
+	 * @return int
+	 */
+	protected function avg($field){
 
 		return $this->sum($field) / $this->count();
-
 	}
 
 
-	private function sum($field){
+	/**
+	 * Retreive sum of values in provided column in selection or full table
+	 *
+	 * @param  string 	$field
+	 * @return int
+	 */
+	protected function sum($field){
 
-		$pre_res = $this->only(array($field));
+		$column = $this->only(array($field));
 
-		if(isset($pre_res)){
+		if(isset($column)){
 
-			$num = array_values($pre_res);
+			$num = array_values($column);
 			$num = intval(array_shift($num));
 
 			if(is_numeric($num)){
 
-				foreach ($pre_res as $value) {
+				foreach ($pre_res as &$value) {
 					
 					$res[] = $value[$field];
 
+					unset($value);
 				}
 
 				return array_sum($res);
@@ -317,37 +428,53 @@ return array( %s );";
 	}
 
 
-	private function count(){
+	/**
+	 * Retreive quantity of rows in selection or full table
+	 *
+	 * @param  boolean 	$or    If set to TRUE search will be thru full table
+	 * @return int
+	 */
+	protected function count(){
 
-		$pre_res = static::object_to_array($this->_t());
+		$rows = static::object_to_array($this->_t());
 
-		if(isset($pre_res)){
+		if(isset($rows) && !empty($rows)){
 
-			return count($pre_res);
+			return count($rows);
 
 		}else{
-			return null;
+
+			return 0;
 		}
 
 	}
 
 
-	private function max($field){
+	/**
+	 * Retreive maximum value of provided column in selection or full table
+	 *
+	 * @param  string 	$field
+	 * @return string|int
+	 */
+	protected function max($field){
 
-		$pre_res = $this->only(array($field));
+		$column = $this->only(array($field));
 
-		if(isset($pre_res)){
+		if(isset($column)){
 
-			$num = array_values($pre_res);
+			$num = array_values($column);
 			$num = intval(array_shift($num));
 
 			if(is_numeric($num)){
 
-				foreach ($pre_res as $value) {
-					$res[] = $value;
+				foreach ($column as &$value) {
+					
+					$result[] = $value;
+
+					unset($value);
 				}
 
-				$max = max($res);
+				$max = max($result);
 
 				return $max[$field];
 
@@ -357,27 +484,37 @@ return array( %s );";
 			}
 
 		}else{
+
 			return null;
 		}
 	}
 
 
+	/**
+	 * Retreive minimum value of provided column in selection or full table
+	 *
+	 * @param  string 	$field
+	 * @return string
+	 */
 	private function min($field){
 
-		$pre_res = $this->only(array($field));
+		$column = $this->only(array($field));
 
-		if(isset($pre_res)){
+		if(isset($column)){
 
-			$num = array_values($pre_res);
+			$num = array_values($column);
 			$num = intval(array_shift($num));
 
 			if(is_numeric($num)){
 
-				foreach ($pre_res as $value) {
-					$res[] = $value;
+				foreach ($column as &$value) {
+
+					$result[] = $value;
+
+					unset($value);
 				}
 
-				$min = min($res);
+				$min = min($result);
 
 				return $min[$field];
 
@@ -387,179 +524,149 @@ return array( %s );";
 			}
 
 		}else{
+
 			return null;
 		}
 	}
 
 
-	private function increment($field){
-
-		if(is_array($field)){
-
-			$this->increment_array($field);
-
-		}else{
-
-			$num = $this->only($field);
-
-			if(isset($num)){
-
-				if(is_numeric($num)){
-
-					$this->update(array($field => $num + 1));
-
-					return $num + 1;
-
-				}else{
-
-					die('Non numeric column "'.$field.'" is provided! Or select has many results');
-				}
-
-			}else{
-
-				die('Nothing to increment! -> Column: '.$field.' is not found in table: '.$this->table());
-			}
-		}
-	}
-
-	public function increment_array($fields=array()){
-
-		$select = $this->only($fields);
-		
-		if($select){
-
-			$nums = array();
-
-			foreach ($select as $file_id => $row) {
-
-				$update_{$file_id} = array();
-				
-				foreach ($row as $field => $num) {
-
-					if(isset($num)){
-
-						if(is_numeric($num)){
-
-							$update[$field] = $num + 1;
-							$nums[$file_id][$field] = $num + 1;
-
-						}else{
-
-							die('Non numeric column "'.$field.'" is provided!');
-						}
-
-					}else{
-
-						die('Select has no results on column - '.$field.' or row record is empty! In table - '.$this->table());
-					}
-				}
-
-				$this->update($update);
-			}
-
-			return $nums;
-
-		}else{
-
-			die('Nothing to increment! -> Columns: '.$fields.' is not found in table: '.$this->table());
-		}
-	}
-
-
-	private function decrement($field){
-
-		if(is_array($field)){
-
-			$this->decrement_array($field);
-
-		}else{
-
-			$num = $this->only($field);
-
-			if(isset($num)){
-
-				if(is_numeric($num)){
-
-					$this->update(array($field => $num - 1));
-
-					return $num - 1;
-
-				}else{
-
-					die('Non numeric column "'.$field.'" is provided! Or select has many results');
-				}
-
-			}else{
-				die('Nothing to decrement! -> Column: '.$field.' is not found in table: '.$this->table());
-			}
-		}
-	}
-
-	public function decrement_array($fields=array()){
-
-		$select = $this->only($fields);
-		
-		if($select){
-
-			$nums = array();
-
-			foreach ($select as $file_id => $row) {
-
-				$update_{$file_id} = array();
-				
-				foreach ($row as $field => $num) {
-
-					if(isset($num)){
-
-						if(is_numeric($num)){
-
-							$update[$field] = $num - 1;
-							$nums[$file_id][$field] = $num - 1;
-
-						}else{
-
-							die('Non numeric column "'.$field.'" is provided!');
-						}
-
-					}else{
-
-						die('Select has no results on column - '.$field.' or row record is empty! In table - '.$this->table());
-					}
-				}
-
-				$this->update($update);
-			}
-
-			return $nums;
-
-		}else{
-
-			die('Nothing to increment! -> Columns: '.$fields.' is not found in table: '.$this->table());
-		}
-	}
-
-
-	private function order_by($field, $type='ASC'){
+	/**
+	 * Increment value of provided column(s) in selection
+	 *
+	 * @param  string|array $field
+	 * @param  int 			$on 	increment value on $on
+	 * @return Filedb
+	 */
+	private function increment($field, $on = null){
 
 		if($this->_t()){
-			foreach ($this->_t() as $file_id => $row) {
-				$res[$file_id] = $row->{$field}; 
+
+			$rows = count($this->_t());
+			$preserved = $this->_t();
+			$cycle = 0;
+
+			$add = ($on) ? $on : 1;
+
+			foreach ($preserved as $file_id => &$row) {
+
+				++$cycle;
+
+				if(is_array($field)){
+
+					foreach ($field as &$column) {
+
+						(isset($row->{$column})) ? is_numeric($row->{$column}) ? $this->where_id($row->id)->update(array($column => floatval($row->{$column}) + $add)) : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
+						
+						unset($column);
+					}
+
+				}else{
+
+					(isset($row->{$field})) ? is_numeric($row->{$field}) ? $this->where_id($row->id)->update(array($field => floatval($row->{$field}) + $add)) : die('Non numeric column "'.$field.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$field.'" is not found in table: '.static::$table;
+				}
+
+				if($rows <= $cycle){
+
+					$this->_t_set($preserved);
+				}
+
+				unset($file_id, $row);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Decrement value of provided column(s) in selection
+	 *
+	 * @param  string|array $field
+	 * @param  int 			$on 	decrement value on $on
+	 * @return Filedb
+	 */
+	private function decrement($field, $on = null){
+
+		if($this->_t()){
+
+			$rows = count($this->_t());
+			$preserved = $this->_t();
+			$cycle = 0;
+
+			$take = ($on) ? $on : 1;
+
+			foreach ($preserved as $file_id => &$row) {
+
+				++$cycle;
+
+				if(is_array($field)){
+
+					foreach ($field as &$column) {
+
+						(isset($row->{$column})) ? is_numeric($row->{$column}) ? $this->where_id($row->id)->update(array($column => floatval($row->{$column}) - $take)) : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
+
+						unset($column);
+					}
+
+				}else{
+
+					(isset($row->{$field})) ? is_numeric($row->{$field}) ? $this->where_id($row->id)->update(array($field => floatval($row->{$field}) - $take)) : die('Non numeric column "'.$field.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$field.'" is not found in table: '.static::$table;
+				}
+
+				if($rows <= $cycle){
+
+					$this->_t_set($preserved);
+				}
+
+				unset($file_id, $row);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Ordering array from result or full table by provided column
+	 *
+	 * @param  string 	$field
+	 * @param  string(ASC|DESC|asc|desc) $type
+	 * @param  sort_flags $flags see: http://www.php.net/manual/en/function.sort.php
+	 * @return Filedb
+	 */
+	private function order_by($field, $type='ASC', $flags=SORT_REGULAR){
+
+		if($this->_t()){
+
+			$t = $this->_t();
+
+			foreach ($t as $file_id => &$row) {
+
+				$res[$file_id] = $row->{$field};
+
+				unset($file_id, $row);
 			}
 
 			if($type == 'ASC' || $type == 'asc'){
-				asort($res);
+
+				asort($res, $flags);
 			}
+
 			if($type == 'DESC' || $type == 'desc'){
-				arsort($res);
+
+				arsort($res, $flags);
 			}
 
-			$table = $this->_t();
-			foreach ($res as $id => $value) {
+			foreach ($res as $id => &$value) {
 
-				$res[$id] = $table[$id];
+				$res[$id] = $t[$id];
+
+				unset($value);
 			}
 
 			$this->result = $res;
+
+			unset($t);
 
 		}else{
 
@@ -567,120 +674,280 @@ return array( %s );";
 		}
 
 		return $this;
-
 	}
 
 
+	/**
+	 * Add coulmn to table
+	 *
+	 * @param  string 		$column
+	 * @param  string|null 	$function 	MAX|MIN|COUNT|SUM|AVG
+	 * @param  string 		$new_column New column name
+	 * @return Filedb
+	 */
+	private function add($column, $function, $new_column){
+		
+		$value = (!is_null($function) && in_array($function, array('max', 'min', 'count', 'sum', 'avg'))) ? $this->$function($column) : $function;
 
+		if($this->_t()){
+
+			$t = $this->_t();
+
+			foreach ($t as $file_id => &$row) {
+
+				$row->{$new_column} = $value;
+
+				unset($row);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Run BETWEEN selecton
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data1 	Searchable value
+	 * @param  string|array $data2 	Searchable value
+	 * @return Filedb
+	 */
+	private function between($column, $data1, $data2){
+		
+		$this->where($column, '>=', $data1)->and_where($column, '<=', $data2);
+
+		return $this;
+	}
+
+
+	/**
+	 * Run NOT BETWEEN selecton
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data1 	Searchable value
+	 * @param  string|array $data2 	Searchable value
+	 * @return Filedb
+	 */
+	private function not_between($column, $data1, $data2){
+		
+		$this->where($column, '<', $data1)->or_where($column, '>', $data2);
+
+		return $this;
+	}
+
+
+	/**
+	 * Run selecton
+	 *
+	 * @param  string 		$column
+	 * @param  string(=|!=|<>|<|>|<=|>=|like|similar|soundex) $operator
+	 * @param  string|array $data 	Searchable value
+	 * @return Filedb
+	 */
 	private function where($column, $operator, $data){
 		
+		$this->__sleep();
 		$this->_switch_select($column, $operator, $data, false, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Select rows where provided $column is null value.
+	 *
+	 * @param  string 	$column
+	 * @return Filedb
+	 */
 	private function where_null($column){
 
+		$this->__sleep();
 		$this->_switch_select($column, '=', null, false, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Select rows where provided $column is not null value.
+	 *
+	 * @param  string 	$column
+	 * @return Filedb
+	 */
 	private function where_not_null($column){
 
+		$this->__sleep();
 		$this->_switch_select($column, '!=', null, false, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Select rows where provided $column is equal to $data_array.
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data_array
+	 * @return Filedb
+	 */
 	private function where_in($column, $data_array){
 
+		$this->__sleep();
 		$this->_switch_select($column, '=', $data_array, false, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Select rows where provided $column is not equal to $data_array.
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data_array
+	 * @return Filedb
+	 */
 	private function where_not_in($column, $data_array){
 
+		$this->__sleep();
 		$this->_switch_select($column, '!=', $data_array, false, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Run second selection in selected rows
+	 *
+	 * @param  string 		$column
+	 * @param  string(=|!=|<>|<|>|<=|>=|like|similar|soundex) $operator
+	 * @param  string|array $data 	Searchable value
+	 * @return Filedb
+	 */
 	private function and_where($column, $operator, $data){
 		
 		$this->_switch_select($column, $operator, $data, true, false);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Run second selection in full table
+	 *
+	 * @param  string 		$column
+	 * @param  string(=|!=|<>|<|>|<=|>=|like|similar|soundex) $operator
+	 * @param  string|array $data 	Searchable value
+	 * @return Filedb
+	 */
 	private function or_where($column, $operator, $data){
 		
 		$this->_switch_select($column, $operator, $data, false, true);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Second selection from full table where provided $column is equal to $data_array.
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data_array
+	 * @return Filedb
+	 */
 	private function or_where_in($column, $data_array){
 
 		$this->_switch_select($column, '=', $data_array, false, true);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Second selection from full table where provided $column's value is null.
+	 *
+	 * @param  string 	$column
+	 * @return Filedb
+	 */
 	private function or_where_null($column){
 
 		$this->_switch_select($column, '=', null, false, true);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Second selection from full table where provided $column is not equal to $data_array.
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data_array
+	 * @return Filedb
+	 */
 	private function or_where_not_in($column, $data_array){
 
 		$this->_switch_select($column, '!=', $data_array, false, true);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Second selection from full table where provided $column's value is not null.
+	 *
+	 * @param  string 	$column
+	 * @return Filedb
+	 */
 	private function or_where_not_null($column){
 
 		$this->_switch_select($column, '!=', null, false, true);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Retreive row where id is equal to $id
+	 *
+	 * @param  int|string $id
+	 * @return Filedb
+	 */
 	private function where_id($id){
 
 		$id = intval($id);
-
-		$this->_switch_select('id', '=', $id, false, false);
+		// $this->result = array($id => static::get_file($id));
+		$this->where('id', '=', $id);
 
 		return $this;
-
 	}
 
+
+	/**
+	 * Retreive rows where id is not equal to $id
+	 *
+	 * @param  int|string $id
+	 * @return Filedb
+	 */
 	private function where_not_id($id){
 
 		$id = intval($id);
-
 		$this->_switch_select('id', '!=', $id, false, false);
 
 		return $this;
-
 	}
 
-	public function _switch_select($column, $operator, $data, $and, $or){
+
+	/**
+	 * Switch between selection types
+	 *
+	 * @param  string 		$column
+	 * @param  string(=|!=|<>|<|>|<=|>=|like|similar|soundex) $operator
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
+	private function _switch_select($column, $operator, $data, $and, $or){
 
 		if($and || $or){
 			if(!isset($this->result)){
@@ -698,6 +965,12 @@ return array( %s );";
 		    	break;
 		    case 'like':
 		    	$this->where_like($column, $data, $and, $or);
+		    	break;
+		    case 'similar':
+		    	$this->where_similar($column, $data, $and, $or);
+		    	break;
+		    case 'soundex':
+		    	$this->where_soundex($column, $data, $and, $or);
 		    	break;
 		    case '>':
 		    	$this->where_compare($column, $data, $and, $or, 'greater');
@@ -717,15 +990,42 @@ return array( %s );";
 		}
 
 		return $this;
-
 	}
 
 
+	/**
+	 * Run compare selection
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @param  string(greater|less|greater_or_equal|less_or_equal) $type
+	 * @return Filedb
+	 */
 	private function where_compare($column, $data, $and=false, $or=false, $type){
 
-		if($this->_t_where($and, $or)){
+		if($t_where = $this->_t_where($and, $or)){
 
-			foreach ($this->_t_where($and, $or) as $file_id => $row) {
+			switch ($type) {
+				case 'greater':
+						$this->order_by('id');
+					break;
+				
+				case 'less':
+						$this->order_by('id', 'DESC');
+					break;
+
+				case 'greater_or_equal':
+						$this->order_by('id');
+					break;
+
+				case 'less_or_equal':
+						$this->order_by('id', 'DESC');
+					break;
+			}
+
+			foreach ($t_where as $file_id => &$row) {
 
 				if(isset($row->{$column})){
 
@@ -737,57 +1037,34 @@ return array( %s );";
 
 						$data = intval($data);
 
-						if($type == 'greater')
-						{
+						switch ($type) {
+							case 'greater':
+									$result = $this->greater($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
+								break;
+							
+							case 'less':
+									$result = $this->less($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
+								break;
 
-							if($row->{$column} > $data){
+							case 'greater_or_equal':
+									$result = $this->greater_or_equal($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
+								break;
 
-								if($or){
-									$this->result[$file_id] = $row;
-								}else{
-									$res[$file_id] = $row;
-								}
-
-							}
-
-						}elseif($type == 'less'){
-
-							if($row->{$column} < $data){
-
-								if($or){
-									$this->result[$file_id] = $row;
-								}else{
-									$res[$file_id] = $row;
-								}
-
-							}
-
-						}elseif($type == 'greater_or_equal'){
-
-							if($row->{$column} >= $data){
-
-								if($or){
-									$this->result[$file_id] = $row;
-								}else{
-									$res[$file_id] = $row;
-								}
-
-							}
-
-						}elseif($type == 'less_or_equal'){
-
-							if($row->{$column} <= $data){
-
-								if($or){
-									$this->result[$file_id] = $row;
-								}else{
-									$res[$file_id] = $row;
-								}
-							}
+							case 'less_or_equal':
+									$result = $this->less_or_equal($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
+								break;
 						}
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t_where);
 
 			if($and || $or){
 				if(isset($res)){
@@ -806,18 +1083,86 @@ return array( %s );";
 		}else{
 
 			$this->result = '';
-
 		}
 
 		return $this;
 	}
 
 
+	/**
+	 * Check if value is greater than
+	 *
+	 * @param  mixed 		$value
+	 * @param  string|array $data
+	 * @param  int 			$file_id
+	 * @param  array 		$row
+	 * @return array|void
+	 */
+	protected function greater($value, $data, $or=false, $file_id, $row){
+
+		return ($value > $data) ? ($or) ? $this->result[$file_id] = $row : $row : false;
+	}
+
+
+	/**
+	 * Check if value is less than
+	 *
+	 * @param  mixed 		$value
+	 * @param  string|array $data
+	 * @param  int 			$file_id
+	 * @param  array 		$row
+	 * @return array|void
+	 */
+	protected function less($value, $data, $or=false, $file_id, $row){
+
+		return ($value < $data) ? ($or) ? $this->result[$file_id] = $row : $row : false;
+	}
+
+
+	/**
+	 * Check if value is greater than or equal
+	 *
+	 * @param  mixed 		$value
+	 * @param  string|array $data
+	 * @param  int 			$file_id
+	 * @param  array 		$row
+	 * @return array|void
+	 */
+	protected function greater_or_equal($value, $data, $or=false, $file_id, $row){
+
+		return ($value >= $data) ? ($or) ? $this->result[$file_id] = $row : $row : false;
+	}
+
+
+	/**
+	 * Check if value is less than or equal
+	 *
+	 * @param  mixed 		$value
+	 * @param  string|array $data
+	 * @param  int 			$file_id
+	 * @param  array 		$row
+	 * @return array|void
+	 */
+	protected function less_or_equal($value, $data, $or=false, $file_id, $row){
+
+		return ($value <= $data) ? ($or) ? $this->result[$file_id] = $row : $row : false;
+	}
+
+
+	/**
+	 * Run equal selection
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
 	private function where_equal($column, $data, $and=false, $or=false){
 
-		if($this->_t_where($and, $or)){
+		if($t_where = $this->_t_where($and, $or)){
 
-			foreach ($this->_t_where($and, $or) as $file_id => $row) {
+			foreach ($t_where as $file_id => &$row) {
 
 				if(isset($row->{$column})){
 
@@ -844,7 +1189,11 @@ return array( %s );";
 						}
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t_where);
 
 			if($and || $or){
 				if(isset($res)){
@@ -863,19 +1212,26 @@ return array( %s );";
 		}else{
 
 			$this->result = '';
-
 		}
 
 		return $this;
 	}
 
 
-
+	/**
+	 * Run where not selection
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
 	private function where_not($column, $data, $and=false, $or=false){
 		
-		if($this->_t_where($and, $or)){
+		if($t_where = $this->_t_where($and, $or)){
 
-			foreach ($this->_t_where($and, $or) as $file_id => $row) {
+			foreach ($t_where as $file_id => &$row) {
 
 				if(isset($row->{$column})){
 
@@ -904,7 +1260,11 @@ return array( %s );";
 						}
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t_where);
 
 			if($and || $or){
 				if(isset($res)){
@@ -923,24 +1283,33 @@ return array( %s );";
 		}else{
 
 			$this->result = '';
-
 		}
 
 		return $this;
 	}
 
 
+	/**
+	 * Run like selection.
+	 * To find out how method works please see: http://www.php.net/manual/en/function.strripos.php
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
 	private function where_like($column, $data, $and=false, $or=false){
 
-		if($this->_t_where($and, $or)){
+		if($t_where = $this->_t_where($and, $or)){
 
-			foreach ($this->_t_where($and, $or) as $file_id => $row) {
+			foreach ($t_where as $file_id => &$row) {
 
 				if(isset($row->{$column})){
 
 					if(is_array($data)){
 
-						foreach($data as $needle){
+						foreach($data as &$needle){
 
 							if(strripos($row->{$column}, $needle) !== false){
 
@@ -951,6 +1320,8 @@ return array( %s );";
 								}
 
 							}
+
+							unset($needle);
 						}
 
 					}else{
@@ -966,7 +1337,11 @@ return array( %s );";
 						}
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t_where);
 
 			if($and || $or){
 				if(isset($res)){
@@ -985,71 +1360,410 @@ return array( %s );";
 		}else{
 
 			$this->result = '';
-
 		}
 
 		return $this;
 	}
 
 
+	/**
+	 * Run similar selection.
+	 * To find out how method works please see: http://www.php.net/manual/en/function.similar-text.php
+	 * In Indira FileDB Driver where_similar method accepts all results with similarity greater or equal to 80%
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
+	private function where_similar($column, $data, $and=false, $or=false){
 
-	private function all(){
+		if($t_where = $this->_t_where($and, $or)){
 
-		return $this->_t();
+			foreach ($t_where as $file_id => &$row) {
 
+				if(isset($row->{$column})){
+
+					if(is_array($data)){
+
+						foreach($data as &$needle){
+
+							similar_text($row->{$column}, $needle, $similarity);
+
+							if(number_format($similarity, 0) >= 80){
+
+								if($or){
+									$this->result[$file_id] = $row;
+								}else{
+									$res[$file_id] = $row;
+								}
+
+							}
+
+							unset($needle);
+						}
+
+					}else{
+
+						similar_text($row->{$column}, $data, $similarity);
+						if(number_format($similarity, 0) >= 80){
+
+							if($or){
+								$this->result[$file_id] = $row;
+							}else{
+								$res[$file_id] = $row;
+							}
+
+						}
+					}
+				}
+
+				unset($file_id, $row);
+			}
+
+			unset($t_where);
+
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
+			}
+
+		}else{
+
+			$this->result = '';
+		}
+
+		return $this;
 	}
 
 
-	public function _t(){
+	/**
+	 * Run soundex selection.
+	 * To find out how method works please see: http://www.php.net/manual/en/function.soundex.php
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return Filedb
+	 */
+	private function where_soundex($column, $data, $and=false, $or=false){
+
+		if($t_where = $this->_t_where($and, $or)){
+
+			foreach ($t_where as $file_id => &$row) {
+
+				if(isset($row->{$column})){
+
+					if(is_array($data)){
+
+						foreach($data as &$needle){
+
+							if(soundex($row->{$column}) == soundex($needle)){
+
+								if($or){
+									$this->result[$file_id] = $row;
+								}else{
+									$res[$file_id] = $row;
+								}
+
+							}
+
+							unset($needle);
+						}
+
+					}else{
+						
+						if(soundex($row->{$column}) == soundex($data)){
+
+							if($or){
+								$this->result[$file_id] = $row;
+							}else{
+								$res[$file_id] = $row;
+							}
+
+						}
+					}
+				}
+
+				unset($file_id, $row);
+			}
+
+			unset($t_where);
+
+			if($and || $or){
+				if(isset($res)){
+					$this->result = $res;
+				}elseif($and && !$or){
+					$this->result = '';
+				}
+			}else{
+				if(isset($res)){
+					$this->result = $res;
+				}else{
+					$this->result = '';
+				}
+			}
+
+		}else{
+
+			$this->result = '';
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Group by implementation
+	 * Results will be available as $object->$group->$file_id->$column
+	 *
+	 * @param  string $column
+	 * @return array
+	 */
+	private function groupBy($column){
+
+		return $this->group($column);
+	}
+
+	private function group_by($column){
+
+		return $this->group($column);
+	}
+
+
+	/**
+	 * Group selection by one column
+	 * This method will return array($column[$value] => array(array $row, [, array $... ]))
+	 * This method must be final in query builder as it returns non-typical array
+	 * Results will be available as $object->$group->$file_id->$column
+	 *
+	 * @param  string $column
+	 * @param  array  $order 		array(column, type(ASC|DESC))
+	 * @param  array  $aggregate 	array(column, type(sum|min|avg|count), (optional)new_column_name)
+	 * @return array
+	 */
+	private function group($column, $order = null, $aggregate = null){
+
+		$result = array();
+		$number = 0;
+		$previous_selection = $this->_t();
+
+		if($this->_t()){
+
+			($order) ? $this->order_by($order[0], $order[1]) : $this->order_by($column);
+
+			$t = $this->_t();
+
+			foreach ($t as $file_id => &$row) {
+
+				if(isset($row->{$column})){
+
+					$previous 	= 	(!isset($previous)) ? $row->{$column} : $previous;
+
+					if($previous != $row->{$column} || !isset($num) || array_key_exists($num, $result)){
+
+						$num = (is_string($row->{$column})) ? $row->{$column} : ++$number;
+					}
+
+					$result[$num][$file_id] = $row;
+				}
+
+				unset($file_id, $row);
+			}
+
+			unset($t);
+
+			if($aggregate){
+
+				foreach ($result as $grouped_by => &$selection) {
+					
+					if(!isset(${'aggregated'.$grouped_by})){
+
+						$this->_t_set($previous_selection);
+
+						${'aggregated'.$grouped_by} = $this->and_where($column, '=', $grouped_by)->$aggregate[1]($aggregate[0]);
+					}
+
+					foreach ($selection as $file_id => &$row) {
+						
+						$column_name = ($aggregate[2]) ? $aggregate[2] : $aggregate[0];
+
+						$result[$grouped_by][$file_id]->{$column_name} = ${'aggregated'.$grouped_by};
+
+						unset($file_id, $row);
+					}
+
+					unset($grouped_by, $selection);
+				}
+			}
+		}
+
+		$this->_t_set($previous_selection);
+		$this->grouped = $result;
+
+		unset($result, $previous_selection);
+
+		return $this;
+	}
+
+
+	/**
+	 * Retreive all rows from table.
+	 *
+	 * @return array
+	 */
+	private function all(){
+
+		return $this->_t();
+	}
+
+
+	/**
+	 * Retreive all rows from table.
+	 *
+	 * @return array
+	 */
+	private function model(){
+
+		return $this->get_model();
+	}
+
+
+	/**
+	 * Retreive current selection.
+	 *
+	 * @return array
+	 */
+	private function _t(){
 
 		if(isset($this->result)){
 
 			return $this->result;
 
-		}else{
+		}elseif(isset($this->id)){
 
-		 	return $this->full_table;
+			$table = array();
+			$table[$this->id] = static::get_file($this->id);
 
+			foreach (static::$model as $column => &$default_value) {
+				
+				if(isset($this->{$column})){
+
+					$table[$this->id]->{$column} = $this->{$column};
+
+				}
+
+				unset($column, $default_value);
+			}
+
+			return $table;
+
+		}elseif(isset($this->{'full_table_'.static::$table})){
+
+		 	return $this->{'full_table_'.static::$table};
 		}
-
 	}
 
 
-	public function _t_where($and, $or){
+	/**
+	 * Set new value to result.
+	 *
+	 * @var mixed $data
+	 * @return void
+	 */
+	private function _t_set($data){
+
+		if(isset($this->result)){
+
+			$this->result = $data;
+
+		}elseif(isset($this->{'full_table_'.static::$table})){
+
+		 	$this->{'full_table_'.static::$table} = $data;
+		}
+	}
+
+
+	/**
+	 * Retreive current selection for different selection methods.
+	 *
+	 * @return array
+	 */
+	private function _t_where($and, $or){
 
 		if($and){
+
 			if(isset($this->result)){
+
 				$table = $this->result;
+
 			}else{
+
 				die('"and_where" or "or_where" must be at least as second parameter!');
 			}
+
 		}elseif($or){
-			$table = $this->full_table;
+
+			if(isset($this->{'full_table_'.static::$table})){
+
+				$table = $this->{'full_table_'.static::$table};
+
+			}else{
+
+				die('"and_where" or "or_where" must be at least as second parameter! | Something went wrong please check $this object above.'.var_dump($this));
+			}
+
 		}else{
-			$table = $this->_t();
+
+			if(isset($this->{'full_table_'.static::$table})){
+
+				$table = $this->{'full_table_'.static::$table};
+
+			}else{
+
+				$table = null;
+			}
 		}
 
 		return $table;
-
 	}
 
 
-	public function _only($column){
+	/**
+	 * Retreive value(s) of provided column(s).
+	 *
+	 * @param  string|array $column
+	 * @return Filedb|null
+	 */
+	private function _only($column){
 
-		if($this->_t()){
+		if($t = $this->_t()){
 
-			foreach ($this->_t() as $file_id => $row) {
+			foreach($t as $file_id => &$row) {
 
 				if(is_array($column)){
 
 					$mid_res = array();
 					
-					foreach ($column as $value) {
+					foreach ($column as &$value) {
 
 						if(isset($row->{$value})){
 						
 							 $mid_res = array_merge($mid_res, array($value => $row->{$value}));
 						}
+
+						unset($value);
 					}
 
 					if($mid_res){
@@ -1064,7 +1778,11 @@ return array( %s );";
 
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t);
 
 			if(isset($res)){
 				$this->result = $res;
@@ -1077,26 +1795,34 @@ return array( %s );";
 		}else{
 
 			return null;
-
 		}
-
 	}
 
 
-	private function only($column){
+	/**
+	 * Retreive value(s) of provided column(s).
+	 *
+	 * @param  string|array 		$column
+	 * @param  boolean 		$and
+	 * @param  boolean 		$or
+	 * @return string|array|null
+	 */
+	protected function only($column){
 
-		if($this->_t()){
+		if($t = $this->_t()){
 
-			foreach ($this->_t() as $file_id => $row) {
+			foreach ($t as $file_id => &$row) {
 
 				if(is_array($column)){
 					
-					foreach ($column as $value) {
+					foreach ($column as &$value) {
 
 						if(isset($row->{$value})){
 						
 							$res[$file_id][$value] = $row->{$value};
 						}
+
+						unset($value);
 					}
 
 				}else{
@@ -1105,449 +1831,168 @@ return array( %s );";
 
 						$res = $row->{$column};
 					}
-
 				}
+
+				unset($file_id, $row);
 			}
 
-			if(isset($res)){
-				return $res;
-			}else{
-				$res = null;
-			}
-			return $res;
+			unset($t);
+
+			return (isset($res)) ? $res : null;
 
 		}else{
 
 			return null;
-
 		}
 	}
 	
 
-	private function where_only($column, $data, $only=null){
+	/**
+	 * Retreive value(s) of provided column(s) in according to .
+	 *
+	 * @param  string 		$column
+	 * @param  string|array $data
+	 * @param  string|array $only
+	 * @return Filedb
+	 */
+	protected function where_only($column, $data, $only=null){
 
-		foreach ($this->_t() as $file_id => $row) {
-			
-			if(isset($row->{$column})){
+		if($t = $this->_t()){
 
-				if($row->{$column} == $data){
+			foreach ($t as $file_id => &$row) {
+				
+				if(isset($row->{$column})){
 
-					if(is_array($only)){
-						
-						foreach ($only as $value) {
+					if($row->{$column} == $data){
+
+						if(is_array($only)){
 							
-							$res[$value] = $row->{$value};
+							foreach ($only as &$value) {
+								
+								$res[$value] = $row->{$value};
+
+								unset($value);
+							}
+
+						}elseif($only){
+
+							$res[$file_id] = $row->{$only};
 						
+						}else{
+
+							$res[$file_id] = $row->{$column};
 						}
-
-					}elseif($only){
-
-						$res[$file_id] = $row->{$only};
-					
-					}else{
-
-						$res[$file_id] = $row->{$column};
-
 					}
 				}
+
+				unset($file_id, $row);
 			}
+
+			unset($t);
 		}
 
-		if(isset($res)){
-			$this->result = $res;
-		}else{
-			$this->result = '';
-		}
+		$this->result = (isset($res)) ? $res : '';
+
 		return $this;
-
 	}
 
 
-	public static function array_to_object($array){
-		
-		$obj = new stdClass;
-
-		foreach($array as $k => $v) {
-
-			if(is_array($v)){
-
-				$obj->{$k} = static::array_to_object($v);
-
-			}else{
-
-				$obj->{$k} = $v;
-
-			}
-
-		}
-		return $obj;
-	}
-
-
-
-	public static function object_to_array($data, $once=false){
-
-	    if (is_array($data) || is_object($data))
-	    {
-	        $result = array();
-	        foreach ($data as $key => $value){
-
-	        	if($once){
-	        		$result[$key] = $value;
-	        	}else{
-	        		$result[$key] = static::object_to_array($value);
-	        	}
-
-	        }
-	        return $result;
-	    }
-	    return $data;
-	}
-
-
-
-	private static function _rawurlencode($data){
-
-		if(is_object($data)){
-
-			$result = new stdClass;
-
-			foreach ($data as $key => $value) {
-
-				if(is_array($value) || is_object($value)){
-
-					$result->{$key} = static::_rawurlencode($value);
-
-				}else{
-
-					if(!empty($value)){
-
-						$result->{$key} = rawurlencode($value);
-
-					}else{
-
-						$result->{$key} = '';
-					}
-				
-				}
-			}
-
-		}elseif(is_array($data)){
-
-			$result = array();
-
-			foreach ($data as $key => $value) {
-
-				if(is_array($value) || is_object($value)){
-
-					$result[$key] = static::_rawurlencode($value);
-
-				}else{
-					
-					if(!empty($value)){
-
-						$result[$key] = rawurlencode($value);
-
-					}else{
-
-						$result[$key] = '';
-
-					}	
-				}
-			}
-
-		}else{
-
-			$result = rawurlencode($data);
-
-		}
-
-		return $result;
-
-	}
-
-
-
-	private static function _rawurldecode($data){
-
-		if(is_object($data)){
-
-			$result = new stdClass;
-
-			foreach ($data as $key => $value) {
-
-				if(is_array($value) || is_object($value)){
-
-					$result->{$key} = static::_rawurlencode($value);
-
-				}else{
-
-					if(!empty($value)){
-
-						$result->{$key} = rawurldecode($value);
-
-					}else{
-
-						$result->{$key} = '';
-					}
-				
-				}
-			}
-
-		}elseif(is_array($data)){
-
-			$result = array();
-
-			foreach ($data as $key => $value) {
-
-				if(is_array($value) || is_object($value)){
-
-					$result[$key] = static::_rawurlencode($value);
-
-				}else{
-
-					if(!empty($value)){
-
-						$result[$key] = rawurldecode($value);
-
-					}else{
-
-						$result[$key] = '';
-
-					}
-				
-				}
-			}
-
-		}else{
-
-			$result = rawurldecode($data);
-
-		}
-
-		return $result;
-
-	}
-
-
-
-	public static function decode_table($table, $file){
-
-		$file = require static::$dir.'/'.$table.'/'.$file.'.php';
-
-		foreach ($file as $key => $value) {
-
-			$result[$key] = static::_rawurldecode($value);
-
-		}
-
-		return static::array_to_object($result);
-
-	}
-
-
-	public static function decode_obj($obj){
-
-		foreach ($obj as $key => $value) {
-
-			$result[$key] = static::_rawurldecode($value);
-
-		}
-
-		return static::array_to_object($result);
-
-	}
-
-
-
-	public static function import_from_db(){
-
-		$dbobj = DB::query('SHOW TABLES');
-		$db_prefix = Config::get('database.connections.'.Config::get('database.default').'.prefix');
-		$db_name = Config::get('database.connections.'.Config::get('database.default').'.database');
-
-
-		foreach ($dbobj as $key => $table_data) {
-			
-			$table = DB::query('SELECT * FROM '.$table_data->{'tables_in_'.$db_name});
-			$dir_name = str_replace($db_prefix, '', $table_data->{'tables_in_'.$db_name});
-
-			foreach($table as $key => $row)
-			{
-				
-				
-
-				$file_dir 	= 	static::$import_dir."/".$dir_name."/".$row->id.".php";
-
-$file 		= 	"<?php 
-";
-$file 		.= 	"return array( ";
-				foreach ($row as $key => $value) {
-
-					if($key == 'id'){
-
-$file 	.= 	"'".$key."' => ".static::_rawurlencode($value).", 
-";
-
-					}else{
-
-$file 	.= 	"'".$key."' => '".static::_rawurlencode($value)."', 
-";
-
-					}
-
-				}
-$file 		.= 	");";
-
-				if(!file_exists(dirname($file_dir))){
-	    			
-	    			mkdir(dirname($file_dir), 0777, true);
-
-	    		}
-
-				file_put_contents($file_dir, $file);
-
-			}
-
-		}
-
-	}
-
-
-
-	public static function _row($key, $value, $timestamp=null){
-
-		if(is_array($value) || is_object($value)){
-
-			return static::_row_array($key, $value, $timestamp);
-
-		}else{
-
-			if($key === $timestamp){
-
-				return "'".$key."' => '".static::_rawurlencode(date("Y-m-d H:i:s"))."', 
-";
-			}elseif(is_numeric($value) || is_bool($value)){
-
-				return "'".$key."' => ".$value.", 
-";
-			}else{
-
-				return "'".$key."' => '".static::_rawurlencode($value)."', 
-";
-			}
-		}
-	}
-
-
-	public static function _row_array($key, $value, $timestamp=null){
-
-		$file = '';
-		$file .= "'".$key."' => array(";
-
-			foreach($value as $key1 => $val){
-
-				if(is_array($val)){
-
-					$file .= static::_row_array($key1, $val, $timestamp);
-
-				}else{
-
-					$file .= static::_row($key1, $val, $timestamp);
-				}
-			}
-
-		$file .= "),
-";
-		return $file;
-	}
-
-
+	/**
+	 * Save data from object(TableClass)
+	 *
+	 * @return Filedb
+	 */
 	public function save(){
 
 		$data = array();
 
-		foreach (static::$model as $model_key => $default_value) {
+		foreach (static::$model as $model_key => &$default_value) {
 
 			if(isset($this->$model_key)){
 
-				$data[$model_key] = $this->$model_key;
+				$data[$model_key] = $this->{$model_key};
 
-			}			
+			}
+
+			unset($model_key, $default_value);			
 		}
 
-		if(isset($data["id"])){
+		if(isset($data["id"]) && !empty($data["id"]) && !is_null($data["id"])){
 
-			$this->update($data);
+			$result = $this->update($data);
 
 		}else{
 
-			$this->create($data);
-
+			$result = $this->create($data);
 		}
+
+		return $this;
 	}
 
+
+	/**
+	 * Update data in selection or full table
+	 *
+	 * @param  array|object $data
+	 * @return array
+	 */
 	private function update($data=null){
 
 		if(is_array($data) || is_object($data) || is_null($data)){
 
-			if(!is_null($data) || !empty($data)){
+			$data = $this->update_helper($data);
 
-				if(is_object($data)){
+			$result = array();
+			$table_dir = static::path();
 
-					$data = static::object_to_array($data);
-				}
+			if($t = $this->_t()){
 
-				if(!isset($this->result) && isset($data["id"]) || empty($this->result) && isset($data["id"])){
+				foreach($t as &$row) {
 
-					$current_table = $this->table();
+					$file_dir = static::path($row->id);
+					$file = array();
 
-					if(!$current_table::where('id', '=', $data["id"])->get()){
+					foreach (static::$model as $model_key => &$default_value) {
 
-						die('Nothing to update! -> Trying to update -> '.$current_table.'::update(...) with data: <pre><code> "id" => '.htmlspecialchars($data["id"]).'</pre>');
+						if(array_key_exists($model_key, $data)){
 
+							$this->{$model_key} = $data[$model_key];
+
+							$file[] = static::_row($model_key, $data[$model_key], 'updated_at');
+
+						}elseif(isset($row->$model_key)){
+
+							$this->{$model_key} = $row->$model_key;
+
+							$file[] = static::_row($model_key, $row->$model_key, 'updated_at');
+
+						}else{
+
+							$file[] = static::_row($model_key, $default_value);
+		 				}
+
+		 				unset($model_key, $default_value);
 					}
 
-				}
+					sleep(0.1);
 
-			}else{
-				$data = array();
-			}
+					if(static::$encrypt){
 
-			$result = "";
-			$table_dir = $this->dir."/".static::$table;
-
-			foreach ($this->_t() as $row) {
-
-				$file_dir 	= 	$this->dir."/".static::$table."/".$row->id.".php";
-				$file = "";
-
-				foreach (static::$model as $model_key => $default_value) {
-
-					if(array_key_exists($model_key, $data)){
-
-						$file .= static::_row($model_key, $data[$model_key], 'updated_at');
-
-					}elseif(isset($row->$model_key)){
-
-						$file .= static::_row($model_key, $row->$model_key, 'updated_at');
+						$file = Crypter::encrypt(static::_rawurlencode(sprintf(static::$file_pattern, implode('', $file))));
 
 					}else{
+						
+						$file = sprintf(static::$file_pattern, implode('', $file));
+					}
+					
+					File::mkdir($table_dir, 0777);
 
-						$file .= static::_row($model_key, $default_value);
+		    		$result[] = File::put($file_dir, $file);
 
-	 				}			
+		    		unset($row);
 				}
 
-				$file = sprintf(static::$file_pattern, $file);
-				
-				if(!is_dir($table_dir)){
-	    			
-	    			mkdir($table_dir, 0755, true);
-
-	    		}
-
-	    		$result .= File::put($file_dir, $file);
+				unset($t);
 			}
 	 
 			return $result;
@@ -1558,19 +2003,59 @@ $file 		.= 	");";
 		}
 	}
 
+
+	/**
+	 * Help to retreive saving data
+	 *
+	 * @param  array|object $data
+	 * @return array
+	 */
+	private function update_helper($data){
+
+		if(!is_null($data) || !empty($data)){
+
+			if(is_object($data)){
+
+				$data = static::object_to_array($data);
+			}
+
+			if(!isset($this->result) && isset($data["id"]) || empty($this->result) && isset($data["id"])){
+
+				if(!isset($this->id)){
+
+					die('Nothing to update! -> Trying to update -> '.static::$table.'::update(...) with data: <pre><code> "id" => '.htmlspecialchars($data["id"]).'</pre>');
+				}
+			}
+
+		}else{
+
+			$data = array();
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * Alias for insert() method
+	 *
+	 * @param  array|object $data
+	 * @return Filedb
+	 */
 	private function create($data){
 
 		$id = $this->insert($data);
 
-		return $id;
-		// THINK ABOUT HOW TO RETURN NEWLY CREATED INSTANCE
-		// $current_table = static::$table;
-		// die(var_dump($current_table::where('id', '=', $id)->get()));
-		// $new_instance = $current_table::where('id', '=', $id)->get();
-
-		// return $new_instance;
+		return $this;
 	}
 
+
+	/**
+	 * Insert new row with provided $data
+	 *
+	 * @param  array|object $data
+	 * @return int
+	 */
 	private function insert($data){
 
 		if(is_array($data) || is_object($data)){
@@ -1580,46 +2065,54 @@ $file 		.= 	");";
 				$data = static::object_to_array($data);
 			}
 
-			$table_dir = $this->dir."/".static::$table;
+			$table_dir = static::path();
 			$file = "";
 
-			if(!is_dir($table_dir)){
-				
-				mkdir($table_dir, 0755, true);
-
-			}
+			File::mkdir($table_dir, 0777);
 
 			
-			$new_id 	= 	$this->max_id();
-			$file_dir 	= 	$this->dir."/".static::$table."/".++$new_id.".php";
+			$new_id 	= 	static::max_id();
+			$file_dir 	= 	static::path(++$new_id);
 
-			foreach (static::$model as $model_key => $default_value) {
+			$file = array();
+
+			foreach (static::$model as $model_key => &$default_value) {
 
 				if($model_key == 'id'){
 
-					$file .= static::_row($model_key, $new_id);
+					$this->{$model_key} = $new_id;
+
+					$file[] = static::_row($model_key, $new_id);
 
 				}elseif(array_key_exists($model_key, $data)){
 
-					$file .= static::_row($model_key, $data[$model_key], 'created_at');
+					$this->{$model_key} = $data[$model_key];
+
+					$file[] = static::_row($model_key, $data[$model_key], 'created_at');
 
 				}else{
 
-					$file .= static::_row($model_key, $default_value, 'created_at');
-				}			
+					$file[] = static::_row($model_key, $default_value, 'created_at');
+				}
+
+				unset($model_key, $default_value);
 			}
 
-			$file = sprintf(static::$file_pattern, $file);
-				
-			if(!is_dir($table_dir)){
-				
-				mkdir($table_dir, 0755, true);
+			if(static::$encrypt){
 
+				$file = Crypter::encrypt(static::_rawurlencode(sprintf(static::$file_pattern, implode('', $file))));
+
+			}else{
+
+				$file = sprintf(static::$file_pattern, implode('', $file));
 			}
 
 			File::put($file_dir, $file);
 
+			$this->{'full_table_'.static::$table}[$new_id] = static::get_file($new_id);
+
 			return $new_id;
+
 		}else{
 
 			return 'To insert a new row use array or object ONLY!';
@@ -1627,51 +2120,219 @@ $file 		.= 	");";
 	}
 
 
+	/**
+	 * Create table
+	 *
+	 * @param  string 		$name
+	 * @param  array|object $model
+	 * @param  boolean 		$encrypt
+	 * @return void
+	 */
+	private function create_table($name, $model, $encrypt=false){
 
+		if(is_array($model) || is_object($model)){
+
+			if(is_object($model)){
+
+				$model = static::object_to_array($model);
+			}
+			
+			$file = array();
+
+			$model_file = ($encrypt) ? sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = true; ') : sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = false; ');
+
+			
+			File::put(static::$models_dir.'/'.strtolower($name).EXT, $model_file);
+			self::create_model($name, $model, $encrypt);
+
+		}else{
+
+			return 'To create a new table use array or object as model ONLY!';
+		}
+	}
+
+
+	/**
+	 * Create model
+	 *
+	 * @param  string 		$table_name
+	 * @param  array|object $model
+	 * @param  boolean 		$encrypt
+	 * @return void
+	 */
+	private function create_model($table_name, $model, $encrypt=false){
+
+		if(is_array($model) || is_object($model)){
+
+			if(is_object($model)){
+
+				$model = static::object_to_array($model);
+			}
+
+			$file = array();
+
+			File::mkdir(static::$directory.'/'.strtolower($table_name), 0777);
+
+			foreach ($model as $model_key => $default_value) {
+
+				$file[] = static::_row($model_key, $default_value);		
+			}
+
+			$file = ($encrypt) ? Crypter::encrypt(static::_rawurlencode(sprintf(static::$file_pattern, implode('', $file)))) : sprintf(static::$file_pattern, implode('', $file));
+
+			File::put(static::$directory.'/'.strtolower($table_name).'/model'.EXT, $file);
+
+		}else{
+
+			return 'To create or update model use array or object as model ONLY!';
+		}
+	}
+
+
+	/**
+	 * Encrypt table
+	 *
+	 * @return void
+	 */
+	private function encrypt_table(){
+
+		$this->all();
+		static::$encrypt = true;
+		self::create_table(static::$table, static::$model, static::$encrypt);
+		$this->update();
+	}
+
+
+	/**
+	 * Decrypt table
+	 *
+	 * @return void
+	 */
+	private function decrypt_table(){
+
+		$this->all();
+		static::$encrypt = false;
+		self::create_table(static::$table, static::$model, static::$encrypt);
+		$this->update();
+	}
+
+
+	/**
+	 * Truncate table
+	 *
+	 * @return void
+	 */
+	private function truncate(){
+
+		File::cleandir(static::$directory.'/'.static::$table);
+		self::create_model(static::$table, static::$model, static::$encrypt);
+	}
+
+
+	/**
+	 * Drop (Deleta) table
+	 *
+	 * @return void
+	 */
+	private function drop(){
+
+		File::rmdir(static::$directory.'/'.static::$table);
+		File::delete(static::$models_dir.'/'.static::$table.EXT);
+	}
+
+	/**
+	 * Rename table
+	 *
+	 * @param  string $new_name
+	 * @return void
+	 */
+	private function rename($new_name){
+
+		File::mvdir(static::$directory.'/'.static::$table, static::$directory.'/'.$new_name);
+		File::delete(static::$models_dir.'/'.static::$table.EXT);
+		self::create_table($new_name, static::$model, static::$encrypt);
+	}
+
+
+	/**
+	 * Delete row (record) from table
+	 *
+	 * @param  int|string|array $ids
+	 * @return boolean
+	 */
 	private function delete($ids=null){
 
 		if($ids == null){
 
-			if(isset($this->result)){
+			if(isset($this->id)){
 
-				foreach ($this->result as $row) {
+				return $this->delete($this->id);
 
-					$this->delete($row->id);
+			}elseif(isset($this->result)){
 
+				if($this->result){
+					
+					foreach ($this->result as &$row) {
+
+						$this->delete($row->id);
+
+						unset($row);
+						sleep(0.1);
+					}
 				}
 
 			}else{
 
 				die("Use TableName::delete($id), TableName::delete(array('$id1', '$id2'..)) or select TableName::where('some request')->delete()");
-
 			}
 
 		}else{
 
 			if(is_array($ids)){
 				
-				foreach($ids as $id){
+				foreach($ids as &$id){
 				
-					return File::delete($this->dir."/".static::$table."/".$id.".php");
+					$status[] = File::delete(static::path($id));
 
+					unset($id);
+					sleep(0.1);
 				}
+
+				return end($status);
 
 			}else{
 
-				return File::delete($this->dir."/".static::$table."/".$ids.".php");
-
+				return File::delete(static::path($ids));
 			}
 		}
 	}
 
 
-    final private function  __clone() { }
+	/**
+	 * magic __clone
+	 *
+	 * @return void
+	 */
+    final private function  __clone() {
 
-	public static function __callStatic($method, $parameters) 
-	{
+    }
+
+
+    /**
+	 * magic __callStatic to call a callback 
+	 * with an array of parameters.
+	 * Triggered when invoking inaccessible methods in a static context.
+	 *
+	 * @param  $method      The callable to be called.
+	 * @param  $parameters  The parameters to be passed to the callback, as an indexed array.
+	 * @return mixed
+	 */
+	public static function __callStatic($method, $parameters){
+
 		$model = get_called_class();
-		if ($model::$_inst === NULL || $model::$_inst !== $model)
-		{
+
+		if ($model::$_inst === NULL || $model::$_inst !== $model){
+
 			$model::$_inst = new $model;
 		}
 
@@ -1680,16 +2341,46 @@ $file 		.= 	");";
 	}
 
 
-	public function __destruct() {
+	/**
+	 * magic __destruct
+	 * Unset unused vars
+	 *
+	 * @return void
+	 */
+	function __destruct(){
 		
+		if(isset($this->{'find_'.Config::get('application.key')})){
+
+			//unset($this->{'full_table_'.static::$table});
+			unset($this->{'find_'.Config::get('application.key')});
+			unset($this->result);
+		}
    	}
 
 
-	public function __call($method, $parameters) 
-	{
+   	/**
+	 * magic __sleep
+	 * Unset unused vars
+	 *
+	 * @return void
+	 */
+   	public function __sleep(){
+
+   		unset($this->result);
+   	}
+
+
+
+   	/**
+	 * magic __call
+	 * Triggered when invoking inaccessible methods in an object context.
+	 *
+	 * @return mixed
+	 */
+	public function __call($method, $parameters){
+
+		self::__destruct();
 		$model = get_called_class();
 		return call_user_func_array(array($model::$_inst, $method), $parameters);
 	}
-
-
 }

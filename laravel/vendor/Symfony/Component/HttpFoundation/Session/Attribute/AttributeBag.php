@@ -14,7 +14,7 @@ namespace Symfony\Component\HttpFoundation\Session\Attribute;
 /**
  * This class relates to session attribute storage
  */
-class AttributeBag implements AttributeBagInterface
+class AttributeBag implements AttributeBagInterface, \IteratorAggregate, \Countable
 {
     private $name = 'attributes';
 
@@ -31,7 +31,7 @@ class AttributeBag implements AttributeBagInterface
     /**
      * Constructor.
      *
-     * @param string $storageKey The key used to store flashes in the session.
+     * @param string $storageKey The key used to store attributes in the session.
      */
     public function __construct($storageKey = '_sf2_attributes')
     {
@@ -133,5 +133,25 @@ class AttributeBag implements AttributeBagInterface
         $this->attributes = array();
 
         return $return;
+    }
+
+    /**
+     * Returns an iterator for attributes.
+     *
+     * @return \ArrayIterator An \ArrayIterator instance
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->attributes);
+    }
+
+    /**
+     * Returns the number of attributes.
+     *
+     * @return int The number of attributes
+     */
+    public function count()
+    {
+        return count($this->attributes);
     }
 }

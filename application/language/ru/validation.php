@@ -24,6 +24,8 @@ return array(
 	"alpha"          => "Поле :attribute может содержать только буквы.",
 	"alpha_dash"     => "Поле :attribute может содержать только буквы, цифры и тире.",
 	"alpha_num"      => "Поле :attribute может содержать только буквы и цифры.",
+	"array"          => "Поле :attribute должно содержать выбранные элементы.",
+	"date_format"    => "Поле :attribute имеет неверный формат.",
 	"before"         => "Поле :attribute должно быть датой перед :date.",
 	"between"        => array(
 		"numeric" => "Поле :attribute должно быть между :min и :max.",
@@ -31,11 +33,15 @@ return array(
 		"string"  => "Поле :attribute должно быть от :min до :max символов.",
 	),
 	"confirmed"      => "Поле :attribute не совпадает с подтверждением.",
+	"count"          => "Поле :attribute должно совпадать с :count выбранными элементами.",
+	"countbetween"   => "Поле :attribute должно быть между :min и :max выбранными элементами.",
+	"countmax"       => "Поле :attribute долюно быть менее :max выбранных элементов.",
+	"countmin"       => "Поле :attribute должно иметь как минимум :min выбранных элементов.",
 	"different"      => "Поля :attribute и :other должны различаться.",
 	"email"          => "Поле :attribute имеет неверный формат.",
-	"exists"         => "Выбранное значение для :attribute уже существует.",
+	"exists"         => "Введенное значение для поля :attribute не верно, или не существует.",
 	"image"          => "Поле :attribute должно быть картинкой.",
-	"in"             => "Выбранное значение для :attribute не верно.",
+	"in"             => "Введенное значение для поля :attribute не верно.",
 	"integer"        => "Поле :attribute должно быть целым числом.",
 	"ip"             => "Поле :attribute должно быть полным IP-адресом.",
 	"match"          => "Поле :attribute имеет неверный формат.",
@@ -50,10 +56,10 @@ return array(
 		"file"    => "Поле :attribute должно быть не менее :min Килобайт.",
 		"string"  => "Поле :attribute должно быть не короче :min символов.",
 	),
-	"not_in"         => "Выбранное значение для :attribute не верно.",
+	"not_in"         => "Введенное значение для поля :attribute не верно.",
 	"numeric"        => "Поле :attribute должно быть числом.",
 	"required"       => "Поле :attribute обязательно для заполнения.",
-	"same"           => "Значение :attribute должно совпадать с :other.",
+	"same"           => "Значение поля :attribute должно совпадать с :other.",
 	"size"           => array(
 		"numeric" => "Поле :attribute должно быть :size.",
 		"file"    => "Поле :attribute должно быть :size Килобайт.",
@@ -94,6 +100,11 @@ return array(
 	|
 	*/
 
-	'attributes' => array(),
+	'attributes' => array(
+
+			'text_lang' 			=> 'Имя языка',
+			'lang' 					=> 'Двухбуквенный код языка',
+			'ietf' 					=> 'Код языка + Код региона',
+		),
 
 );

@@ -116,7 +116,7 @@ class Crypter {
 	 */
 	protected static function pad($value)
 	{
-		$pad = static::$block - (Str::length($value) % static::$block);
+		$pad = static::$block - (strlen($value) % static::$block);
 
 		return $value .= str_repeat(chr($pad), $pad);
 	}
@@ -129,16 +129,16 @@ class Crypter {
 	 */
 	protected static function unpad($value)
 	{
-		$pad = ord($value[($length = Str::length($value)) - 1]);
+		$pad = ord(substr($value, -1));
 
-		if ($pad and $pad < static::$block)
+		if ($pad and $pad <= static::$block)
 		{
 			// If the correct padding is present on the string, we will remove
 			// it and return the value. Otherwise, we'll throw an exception
 			// as the padding appears to have been changed.
 			if (preg_match('/'.chr($pad).'{'.$pad.'}$/', $value))
 			{
-				return substr($value, 0, $length - $pad);
+				return substr($value, 0, strlen($value) - $pad);
 			}
 
 			// If the padding characters do not match the expected padding

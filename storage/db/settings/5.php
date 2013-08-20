@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 5, 'created_at' => '2013-05-15%2017%3A05%3A00', 'updated_at' => '1377014543', 'type' => 'indira', 'param' => 'no-reply_email', 'value' => 'no-reply%40yourdomainname.com',  );
