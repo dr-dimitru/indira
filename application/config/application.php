@@ -4,32 +4,26 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| WARNING
+	|--------------------------------------------------------------------------
+	|
+	| INDIRA CMS OVERRIDES MOST OF SETTINGS BELOW
+	| TO MANAGE IT, - PLEASE GO TO admin/filedb/home/table/settings
+	|
+	*/
+
+	/*
+	|--------------------------------------------------------------------------
 	| Application URL
 	|--------------------------------------------------------------------------
 	|
 	| The URL used to access your application without a trailing slash. The URL
-	| does not have to be set. If it isn't we'll try our best to guess the URL
+	| does not have to be set. If it isn't, we'll try our best to guess the URL
 	| of your application.
 	|
 	*/
 
-	'url' => 'http://yourdomain.com',
-	
-	'name' => 'Indira CMS',
-
-	'site_email' => 'info@yourdomain.com',
-
-	'no-reply_email' => 'no-reply@yourdomain.com',
-
-	'google_analytics' => '',
-
-	'meta_tags' => 'tag1, tag2,',
-
-	'meta_creator' => 'Veliov Group: Dmitriy A.',
-
-	'default_loader' => '<i class="icon-cog icon-spin"></i>Loading with <i class="icon-heart icon-spin"></i>',
-
-	'footer_sign' => 'Powered by © <a href="http://indira.veliovgroup.com">Indira</a>',
+	'url' => '',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -64,12 +58,12 @@ return array(
 	|
 	| This key is used by the encryption and cookie classes to generate secure
 	| encrypted strings and hashes. It is extremely important that this key
-	| remain secret and should not be shared with anyone. Make it about 32
+	| remains secret and it should not be shared with anyone. Make it about 32
 	| characters of random gibberish.
 	|
 	*/
 
-	'key' => 'd3dnjxdf934hnc834ncndcs96230newf', //change to yourdomain.com unique key
+	'key' => '',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -79,11 +73,11 @@ return array(
 	| Laravel includes a beautiful profiler toolbar that gives you a heads
 	| up display of the queries and logs performed by your application.
 	| This is wonderful for development, but, of course, you should
-	| disable the toolbar for production applications..
+	| disable the toolbar for production applications.
 	|
 	*/
 
-	'profiler' => false, // turn off or on
+	'profiler' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -100,7 +94,7 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Application Language
+	| Default Application Language
 	|--------------------------------------------------------------------------
 	|
 	| The default language of your application. This language will be used by
@@ -112,10 +106,23 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| Supported Languages
+	|--------------------------------------------------------------------------
+	|
+	| These languages may also be supported by your application. If a request
+	| enters your application with a URI beginning with one of these values
+	| the default language will automatically be set to that language.
+	|
+	*/
+
+	'languages' => array(),
+
+	/*
+	|--------------------------------------------------------------------------
 	| SSL Link Generation
 	|--------------------------------------------------------------------------
 	|
-	| Many sites use SSL to protect their users data. However, you may not be
+	| Many sites use SSL to protect their users' data. However, you may not be
 	| able to use SSL on your development machine, meaning all HTTPS will be
 	| broken during development.
 	|
@@ -162,6 +169,7 @@ return array(
 		'Blade'      	=> 'Laravel\\Blade',
 		'Bundle'     	=> 'Laravel\\Bundle',
 		'Cache'      	=> 'Laravel\\Cache',
+		'Command'    	=> 'Laravel\\CLI\\Command',
 		'Config'     	=> 'Laravel\\Config',
 		'Controller' 	=> 'Laravel\\Routing\\Controller',
 		'Cookie'     	=> 'Laravel\\Cookie',
