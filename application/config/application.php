@@ -24,25 +24,6 @@ return array(
 	*/
 
 	'url' => '',
-<<<<<<< HEAD
-=======
-	
-	'name' => 'Indira CMS',
-
-	'site_email' => 'info@yourdomain.com',
-
-	'no-reply_email' => 'no-reply@yourdomain.com',
-
-	'google_analytics' => '',
-
-	'meta_tags' => 'tag1, tag2,',
-
-	'meta_creator' => 'Veliov Group: Dmitriy A.',
-
-	'default_loader' => '<i class="icon-cog icon-spin"></i>Loading with <i class="icon-heart icon-spin"></i>',
-
-	'footer_sign' => 'Powered by © <a href="http://indira.veliovgroup.com">Indira</a>',
->>>>>>> db55a79011ee5659d3cc510f72586caf3af7f788
 
 	/*
 	|--------------------------------------------------------------------------
