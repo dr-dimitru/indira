@@ -12,50 +12,63 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 	public function action_posts($name)
 	{	
 
-		Session::put('href.previous', URL::current());
+		if(Indira::get('modules.posts.active')){
 
-		$data 			= array();
-		$data["post"] 	= (is_numeric($name)) ? Posts::find($name) : Posts::find(rawurldecode($name), 'link');
-		$data["page"]	= 'templates::posts.main';
+			Session::put('href.previous', URL::current());
 
-		if((int) $data["post"]->access > (int) Session::get('user.access')){
+			$data 			= array();
+			$data["post"] 	= (is_numeric($name)) ? Posts::find($name) : Posts::find(rawurldecode($name), 'link');
+			$data["page"]	= 'templates::posts.main';
 
-			return parent::_401();
+			if($data["post"]->id){
 
-		}elseif($data["post"]->id){
-
-			if($data["post"]->lang !== Session::get('lang')){
-
-				if(isset($data["post"]->related->{'related_'.Session::get('lang')})){
+				if($data["post"]->published !== 'true' && !Admin::check()){
 					
-					if($data["post"]->related->{'related_'.Session::get('lang')} !== 'false'){
+					return parent::_404();
+				}
 
-						$data["post"] = Posts::find($data["post"]->related->{'related_'.Session::get('lang')});
+				if((int) $data["post"]->access > (int) Session::get('user.access')){
 
+					return parent::_401();
+				}
+
+				if($data["post"]->lang !== Session::get('lang')){
+
+					if(isset($data["post"]->related->{'related_'.Session::get('lang')})){
+						
+						if($data["post"]->related->{'related_'.Session::get('lang')} !== 'false'){
+
+							$data["post"] = Posts::find($data["post"]->related->{'related_'.Session::get('lang')});
+
+						}
 					}
 				}
+
+				if($data["post"]->image){
+					
+					$image   			= 	Media::find($data["post"]->image);
+					$data["post_image"] = 	$image->formats->mobile_header;
+					$data["image"] 		= 	asset($image->formats->social);
+				}
+
+				$data["keywords"] 		= 	$data["post"]->tags;
+				$data["description"] 	= 	($data["post"]->short) ? $data["post"]->short : ucfirst(strtolower(substr(strip_tags($data["post"]->text), 0, 600)));
+				$data["section"] 		= 	Sections::find($data["post"]->section);
+				$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), $data["section"]->title, $data["post"]->title));
+				$link 					= 	($data["post"]->link) ? $data["post"]->link : $data["post"]->id;
+				$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.posts.link')).'/'.$link;
+
+			}else{
+
+				return parent::_404();
 			}
 
-			if($data["post"]->image){
-				
-				$image   			= 	Media::find($data["post"]->image);
-				$data["post_image"] = 	$image->formats->mobile_header;
-				$data["image"] 		= 	asset($image->formats->social);
-			}
-
-			$data["keywords"] 		= 	$data["post"]->tags;
-			$data["description"] 	= 	($data["post"]->short) ? $data["post"]->short : ucfirst(strtolower(substr(strip_tags($data["post"]->text), 0, 600)));
-			$data["section"] 		= 	Sections::find($data["post"]->section);
-			$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), $data["section"]->title, $data["post"]->title));
-			$link 					= 	($data["post"]->link) ? $data["post"]->link : $data["post"]->id;
-			$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.posts.link')).'/'.$link;
+			return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 
 		}else{
 
 			return parent::_404();
 		}
-
-		return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 	}
 
 
@@ -67,60 +80,70 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 	 */
 	public function action_blog($name)
 	{	
+		if(Indira::get('modules.blog.active')){
 
-		Session::put('href.previous', URL::current());
+			Session::put('href.previous', URL::current());
 
-		$data 			= array();
-		$data["blog"] 	= (is_numeric($name)) ? Blog::find($name) : Blog::find(rawurldecode($name), 'link');
-		$data["page"]	= 'templates::blog.main';
+			$data 			= array();
+			$data["blog"] 	= (is_numeric($name)) ? Blog::find($name) : Blog::find(rawurldecode($name), 'link');
+			$data["page"]	= 'templates::blog.main';
 
-		if($data["blog"]->image){
-			
-			$image   			= 	Media::find($data["blog"]->image);
-			$data["post_image"] = 	$image->formats->mobile_header;
-			$data["image"] 		= 	asset($image->formats->social);
-		}
+			if($data["blog"]->id){
 
-		$data["previous"] = 
-				Blog::where('order', '<', $data["blog"]->order)
-				->and_where('lang', '=', Session::get('lang'))
-				->order_by('order', 'DESC')
-				->first(array('id', 'title', 'link', 'order'));
-		
-		if(!isset($data["previous"]->id) || empty($data["previous"]->id)){
+				if((int) $data["blog"]->access > (int) Session::get('user.access')){
 
-			unset($data["previous"]);
-		}
+					return parent::_401();
+				}
 
-		$data["next"] = 
-				Blog::where('order', '>', $data["blog"]->order)
-				->and_where('lang', '=', Session::get('lang'))
-				->order_by('order', 'ASC')
-				->first(array('id', 'title', 'link', 'order'));
+				if($data["blog"]->published !== 'true' && !Admin::check()){
+					
+					return parent::_404();
+				}
 
-		if(!isset($data["next"]->id) || empty($data["next"]->id)){
+				if($data["blog"]->image){
+					
+					$image   			= 	Media::find($data["blog"]->image);
+					$data["post_image"] = 	$image->formats->mobile_header;
+					$data["image"] 		= 	asset($image->formats->social);
+				}
 
-			unset($data["next"]);
-		}
+				$data["previous"] 	= 	Blog::where('order', '<', $data["blog"]->order)
+										->and_where('lang', '=', Session::get('lang'))
+										->order_by('order', 'DESC')
+										->first(array('id', 'title', 'link', 'order'));
+				
+				if(!isset($data["previous"]->id) || empty($data["previous"]->id)){
 
-		if((int) $data["blog"]->access > (int) Session::get('user.access')){
+					unset($data["previous"]);
+				}
 
-			return parent::_401();
+				$data["next"] 		= 	Blog::where('order', '>', $data["blog"]->order)
+										->and_where('lang', '=', Session::get('lang'))
+										->order_by('order', 'ASC')
+										->first(array('id', 'title', 'link', 'order'));
 
-		}elseif($data["blog"]->id){
+				if(!isset($data["next"]->id) || empty($data["next"]->id)){
 
-			$data["keywords"] 		= 	$data["blog"]->tags;
-			$data["description"] 	= 	($data["blog"]->short) ? $data["blog"]->short : ucfirst(strtolower(substr(strip_tags($data["blog"]->text), 0, 600)));
-			$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.blog_word', $data["blog"]->title));
-			$link 					= 	($data["blog"]->link) ? $data["blog"]->link : $data["blog"]->id;
-			$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.blog.link')).'/'.$link;
+					unset($data["next"]);
+				}
+
+				$data["keywords"] 		= 	$data["blog"]->tags;
+				$data["description"] 	= 	($data["blog"]->short) ? $data["blog"]->short : ucfirst(strtolower(substr(strip_tags($data["blog"]->text), 0, 600)));
+				$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.blog_word', $data["blog"]->title));
+				$link 					= 	($data["blog"]->link) ? $data["blog"]->link : $data["blog"]->id;
+				$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.blog.link')).'/'.$link;
+
+			}else{
+
+				return parent::_404();
+			}
+
+			return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 
 		}else{
 
 			return parent::_404();
 		}
-
-		return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 	}
 
 
@@ -133,33 +156,39 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 	public function action_sections($name)
 	{	
 
-		Session::put('href.previous', URL::current());
+		if(Indira::get('modules.sections.active')){
 
-		$data 			= array();
-		$data["section"]= (is_numeric($name)) ? Sections::find($name) : Sections::find(rawurldecode($name), 'link');
-		$data["page"]	= 'templates::sections.main';
+			Session::put('href.previous', URL::current());
+			$data 			= array();
+			$data["section"]= (is_numeric($name)) ? Sections::find($name) : Sections::find(rawurldecode($name), 'link');
+			$data["page"]	= 'templates::sections.main';
 
-		if($data["section"]->id){
+			if($data["section"]->id){
 
-			$data["posts"] 			= 	Posts::where('section', '=', $data["section"]->id)
-										->and_where('published', '=', 'true')
-										->and_where('access', '<=', Session::get('user.access'))
-										->order_by('order')
-										->add('id', 'count', 'qty')
-										->get();
+				$data["posts"] 			= 	Posts::where('section', '=', $data["section"]->id)
+											->and_where('published', '=', 'true')
+											->and_where('access', '<=', Session::get('user.access'))
+											->order_by('order')
+											->add('id', 'count', 'qty')
+											->get();
 
-			$data["images"] 		= 	Media::get(array('id', 'formats'));
+				$data["images"] 		= 	Media::get(array('id', 'formats'));
 
-			$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), $data["section"]->title));
-			$link 					= 	($data["section"]->link) ? $data["section"]->link : $data["section"]->id;
-			$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.sections.link')).'/'.$link;
+				$data["title"] 			= 	Utilites::build_title(array(Indira::get('name'), $data["section"]->title));
+				$link 					= 	($data["section"]->link) ? $data["section"]->link : $data["section"]->id;
+				$data["canonical_url"] 	= 	URL::to_asset(Indira::get('modules.sections.link')).'/'.$link;
+
+			}else{
+
+				return parent::_404();
+			}
+
+			return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 
 		}else{
 
 			return parent::_404();
 		}
-
-		return (Request::ajax()) ? View::make($data["page"], $data) : View::make('templates::main', $data);
 	}
 
 
@@ -170,24 +199,28 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 	 * 
 	 * @return Laravel\View
 	 */
-	static function action_posts_listing(){
-
-		$data["title"]			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.posts_word'));
-		$data["canonical_url"]	= 	URL::to(Indira::get('modules.posts.link'));
+	static function action_posts_listing()
+	{
 
 		if(Indira::get('modules.sections.active') && Indira::get('modules.posts.active')){
 
-			$data["sections"] 	= 	Sections::where('lang', '=', Session::get('lang'))
-									->order_by('order')
-									->add('id', 'count', 'qty')
-									->get();
-			$data["posts"] 		= 	Posts::where('lang', '=', Session::get('lang'))
-									->and_where('published', '=', 'true')
-									->and_where('access', '<=', Session::get('user.access'))
-									->group('section', array('order', 'ASC'))
-									->get();
+			Session::put('href.previous', URL::current());
 
-			$data["images"] 	= 	Media::get(array('id', 'formats'));
+			$data["title"]			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.posts_word'));
+			$data["canonical_url"]	= 	URL::to(Indira::get('modules.posts.link'));
+
+			$data["sections"] 		= 	Sections::where('lang', '=', Session::get('lang'))
+										->order_by('order')
+										->add('id', 'count', 'qty')
+										->get();
+
+			$data["posts"] 			= 	Posts::where('lang', '=', Session::get('lang'))
+										->and_where('published', '=', 'true')
+										->and_where('access', '<=', Session::get('user.access'))
+										->group('section', array('order', 'ASC'))
+										->get();
+
+			$data["images"] 		= 	Media::get(array('id', 'formats'));
 
 			$data["page"] = ($data["sections"] && $data["sections"]) ? 'templates::posts.listing' : 'templates::assets.no_content';
 
@@ -206,26 +239,29 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 	 * 
 	 * @return Laravel\View
 	 */
-	static function action_blog_listing(){
-
-		$data 					= 	array();
-		$data["page_num"] 		= 	Input::get('page', 1);
-		$take 					= 	Input::get('show', 10);
-		$data["title"]			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.blog_word'));
-		$data["canonical_url"]	= 	URL::to(Indira::get('modules.blog.link'));
-		$data["images"] 		= 	Media::get(array('id', 'formats'));
+	static function action_blog_listing()
+	{
 
 		if(Indira::get('modules.blog.active')){
 
-			$pag_res 			= 	Blog::where('lang', '=', Session::get('lang'))
-									->and_where('published', '=', 'true')
-									->and_where('access', '<=', Session::get('user.access'))
-									->order_by('order')
-									->add('id', 'count', 'qty')
-									->paginate($take);
+			Session::put('href.previous', URL::current());
 
-			$data["blogs"] 		= 	$pag_res->results;
-			$data["pagination"] = 	$pag_res->appends(array('show' => $take))->links();
+			$data 					= 	array();
+			$data["page_num"] 		= 	Input::get('page', 1);
+			$take 					= 	Input::get('show', 10);
+			$data["title"]			= 	Utilites::build_title(array(Indira::get('name'), 'templates::content.blog_word'));
+			$data["canonical_url"]	= 	URL::to(Indira::get('modules.blog.link'));
+			$data["images"] 		= 	Media::get(array('id', 'formats'));
+
+			$pag_res 				= 	Blog::where('lang', '=', Session::get('lang'))
+										->and_where('published', '=', 'true')
+										->and_where('access', '<=', Session::get('user.access'))
+										->order_by('order')
+										->add('id', 'count', 'qty')
+										->paginate($take);
+
+			$data["blogs"] 			= 	$pag_res->results;
+			$data["pagination"] 	= 	$pag_res->appends(array('show' => $take))->links();
 
 			$data["page"] = ($data["blogs"]) ? 'templates::blog.listing' :'templates::assets.no_content';
 
@@ -236,6 +272,7 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 			return parent::_404();
 		}
 	}
+
 
 	/**
 	 * Prepare data and return
