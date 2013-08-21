@@ -50,13 +50,14 @@ class Templates_Base_Controller extends Controller {
 		Asset::container('header')->add('app-js', Config::get('indira.template').'/scripts/app.js');
 	}
 
+
 	/**
 	 * Make view with 404 status response
 	 * Page does not exists
 	 *
 	 * @return Laravel\View
 	 */
-	public function _404(){
+	public static function _404(){
 
 		$data = array();
 		$data["page"] = 'templates::assets.page_not_exists';
@@ -70,7 +71,7 @@ class Templates_Base_Controller extends Controller {
 	 *
 	 * @return Laravel\View
 	 */
-	public function _401(){
+	public static function _401(){
 
 		$data = array();
 		$data["page"] = 'templates::assets.permission_denied';
