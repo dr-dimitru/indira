@@ -71,6 +71,23 @@ If you will expect any issues with routing to /public at first try to remove .ht
 
 --
 
+####Setting up Application Key
+Secret application key. It's extremely important that you change the application key option before working on your site. This key is used throughout the framework for encryption, hashing, etc.
+
+Method #1:
+ - Go to downloaded folder from GitHub (indira-master)
+ - Then find application.php in application/config/
+ - Open the application.php in in text-editor or in any code-editor, for example: Notepad++ (Win), Sublime 2 (All platforms)
+ - Find the line 'key' => '' and place value about 32 characters of random gibberish
+
+Method #2:
+ - Login to Admin Side (yourdomain.com/admin)
+ - Then go to Settings (Wrench icon) -> CLI (yourdomain.com/admin/cli)
+ - Type key:generate 32 (32 - is recommended and max length of key)
+ - !Note: you may meet permissions issue with writable file (/application/config/application.php)
+
+--
+
 ####First login /admin
 
 After most of work is done, let's login into admin side go to yourdomain.com/admin:
