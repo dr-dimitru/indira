@@ -20,8 +20,12 @@ class Templates_Pages_Controller extends Templates_Base_Controller {
 		$data["canonical_url"]	= URL::to('/');
 
 		$page 	= 	Pages::where('main', '=', 'true')
-					->and_where('lang', '=', Session::get('lang'))
-					->and_where('published', '=', 'true');
+					->and_where('lang', '=', Session::get('lang'));
+
+		if(!Admin::check()){
+			
+			$page->and_where('published', '=', 'true');
+		}
 		
 		if(TMPLT_TYPE == 'mobile' && DEVICE_TYPE == 'phone'){
 
@@ -87,7 +91,14 @@ class Templates_Pages_Controller extends Templates_Base_Controller {
 
 		$data = array();
 
-		$page = Pages::where('link', '=', rawurldecode($page_link))->and_where('published', '=', 'true')->get();
+		$page = Pages::where('link', '=', rawurldecode($page_link));
+
+		if(!Admin::check()){
+			
+			$page->and_where('published', '=', 'true');
+		}
+
+		$page = $page->get();
 
 		if($page){
 
