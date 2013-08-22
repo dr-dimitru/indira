@@ -70,7 +70,7 @@ ___________________________________________________________
 
 		<!-- Open Graph -->
 		<meta itemprop="url" property="og:url" content="{{ (isset($canonical_url)) ? $canonical_url : rawurldecode(URL::full()) }}">
-		<meta itemprop="image" property="og:image" content="{{ e((isset($image)) ? $image : $template->where('type', '=', 'icon')->and_where('name', '=', 'image')->only('value')) }}">
+		<meta itemprop="image" property="og:image" content="{{ e((isset($image)) ? URL::to_asset($image) : URL::to_asset($template->where('type', '=', 'icon')->and_where('name', '=', 'image')->only('value'))) }}">
 		<meta property="og:type" content="website">
 		<meta property="og:title" content="{{ e((isset($title)) ? $title : $template->where('type', '=', 'meta')->and_where('name', '=', 'title')->only('value')) }}">
 		<meta property="og:site_name" content="{{ Config::get('indira.name') }}">
@@ -82,7 +82,7 @@ ___________________________________________________________
 		<meta name="twitter:url" content="{{ (isset($canonical_url)) ? $canonical_url : rawurldecode(URL::full()) }}">
 		<meta name="twitter:title" content="{{ e((isset($title)) ? $title : $template->where('type', '=', 'meta')->and_where('name', '=', 'title')->only('value')) }}">
 		<meta name="twitter:description" content="{{ e((isset($description)) ? $description : $template->where('type', '=', 'meta')->and_where('name', '=', 'description')->only('value')) }}">
-		<meta name="twitter:image" content="{{ e((isset($image)) ? $image : $template->where('type', '=', 'icon')->and_where('name', '=', 'image')->only('value')) }}">
+		<meta name="twitter:image" content="{{ e((isset($image)) ? URL::to_asset($image) : URL::to_asset($template->where('type', '=', 'icon')->and_where('name', '=', 'image')->only('value'))) }}">
 		@if($twitter_site = $template->where('type', '=', 'meta')->and_where('name', '=', 'twitter:site')->only('value'))
 		<meta name="twitter:site" value="@{{ $twitter_site }}">
 		@endif
@@ -102,6 +102,8 @@ ___________________________________________________________
 		<!-- TOUCH ICONS -->
 		@foreach(Template::where('type', '=', 'icon')->get() as $icon)
 			<link rel="{{ $icon->name }}" sizes="{{ $icon->additions }}" href="{{ asset($icon->value) }}">
+
+			<?php unset($icon) ?>
 		@endforeach
 
 		<!-- SPLASH SCREEN FOR IOS_WEB APP -->
@@ -110,11 +112,15 @@ ___________________________________________________________
 			<?php list($size, $media_query) = explode(',', $startup_image->additions); ?>
 
 			<link href="{{ asset($startup_image->value) }}" media="{{ trim($media_query) }}" rel="apple-touch-startup-image">
+
+			<?php unset($icon, $size, $media_query) ?>
 		@endforeach
 
 		<!-- ICONS AND IMAGES -->
 		@foreach(Template::where('type', '=', 'shortcut icon')->get() as $icon)
 			<link rel="{{ ($icon->name == 'image/png') ? 'icon' : $icon->type }}" type="{{ $icon->name }}" href="{{ asset($icon->value) }}">
+			
+			<?php unset($icon) ?>
 		@endforeach
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
