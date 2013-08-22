@@ -13,7 +13,7 @@
 	<div class="actions">
 		<button 
 			id="ajax_user_save"
-			class="btn" 
+			class="btn btn-block" 
 			type="button"
 			data-link="{{ URL::to_route('user_signup') }}?frontend=true"
 			data-post="{{ e(Utilites::json_with_js_encode($json_edit_user_form, $user_id)) }}"
@@ -22,9 +22,10 @@
 		>
 			{{ __('templates::content.save_word') }}
 		</button>
+		<hr>
 		<button 	
 			onclick="$('#user_info').slideToggle();$('#edit_user_form').slideToggle()"
-			class="btn pull-right" 
+			class="btn btn-block" 
 			type="button"
 		>
 			{{ __('templates::content.close_word') }}

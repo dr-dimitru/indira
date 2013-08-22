@@ -1,7 +1,7 @@
 <nav id="main_sidebar" class="sidebar container closed">
 	<div class="sidebar-container">
 		
-		<menu class="sidebar-menu">
+		<menu class="sidebar-menu" id="sidebar_menu">
 
 			@if(Indira::get('modules.users.active'))
 				<div id="user_form"  style="display:none">
@@ -9,6 +9,7 @@
 
 						@include('templates::user.login')
 						@include('templates::user.sign')
+						@include('templates::user.iforgot')
 
 					@else
 
@@ -23,10 +24,11 @@
 
 			<div class="hot-links">
 
-				<a type="button" style="cursor:pointer" onclick="$('#user_form').slideToggle();">
-					<i class="icon-fixed-width icon-2x icon-user"></i>
-				</a>
-
+				@if(Indira::get('modules.users.active'))
+					<a type="button" style="cursor:pointer" onclick="$('#user_form').slideToggle(); $(this).toggleClass('gold')">
+						<i class="icon-fixed-width icon-2x icon-user"></i>
+					</a>
+				@endif
 				@if(Admin::check())
 				<a type="button" style="cursor:pointer" href="{{ URL::to('admin') }}">
 					<i class="icon-fixed-width icon-2x icon-lemon"></i>
@@ -37,7 +39,7 @@
 
 			</div>
 		</menu>
-
+		<hr class="no-vertical-margin">
 		<div id="sidebar_sections">
 		@if(Indira::get('modules.sections.active') && Indira::get('modules.posts.active'))
 			<section>

@@ -7,14 +7,15 @@
 
 	<div class="actions">
 		<button 
-			class="btn"
+			class="btn btn-block"
 			onclick="$('#user_info').slideToggle(); $('#edit_user_form').slideToggle();"
 		>
 			{{ __('templates::content.user.edit_word') }}
 		</button> 
+		<hr>
 		<button 
 			id="ajax_user_logout"
-			class="btn pull-right"
+			class="btn btn-block"
 			data-link="{{ URL::to_route('user_logout') }}"
 			data-out="status_user_info"
 			data-prevent-follow="true"
