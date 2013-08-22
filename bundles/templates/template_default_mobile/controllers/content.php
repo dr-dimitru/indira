@@ -301,6 +301,7 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 
 		$data["user_id"] = Session::get('user.id');
 		list($listing_fields, $fields_settings, $editor_fields, $frontend_fields) = Utilites::prepare_module_settings('users');
+		$deafult_attributes = array('class' => 'form-control');
 
 
 		//Included views data
@@ -324,7 +325,7 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 						$options = (isset($fields_settings[$key]['options'])) ? $fields_settings[$key]['options'] : null;
 						$attributes = (isset($fields_settings[$key]['attributes'])) ? $fields_settings[$key]['attributes'] : array();
 
-						$data["edit_user_form_fields"][$key] = array('type' => $fields_settings[$key]['type'], 'data' => array($key, $value, $options), 'attributes' => array_merge($attributes, array('placeholder' => (Lang::has('templates::content.'.$key)) ? __('templates::content.'.$key) : __('forms.'.$key.'_word') )));
+						$data["edit_user_form_fields"][$key] = array('type' => $fields_settings[$key]['type'], 'data' => array($key, $value, $options), 'attributes' => array_merge($attributes, $deafult_attributes, array('placeholder' => (Lang::has('templates::content.'.$key)) ? __('templates::content.'.$key) : __('forms.'.$key.'_word') )));
 
 						$data["json_edit_user_form"][$key] = null;
 					}
@@ -356,7 +357,7 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 				$options = (isset($fields_settings[$key]['options'])) ? $fields_settings[$key]['options'] : null;
 				$attributes = (isset($fields_settings[$key]['attributes'])) ? $fields_settings[$key]['attributes'] : array();
 
-				$data["user_sign_form_fields"][$key] = array('type' => $fields_settings[$key]['type'], 'data' => array($key, $value, $options), 'attributes' => array_merge($attributes, array('placeholder' => (Lang::has('templates::content.'.$key)) ? __('templates::content.'.$key) : __('forms.'.$key.'_word') )));
+				$data["user_sign_form_fields"][$key] = array('type' => $fields_settings[$key]['type'], 'data' => array($key, $value, $options), 'attributes' => array_merge($attributes, $deafult_attributes, array('placeholder' => (Lang::has('templates::content.'.$key)) ? __('templates::content.'.$key) : __('forms.'.$key.'_word') )));
 
 				$json_user_sign_form[$key] = null;
 			}
