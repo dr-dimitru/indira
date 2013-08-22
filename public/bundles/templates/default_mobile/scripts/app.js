@@ -40,9 +40,11 @@ $(function(){
 
 				$('#iosappcontainer').addClass('scroll-y');
 				$('#iosappcontainer').css({"padding-top":iospaddingtop, "margin-top":-iospaddingtop});
-				$('#iosappcontainer').height($(window).height() - 61);
+				$('#iosappcontainer').height($(window).height() - 75);
 				$('#sidebar_sections').addClass('scroll-y');
-				$('#sidebar_sections').css({"min-height": $(window).height() - 70, "height": $(window).height() - 70})
+				$('#sidebar_sections').css({"max-height": $(window).height() - 85, "height": $(window).height() - 85});
+				$('#sidebar_menu').addClass('scroll-y');
+				$('#sidebar_menu').css({"max-height": $(window).height() + 2});
 			}
 
 			orientationHandler();
