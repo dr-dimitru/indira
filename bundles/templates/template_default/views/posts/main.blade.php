@@ -9,17 +9,20 @@
 		@endif
 		
 		<div class="post-header">
-			<h1 itemprop="name">{{ $post->title }}</h1>
-			<small itemprop="articleSection">
-				<a 	id="go_to_section_{{ $section->id }}"
-					href="{{ URL::to_route('sections', array(($section->link) ? $section->link : $section->id)) }}"
-					data-title="{{ Utilites::build_title(array(Indira::get('name'), $section->title)) }}"
-				>
-					{{ $section->title }}
-				</a>
-			</small>
+			
+			<div class="header-container">
 
-			<hr style="opacity:0.5">
+				<h1 itemprop="name">{{ $post->title }}</h1>
+
+				<small itemprop="articleSection">
+					<a 	id="go_to_section_{{ $section->id }}"
+						href="{{ URL::to_route('sections', array(($section->link) ? $section->link : $section->id)) }}"
+						data-title="{{ Utilites::build_title(array(Indira::get('name'), $section->title)) }}"
+					>
+						{{ $section->title }}
+					</a>
+				</small>
+			</div>
 
 			<?php $tags = explode(',', $post->tags); ?>
 			@foreach($tags as $tag_key => $tag)

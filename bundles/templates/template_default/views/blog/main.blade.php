@@ -9,15 +9,19 @@
 		@endif
 
 		<div class="post-header">
-			<h2 itemprop="name">{{ $blog->title }}</h2>
-			<small>
-				<i class="icon-time"></i> 
-				<time datetime="{{ date('Y-m-d\Th:i', $blog->created_at) }}" itemprop="datePublished" pubdate>
-					{{ date('d F Y', $blog->created_at) }}
-				</time>
-			</small>
 
-			<hr style="opacity:0.5">
+			<div class="header-container">
+
+				<h2 itemprop="name">{{ $blog->title }}</h2>
+
+				<small>
+					<i class="icon-time"></i> 
+					<time datetime="{{ date('Y-m-d\Th:i', $blog->created_at) }}" itemprop="datePublished" pubdate>
+						{{ date('d F Y', $blog->created_at) }}
+					</time>
+				</small>
+				
+			</div>
 
 			<?php $tags = explode(',', $blog->tags); ?>
 			@foreach($tags as $tag_key => $tag)
