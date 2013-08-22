@@ -13,7 +13,7 @@ body {
 	font-smoothing: subpixel-antialiased;
 	font-smooth: always;
 	background: #fafafa url('./../img/background.png');
-	color: #818486;
+	color: #333;
 	font-weight: light;
 	font-weight: 300;
 }
@@ -619,13 +619,16 @@ menu.sidebar-menu .alert{
 	border-bottom: 1px solid rgba(255, 255, 255, .4);
 	border-top: 1px solid #000;
 	background-image: none;
-	color: #E0E0E0;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
 	-moz-box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
 	box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
 	padding-left: 5px;
 	padding-right: 5px;
+}
+
+menu.sidebar-menu .alert .alert-error{
+	color: #bd362f;
 }
 
 menu.sidebar-menu .hot-links{
@@ -869,6 +872,10 @@ div.screen-vertical{
 
 
 /*HELPERS & FIXES*/
+ul, ol{
+	padding-left: 18px;
+}
+
 .redactor_toolbar li {
 	padding: 0px 4px;
 }
@@ -886,6 +893,11 @@ h2, .h2{
 h3, .h3 {
 	margin: .53em 0;
 	font-size: 1.4em;
+	margin-top: 30px;
+}
+
+.well h3, .well .h3{
+	margin-top: 10px 
 }
 
 h4, .h4 {
@@ -913,7 +925,8 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 }
 
 .gold{
-	color: gold;
+	color: gold !important;
+	text-shadow: 0 0 4px gold !important;
 }
 
 .red{

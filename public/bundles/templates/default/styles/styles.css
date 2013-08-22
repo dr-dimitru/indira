@@ -15,7 +15,7 @@ body {
 	font-smoothing: subpixel-antialiased;
 	font-smooth: always;
 	background: #fafafa url('./../img/background.png');
-	color: #818486;
+	color: #333;
 	font-weight: light;
 	font-weight: 300;
 }
@@ -244,6 +244,10 @@ article.posts header.post-heading .post-header-image{
 	-webkit-border-radius: 5px 5px 0px 0px ;
 	-moz-border-radius: 5px 5px 0px 0px ;
 	border-radius: 5px 5px 0px 0px ;
+}
+
+article.posts header.post-heading .post-header .header-container{
+	padding-bottom: 110px;
 }
 
 article.posts header:hover .post-header-image{
@@ -683,6 +687,24 @@ menu.sidebar-menu .form input, menu.sidebar-menu .form textarea{
 	-moz-box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
 	box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
 	width: 245px;
+}
+
+menu.sidebar-menu .alert {
+	border-color: rgba(0, 0, 0, .05);
+	background-color: rgba(0, 0, 0, .2);
+	border-bottom: 1px solid rgba(255, 255, 255, .4);
+	border-top: 1px solid #000;
+	background-image: none;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 1);
+	-webkit-box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
+	-moz-box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
+	box-shadow: 0 -1px 4px rgba(0, 0, 0, .5), inset 0 -2px 1px rgba(255,255,255,.1);
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+menu.sidebar-menu .alert .alert-error{
+	color: #bd362f;
 }
 
 menu.sidebar-menu .form{
