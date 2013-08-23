@@ -27,7 +27,7 @@
 	
 	</header>
 
-	<p style="text-align:justify" itemprop="description">
+	<p itemprop="description">
 		{{ ($post->short) ? $post->short : ucfirst(strtolower(preg_replace("/\s+/", " ",substr(strip_tags($post->text), 0, 200)))) }}
 	</p>
 

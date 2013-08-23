@@ -35,7 +35,7 @@
 	</header>
 
 
-	<p style="text-align:justify" itemprop="description">
+	<p itemprop="description">
 		{{ ($blog->short) ? $blog->short : ucfirst(strtolower(preg_replace("/\s+/", " ",substr(strip_tags($blog->text), 0, 200)))) }}
 		&nbsp; | &nbsp;
 		<a	id="go_to_blog_post_{{ $blog->id }}"
