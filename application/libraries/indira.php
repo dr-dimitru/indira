@@ -127,9 +127,13 @@ class Indira{
 
 		if($languages->count() > 1){
 
-			foreach($languages->get(array('lang')) as $lang){
+			foreach($languages->get(array('lang', 'text_lang', 'ietf')) as $lang){
 
 				$langs[] = $lang->lang;
+
+				Config::set('indira.language.'.$lang->lang.'.params.ietf', $lang->ietf);
+				Config::set('indira.language.'.$lang->lang.'.params.text', $lang->text_lang);
+				Config::set('indira.language.'.$lang->lang.'.params.lang', $lang->lang);
 			}
 
 			Config::set('application.languages', $langs);
