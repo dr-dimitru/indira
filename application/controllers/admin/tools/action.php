@@ -176,4 +176,34 @@ class Admin_Tools_Action_Controller extends Base_Controller {
 			return 'Undeclared module '.$module;
 		}
 	}
+
+
+	/**
+	 * Duplicate row by id and table_name.
+	 * 
+	 * @return string
+	 */
+	public function post_duplicate_row(){
+
+		$income_data = Filedb::_rawurldecode(json_decode(stripcslashes(Input::get('data')), true));
+
+		$result = $income_data["table_name"]::duplicate($income_data["id"]);
+
+		$data = array();
+
+		if(strpos(Session::get('href.previous'), 'admin') !== false){
+
+			$data["data_link"] 	= Session::get('href.previous');
+
+		}else{
+
+			$data["data_link"] 	= action('admin.home@index');
+		}
+
+		$data["success"] 			= 	true;
+		$data["text"] 				= 	__('forms.duplicated_word');
+		$data["location_replace"]	= 	true;
+
+		return View::make('assets.message_redirect', $data);
+	}
 }
