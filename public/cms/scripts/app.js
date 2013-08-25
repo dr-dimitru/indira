@@ -110,46 +110,70 @@ $(function(){
 			});
 		}
 
-		if($('input[id^="tags"]').length !== 0){
+		if($('input[id$="_fake_multiselect"]').length !== 0){
 			
-			$('input[id^="tags"]').unbind('enterKey').bind("enterKey",function(e){
+			$('input[id$="_fake_multiselect"]').unbind('enterKey').bind("enterKey",function(e){
 
 				var id = $(this).attr('data-id');
+
+				if($(this).val().indexOf(',')){
+
+					var add_values = $(this).val().split(',');
 				
-				var tags = $('#' + id).val().split(',');
+				}else{
 
-				if($(this).val() != '' && jQuery.inArray($(this).val(), tags) == -1){
-
-					$('#tags_area_' + id).append('<span class="label">' + $(this).val() + ' <i class="icon-remove" style="cursor: pointer" data-tag="' + $(this).val() + '" onclick="removeTag($(this), \'' + id + '\')"></i></span> ');
-
-					tags.push($(this).val());
+					var add_values = $.trim($(this).val());
 				}
 
-				tags = $(tags).map(String.prototype.trim);
+				var values = $('#' + id).val().split(',');
 
-				tags = jQuery.grep(tags, function(value) {
+				if($(this).val() != '' && jQuery.inArray($(this).val(), values) == -1){
+
+					if($.isArray(add_values)){
+
+						$.each(add_values, function(index, value){
+
+							value = $.trim(value);
+
+							$('#pretty_multiselect_area_' + id).append('<span class="label">' + value + ' <i class="icon-remove" style="cursor: pointer" data-pretty-multiselect="' + value + '" onclick="removePrettyMultiselect($(this), \'' + id + '\')"></i></span> ');
+
+							values.push(value);
+
+						});
+
+					}else{
+
+						$('#pretty_multiselect_area_' + id).append('<span class="label">' + add_values + ' <i class="icon-remove" style="cursor: pointer" data-pretty-multiselect="' + add_values + '" onclick="removePrettyMultiselect($(this), \'' + id + '\')"></i></span> ');
+
+						values.push(add_values);
+					}
+				}
+
+				values = $(values).map(String.prototype.trim);
+
+				values = jQuery.grep(values, function(value) {
 
 					return value != '';
 				});
 
-				var tags_string = tags.join(',')
+				var values_string = values.join(',');
 
-				if(tags_string.indexOf(',') == 0){
+				if(values_string.indexOf(',') == 0){
 					
-					tags_string = tags_string.substring(1);
+					values_string = values_string.substring(1);
 				}
 
-				if(tags_string.indexOf(',') == (tags_string.length - 1)){
+				if(values_string.indexOf(',') == (values_string.length - 1)){
 					
-					tags_string = tags_string.substring(0, tags_string.length - 1);
+					values_string = values_string.substring(0, values_string.length - 1);
 				}
 
-				$('#' + id).val(tags_string);
+				$('#' + id).val(values_string);
 
 				$(this).val('');
 			});
 
-			$('input[id^="tags"]').keyup(function(e){
+			$('input[id$="_fake_multiselect"]').keyup(function(e){
 
 				if(e.keyCode == 13)
 				{
@@ -243,29 +267,29 @@ $(function(){
 	});
 });
 
-function removeTag(obj, id){
+function removePrettyMultiselect(obj, id){
 
-	var tag = obj.attr('data-tag');
+	var to_add = obj.attr('data-pretty-multiselect');
 
 	obj.parent().remove();
-	var tags = $('#' + id).val().split(',');
+	var values = $('#' + id).val().split(',');
 
-	tags = jQuery.grep(tags, function(value) {
+	values = jQuery.grep(values, function(value) {
 
-		return (value != tag && value != '');
+		return (value != to_add && value != '');
 	});
 
-	var tags_string = tags.join(',')
+	var values_string = values.join(',')
 
-	if(tags_string.indexOf(',') == 0){
+	if(values_string.indexOf(',') == 0){
 		
-		tags_string = tags_string.substring(1);
+		values_string = values_string.substring(1);
 	}
 
-	if(tags_string.indexOf(',') == (tags_string.length - 1)){
+	if(values_string.indexOf(',') == (values_string.length - 1)){
 					
-		tags_string = tags_string.substring(0, tags_string.length - 1);
+		values_string = values_string.substring(0, values_string.length - 1);
 	}
 
-	$('#' + id).val(tags_string);
+	$('#' + id).val(values_string);
 }
