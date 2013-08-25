@@ -34,6 +34,7 @@ return array(
 	'similar_word' 				=> 'Схожий',
 	'sounds_like_word' 			=> 'Созвучный',
 	'search' 					=> array('all_search_types' => 'Использовать все типы',),
+	'preview_word' 				=> 'Предпросмотр',
 
 
 
@@ -63,12 +64,14 @@ return array(
 	'cache_control' 			=> 'Контроль Кеша',
 	'modules_word' 				=> 'CMS Модули',
 	'cli' 						=> 'CLI',
+	'newsletter' 				=> 'Email Рассылка',
 	
 
 	/**
 	 * Text Helpers
 	 */
 	'login_annotation' 			=> 'Введите логин и пароль для входа',
+	'login_guest_annotation' 	=> 'Для демо-доступа используйте: guest/guest в качестве Логина/Пароля',
 
 
 	/**

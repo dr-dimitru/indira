@@ -33,6 +33,7 @@ return array(
 	'similar_word' 				=> 'Similar',
 	'sounds_like_word' 			=> 'Sounds like',
 	'search' 					=> array('all_search_types' => 'Use all types',),
+	'preview_word' 				=> 'Preview',
 
 
 	/**
@@ -63,12 +64,14 @@ return array(
 	'cache_control' 			=> 'Cache Control',
 	'modules_word' 				=> 'CMS Modules',
 	'cli' 						=> 'CLI',
+	'newsletter' 				=> 'Email Newsletter',
 	
 
 	/**
 	 * Text Helpers
 	 */
 	'login_annotation' 			=> 'Enter admin\'s Login and Password to login',
+	'login_guest_annotation' 	=> 'To Demo access login with guest/guest as Login/Password',
 
 
 	/**

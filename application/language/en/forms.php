@@ -64,6 +64,11 @@ return array(
 	'saved_word' 			=> 	'Saved',
 	'saved_notification'	=> 	'<strong>:item</strong> successfully saved!',
 
+	'duplicate_word' 		=>	'Duplicate',
+	'duplicated_word' 		=> 	'Duplicated',
+	'duplicated_notification'=> '<strong>:item</strong> successfully duplicated!',
+	'duplicate_warning' 	=> 	'This action will duplicate record of :item',
+
 	'action_word' 			=> 	'Action',
 
 	'delete_many' 			=> 	'all selected items',
@@ -77,6 +82,9 @@ return array(
 	'published_word' 		=> 	'Published',
 	'unpublish_word' 		=> 	'Unpublish',
 	'unpublished_word' 		=> 	'Unpublished',
+
+	'sent_on_word' 			=> 	'Sent on (date)',
+	'is_sent_word' 			=> 	'mail sent?',
 
 	'yes_word' 				=> 	'Yes',
 	'no_word' 				=> 	'No',

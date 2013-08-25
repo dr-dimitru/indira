@@ -64,6 +64,11 @@ return array(
 	'saved_word' 			=> 	'Сохранено',
 	'saved_notification'	=> 	'<strong>:item</strong> успешно сохранен!',
 
+	'duplicate_word' 		=>	'Создать дубликат',
+	'duplicated_word' 		=> 	'Дубликат создан',
+	'duplicated_notification'=> 'Дубликат для <strong>:item</strong> успешно создан!',
+	'duplicate_warning' 	=> 	'Вы собираетесь создать дубликат записи: :item',
+
 	'action_word' 			=> 	'Действие',
 
 	'delete_many' 			=> 	'все отмеченные элементы',
@@ -77,6 +82,9 @@ return array(
 	'published_word' 		=> 	'Опубликовать',
 	'unpublish_word' 		=> 	'Скрыть',
 	'unpublished_word' 		=> 	'Скрытый',
+
+	'sent_on_word' 			=> 	'Дата отправки',
+	'is_sent_word' 			=> 	'Письмо отправлено?',
 
 	'yes_word' 				=> 	'Да',
 	'no_word' 				=> 	'Нет',
