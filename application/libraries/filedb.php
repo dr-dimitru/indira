@@ -2037,6 +2037,20 @@ return array( %s );";
 
 
 	/**
+	 * Duplicate row by id
+	 *
+	 * @param  int|string $id
+	 * @return Filedb
+	 */
+	private function duplicate($id){
+
+		$this->create($this->{'full_table_'.static::$table}[$id]);
+
+		return $this;
+	}
+
+
+	/**
 	 * Alias for insert() method
 	 *
 	 * @param  array|object $data
