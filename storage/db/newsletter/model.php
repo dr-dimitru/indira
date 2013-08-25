@@ -1,0 +1,2 @@
+<?php 
+return array( 'id' => 1, 'created_at' => '', 'updated_at' => '', 'text' => '', 'title' => '', 'sent_on' => '', 'is_sent' => 'false', 'to' => '', 'subject' => '', 'send_count' => '', 'to_all_subscribers' => 'false', 'from' => '', 'from_name' => '',  );

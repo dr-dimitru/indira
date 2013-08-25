@@ -216,11 +216,23 @@
 				@if(Indira::get('modules.users.active'))
 				<li>
 					<a 	tabindex="-1"
-						id="go_to_admins" 
+						id="go_to_users" 
 						href="{{ action('admin.users.home@index') }}" 
 						data-title="{{ Utilites::build_title(array('content.application_name', 'content.users_word')) }}"
 					>
 						<i class="icon-fixed-width icon-user"></i> {{ __('content.users_word') }}
+					</a>
+				</li>
+				@endif
+
+				@if(Indira::get('modules.newsletter.active'))
+				<li>
+					<a 	tabindex="-1"
+						id="go_to_newsletter" 
+						href="{{ action('admin.newsletter.home@index') }}" 
+						data-title="{{ Utilites::build_title(array('content.application_name', 'content.newsletter')) }}"
+					>
+						<i class="icon-fixed-width icon-envelope-alt"></i> {{ __('content.newsletter') }}
 					</a>
 				</li>
 				@endif

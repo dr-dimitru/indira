@@ -1,0 +1,1 @@
+<?php class Newsletter extends Filedb{ public static $table = "newsletter"; public static $model; public static $encrypt = false; }
