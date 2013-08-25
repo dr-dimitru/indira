@@ -75,7 +75,6 @@ ___________________________________________________________
 		<meta property="og:title" content="{{ e((isset($title)) ? $title : $template->where('type', '=', 'meta')->and_where('name', '=', 'title')->only('value')) }}">
 		<meta property="og:site_name" content="{{ Config::get('indira.name') }}">
 		<meta property="og:description" content="{{ e((isset($description)) ? $description : $template->where('type', '=', 'meta')->and_where('name', '=', 'description')->only('value')) }}">
-		<meta property="og:keywords" content="{{ e((isset($keywords)) ? $keywords : $template->where('type', '=', 'meta')->and_where('name', '=', 'keywords')->only('value')) }}">
 
 		<!-- TWITTER META -->
 		<meta name="twitter:card" content="summary">
