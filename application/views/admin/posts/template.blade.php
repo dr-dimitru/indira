@@ -1,7 +1,7 @@
 @yield('posts')
 <script type="text/javascript">
 	
-	$('input[id^="tags"]').typeahead({
+	$('input[id^="tags"]input[id$="_fake_multiselect"]').typeahead({
 
 		"source": {{ Utilites::get_all_tags() }}
 	});
