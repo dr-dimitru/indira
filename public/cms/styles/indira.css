@@ -771,3 +771,58 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 }
 
 #admin_nav{position: absolute;left: 20px;}
+
+.redactor_editor h1, 
+.redactor_area h1, 
+.redactor_editor h2, 
+.redactor_area h2, 
+.redactor_editor h3, 
+.redactor_area h3, 
+.redactor_editor h4, 
+.redactor_area h4, 
+.redactor_editor h5, 
+.redactor_area h5 {
+    vertical-align: baseline;
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
+    font-weight: normal;
+ }
+.redactor_editor h1,
+.redactor_editor h2,
+.redactor_editor h3,
+.redactor_area h1,
+.redactor_area h2,
+.redactor_area h3 {
+  line-height: 35px;
+}
+
+.redactor_editor h1,
+.redactor_area h1 {
+  font-size: 28.5px;
+}
+
+.redactor_editor h2 ,
+.redactor_area h2{
+  font-size: 26.5px;
+}
+
+.redactor_editor h3,
+.redactor_area h3 {
+  font-size: 24.5px;
+}
+
+.redactor_editor h4,
+.redactor_area h4 {
+  font-size: 17.5px;
+}
+
+.redactor_editor h5,
+.redactor_area h5 {
+  font-size: 14px;
+}
+
+.redactor_editor h6,
+.redactor_area h6 {
+  font-size: 11.9px;
+}
