@@ -466,14 +466,21 @@ class Utilites{
 	 * @param  string $message
 	 * @param  string $subject
 	 * @param  bool   $get_copy
+	 * @param  array  $from      array(email, name)
+	 * @param  bool   $via_bcc
 	 * @return void
 	 */
-	public static function send_email($to, $message, $subject, $get_copy=false){
+	public static function send_email($to, $message, $subject, $get_copy = false, $from = array(), $via_bcc = false){
 
 		$charset 		= Config::get('application.encoding');
-		$noreply_email 	= Config::get('indira.email.no-reply');
 		$admin_email 	= Config::get('indira.email.admin');
 		$site_title 	= Config::get('indira.name');
+
+		if(!$from){
+
+			$from[0] 	= Config::get('indira.email.no-reply');
+			$from[1] 	= Config::get('indira.name');
+		}
 
 		$data["subject"] = $subject;
 		$data["message"] = $message;
@@ -488,13 +495,30 @@ class Utilites{
 			Config::set('messages::config.transports.smtp.username', Config::get('indira.email.smtp.username'));
 			Config::set('messages::config.transports.smtp.password', Config::get('indira.email.smtp.password'));
 
-			$message = Message::to($to);
-			$message->from($noreply_email, $site_title);
+			$message = Message::instance();
+
+			if($via_bcc){
+
+				if($get_copy){
+
+					$message->bcc(array_merge($to, array($admin_email => $site_title)));
+
+				}else{
+
+					$message->bcc($to);
+				}
+
+			}else{
+
+				$message->to($to);
+			}
+
+			$message->from($from[0], $from[1]);
 			$message->subject($subject);
 			$message->body($message_body);
 			$message->html(true);
 
-			if($get_copy){
+			if($get_copy && !$via_bcc){
 
 				$message->bcc(array($admin_email => $site_title));
 			}
@@ -511,7 +535,7 @@ class Utilites{
 			foreach ($to as $email => $name) {
 			
 				$headers = 'Content-type: text/html; charset='.$charset."\r\n";
-				$headers .= 'From: '.$site_title.' <'.$noreply_email.'>' . "\r\n";
+				$headers .= 'From: '.$from[1].' <'.$from[0].'>' . "\r\n";
 
 				if($get_copy){
 
@@ -961,9 +985,10 @@ class Utilites{
 	 * Using Validator class result of make() method
 	 *
 	 * @param  Validator $validation
+	 * @param  string  $lang_line_pattern
 	 * @return string
 	 */
-	public static function compose_error($validation){
+	public static function compose_error($validation, $lang_line_pattern = 'forms.%s_word'){
 
 		$errors[] = '<ul>';
 
@@ -980,7 +1005,7 @@ class Utilites{
 
 			foreach ($messages as $message) {
 
-				$line = str_ireplace($fields, '<strong>'.__('forms.'.$field.'_word').'</strong>', $message);
+				$line = str_ireplace($fields, '<strong>'.__(sprintf($lang_line_pattern, $field)).'</strong>', $message);
 				
 				$errors[] = '<li><i class="icon-li icon-warning-sign"></i> '.$line.'</li>';
 			}
@@ -1358,33 +1383,37 @@ class Utilites{
 
 
 			//BELOW WE ADD SPECIAL FORM ELEMENTS
-			case 'tags':
+			case 'pretty_multiselect':
 
-				$input = Form::text($data[0].'_fake', '', array_merge(array('id' => $data[0].'_fake', 'data-id' => $data[0].$postfix ), $attributes));
-
-				$input .= Form::hidden($data[0].$postfix, $data[1], array('id' => $data[0].$postfix, 'style' => 'display:none', 'class' => 'hidden'));
+				$input = Form::text($data[0].$postfix.'_fake_multiselect', '', array_merge(array('id' => $data[0].$postfix.'_fake_multiselect', 'data-id' => $data[0].$postfix ), $attributes));
 
 
 				if(!empty($data[1])){
 
-					$tags = explode(',', $data[1]);
-					$pretty_tags = '';
+					$values = explode(',', $data[1]);
+					$pretty_values = '';
 
-					foreach ($tags as $key => &$data[1]) {
+					foreach ($values as $key => &$data[1]) {
 						
-						$pretty_tags .= '<span class="label">'.$data[1].' <i class="icon-remove" style="cursor: pointer" data-tag="'.e($data[1]).'" onclick="removeTag($(this), \''.$data[0].$postfix.'\')"></i></span> ';
+						$data[1] = trim($data[1]);
+						$pretty_values .= '<span class="label">'.$data[1].' <i class="icon-remove" style="cursor: pointer" data-pretty-multiselect="'.e($data[1]).'" onclick="removePrettyMultiselect($(this), \''.$data[0].$postfix.'\')"></i></span> ';
+
+						$prepared_values[] = $data[1];
 
 						unset($key, $data[1]);
 					}
 
 				}else{
 
-					$pretty_tags = '';
+					$pretty_values = '';
+					$prepared_values = array();
 				}
 
-				$tags_area = '<div class="well well-small" id="tags_area_'.$data[0].$postfix.'">'.$pretty_tags.'</div><hr>';
+				$input .= Form::hidden($data[0].$postfix, implode(',', $prepared_values), array('id' => $data[0].$postfix, 'style' => 'display:none', 'class' => 'hidden'));
+
+				$input = '<div id="'.$data[0].'_fake_multiselect_container">'.$input.'</div><div class="well well-small" id="pretty_multiselect_area_'.$data[0].$postfix.'">'.$pretty_values.'</div>';
 				$pattern = sprintf($pattern, $label, $input, $data[0].$postfix);
-				return $pattern.$tags_area;
+				return $pattern;
 
 			case 'image_selector':
 
@@ -1400,10 +1429,18 @@ class Utilites{
 
 			case 'pretty_checkbox':
 
+				if(!$data[1]){
+
+					if(isset($attributes['value'])){
+
+						$data[1] = $attributes['value'];
+					}
+				}
+
 				$text = ($data[1] == 'false') ?  __('forms.no_word') : __('forms.yes_word');
 				$class = ($data[1] == 'false') ? 'icon-check-empty' : 'icon-check';
 
-				$check_box = '<i style="cursor: pointer" onclick="if($(\'#'.$data[0].$postfix.'\').val() !== \'true\'){$(\'#'.$data[0].$postfix.'\').val(\'true\'); $(this).removeClass().addClass(\'icon-check icon-large\').html(\' '.__('forms.yes_word').'\'); }else{$(\'#'.$data[0].$postfix.'\').val(\'false\'); $(this).removeClass().addClass(\'icon-check-empty icon-large\').html(\' '.__('forms.no_word').'\'); } ; $(\'button[id^='.e('"ajax_save_button"').']\').attr(\'disabled\', false);" id="notify_via_email_icon" class="'.$class.' icon-large" title="'.$label.'"> '.$text.'</i>';
+				$check_box = '<i style="cursor: pointer" onclick="if($(\'#'.$data[0].$postfix.'\').val() !== \'true\'){$(\'#'.$data[0].$postfix.'\').val(\'true\'); $(this).removeClass().addClass(\'icon-check icon-large\').html(\' '.__('forms.yes_word').'\'); }else{$(\'#'.$data[0].$postfix.'\').val(\'false\'); $(this).removeClass().addClass(\'icon-check-empty icon-large\').html(\' '.__('forms.no_word').'\'); } ; $(\'button[id^='.e('"ajax_save_button"').']\').attr(\'disabled\', false);" id="pretty_checkbox_icon" class="'.$class.' icon-large" title="'.$label.'"> '.$text.'</i>';
 
 				$input = Form::hidden($data[0].$postfix, ($data[1]) ? $data[1] : 'true', array('id' => $data[0].$postfix));
 				return sprintf($pattern, $label, $check_box.$input, $data[0].$postfix);
