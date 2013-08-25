@@ -61,7 +61,7 @@
 				@endforeach
 
 			@else
-				<span class="label label-info">$letter->to</span>
+				<span class="label label-info">{{ $letter->to }}</span>
 			@endif
 		</td>
 		@endif
