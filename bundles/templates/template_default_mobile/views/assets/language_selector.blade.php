@@ -1,4 +1,4 @@
-@if(Config::has('application.languages'))
+ @if(count(Config::get('application.languages')) > 1)
 
 	<button style="display:none"
 			id="ajax_lang_switcher"

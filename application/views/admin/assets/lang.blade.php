@@ -1,6 +1,6 @@
 <ul id="admin_lang_bar" class="nav pull-right">
 
-    @if(Config::has('application.languages'))
+    @if(count(Config::get('application.languages')) > 1)
     	<li class="divider-vertical"></li>
     	<li class="dropdown">
 			<a href="#" class="dropdown-toggle icon" data-toggle="dropdown">
