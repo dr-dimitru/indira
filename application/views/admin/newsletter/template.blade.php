@@ -3,15 +3,21 @@
 	$users = array();
 	$subscribed_users = array();
 
-	foreach(Users::only(array('email', 'newsletter_subscription')) as $user){
+	if($select = Users::only(array('email', 'newsletter_subscription'))){
+		
+		foreach($select as &$user){
 
-		$users[] = trim($user["email"]);
+			$users[] = trim($user["email"]);
 
-		if($user["newsletter_subscription"] == 'true'){
-			
-			$subscribed_users[] = trim($user["email"]);
+			if($user["newsletter_subscription"] == 'true'){
+				
+				$subscribed_users[] = trim($user["email"]);
+			}
+
+			unset($user);
 		}
-		unset($user);
+
+		unset($select);
 	}
 ?>
 <script type="text/javascript">

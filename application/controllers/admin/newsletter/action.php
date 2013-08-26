@@ -27,7 +27,7 @@ class Admin_Newsletter_Action_Controller extends Base_Controller {
 	static function send_newsletter($id, $return = null){
 
 		$newsletter 	= 	Newsletter::find($id);
-		$to 			= 	(stripos($newsletter->to, ',')) ? explode(',', $newsletter->to) : $newsletter->to;
+		$to 			= 	(stripos($newsletter->to, ',')) ? explode(',', $newsletter->to) : array($newsletter->to);
 
 		Utilites::send_email($to, $newsletter->text, $newsletter->subject, false, array($newsletter->from, $newsletter->from_name), true);
 
