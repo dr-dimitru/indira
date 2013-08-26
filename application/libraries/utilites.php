@@ -22,9 +22,9 @@ class Utilites{
 	* Prepare POST data to model
 	* 
 	*
-	* @var Laravel\Eloquent|Filedb $table
-	* @var string                  $table_name
-	* @var array                   $income_data
+	* @param Laravel\Eloquent|Filedb $table
+	* @param string                  $table_name
+	* @param array                   $income_data
 	* @return Laravel\Eloquent|Filedb
 	*/
 	public static function prepare_results_to_model($table, $table_name, $income_data){
@@ -68,8 +68,8 @@ class Utilites{
 	/**
 	* Run php artisan commands
 	*
-	* @var string $method ex.: 'migration:make'
-	* @var string $param  ex.: 'create_tablename_table'
+	* @param string $method ex.: 'migration:make'
+	* @param string $param  ex.: 'create_tablename_table'
 	* @return string
 	*/
 	public static function run_artisan($method, $param){
@@ -82,7 +82,7 @@ class Utilites{
 	/**
 	* Check if provide string is JSON
 	*
-	* @var string $string
+	* @param string $string
 	* @return boolean
 	*/
 	public static function is_json($string){
@@ -103,8 +103,8 @@ class Utilites{
 	* Get array of SQL table's columns
 	* and it's settings
 	*
-	* @var string $table_name
-	* @var boolean $with_columns
+	* @param string $table_name
+	* @param boolean $with_columns
 	* @return array
 	*/
 	public static function sql_table_model($table_name, $with_columns = false){
