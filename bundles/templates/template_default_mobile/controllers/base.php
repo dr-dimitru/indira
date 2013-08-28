@@ -13,9 +13,17 @@ class Templates_Base_Controller extends Controller {
 	/**
 	 * Basic user access level
 	 *
-	 * @var int $layout
+	 * @var int $access
 	 */
 	public static $access = 1;
+
+
+	/**
+	 * Rediret to previous viewed page
+	 *
+	 * @var bool $redirect
+	 */
+	public static $redirect = false;
 
 
 	/**
@@ -24,6 +32,15 @@ class Templates_Base_Controller extends Controller {
 	 * @return void
 	 */
 	public function __construct(){
+
+		if(URL::current() == URL::base().'/' && Cookie::get('last_url') !== URL::base().'/'){
+
+			setcookie("redirect_to", Cookie::get('last_url'), time()+3600);
+			static::$redirect = true;
+		}
+
+		Cookie::forever('last_url', URL::full());
+		Session::put('last_url', URL::full());
 
 		parent::__construct();
 
@@ -48,6 +65,10 @@ class Templates_Base_Controller extends Controller {
 		Asset::container('header')->add('bootstrap-js', Config::get('indira.template').'/scripts/bootstrap.min.js');
 		Asset::container('header')->add('indira-js', Config::get('indira.template').'/scripts/indira.min.js');
 		Asset::container('header')->add('app-js', Config::get('indira.template').'/scripts/app.js');
+
+		if(static::$redirect){
+			Asset::container('header')->add('redirect', Config::get('indira.template').'/scripts/redirect.js');
+		}
 	}
 
 
