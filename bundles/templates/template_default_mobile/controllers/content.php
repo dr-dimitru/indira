@@ -161,7 +161,6 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 			Session::put('href.previous', URL::current());
 			$data 			= array();
 			$data["section"]= (is_numeric($name)) ? Sections::find($name) : Sections::find(rawurldecode($name), 'link');
-			$data["page"]	= 'templates::sections.main';
 
 			if($data["section"]->id){
 
@@ -171,6 +170,8 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 											->order_by('order')
 											->add('id', 'count', 'qty')
 											->get();
+
+				$data["page"] 			= 	($data["posts"]) ? 'templates::sections.main' :'templates::assets.no_content';
 
 				$data["images"] 		= 	Media::get(array('id', 'formats'));
 
@@ -190,6 +191,7 @@ class Templates_Content_Controller extends Templates_Base_Controller {
 			return parent::_404();
 		}
 	}
+
 
 
 	/**
