@@ -79,20 +79,24 @@ class Admin_Schema_Home_Controller extends Base_Controller {
 		foreach ($tables_by_migrations as &$table) {
 
 			$name = explode('_', $table);
-			$table_name = '';
-			if(count($name) > 7) {
-				
-				for ($i=5; $i < count($name) - 1; $i++) { 
 
-					$table_name .= ($i > 5) ? '_'.$name[$i] : $name[$i];
+			if(count($name) > 4){
+
+				$table_name = '';
+				if(count($name) > 7) {
+					
+					for ($i=5; $i < count($name) - 1; $i++) { 
+
+						$table_name .= ($i > 5) ? '_'.$name[$i] : $name[$i];
+					}
+
+				}else{
+
+					$table_name = $name[5];
 				}
 
-			}else{
-
-				$table_name = $name[5];
+				$tables[substr($table, 0, -4)] = $table_name;
 			}
-
-			$tables[substr($table, 0, -4)] = $table_name;
 
 			unset($table, $name, $i);
 		}
