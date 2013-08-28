@@ -38,6 +38,11 @@ class Admin_Pages_Action_Controller extends Base_Controller {
 
 		if(Input::get('new')){
 
+			if(!isset($page->lang)){
+				
+				$page->lang = (isset($income_data["lang"])) ? $income_data["lang"] : Config::get('application.language');
+			}
+
 			$required_fields['title'] = Utilites::add_to_validation($required_fields['title'], 'unique:Pages');
 		}
 

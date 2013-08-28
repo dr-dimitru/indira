@@ -55,6 +55,11 @@ class Admin_Blog_Action_Controller extends Base_Controller {
 
 		if(Input::get('new')){
 
+			if(!isset($blog->lang)){
+				
+				$blog->lang = (isset($income_data["lang"])) ? $income_data["lang"] : Config::get('application.language');
+			}
+
 			Blog::increment('order');
 			$blog->order = '1';
 		}

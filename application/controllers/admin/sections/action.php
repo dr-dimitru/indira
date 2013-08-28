@@ -32,7 +32,7 @@ class Admin_Sections_Action_Controller extends Base_Controller {
 		$required_fields 	= 	Utilites::prepare_validation('sections');
 
 		$section->parent 		=
-		$income_data["parent"] 	= 	(!$income_data["parent"]) ? "false" : $income_data["parent"];
+		$income_data["parent"] 	= 	(!isset($income_data["parent"]) || !$income_data["parent"]) ? "false" : $income_data["parent"];
 
 		if(isset($income_data["link"])){
 			
@@ -57,6 +57,11 @@ class Admin_Sections_Action_Controller extends Base_Controller {
 		}
 
 		if(Input::get('new')){
+
+			if(!isset($section->lang)){
+				
+				$section->lang = (isset($income_data["lang"])) ? $income_data["lang"] : Config::get('application.language');
+			}
 
 			Sections::where_in('lang', $section->lang)->increment('order');
 			$section->order = '1';

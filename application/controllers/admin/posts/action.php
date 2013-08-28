@@ -56,6 +56,11 @@ class Admin_Posts_Action_Controller extends Base_Controller {
 
 		if(Input::get('new')){
 
+			if(!isset($post->lang)){
+				
+				$post->lang = (isset($income_data["lang"])) ? $income_data["lang"] : Config::get('application.language');
+			}
+
 			Posts::where_in('section', $post->section)->increment('order');
 			$post->order = '1';
 		}
