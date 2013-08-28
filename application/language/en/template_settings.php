@@ -33,4 +33,7 @@ return array(
 
 	'logo__annotation' 				=> 'Logo, which will be shown in top navigation bar. You may use HTML tags as well as plain text or img-tag with url to image.',
 
+	'startup_image' 				=> 'Startup image or "Splash screen" for iOS-web application',
+	'startup_image_annotation' 		=> '<span style="color: #bd362f">This process may take up to 2 minutes!</span><br />Please upload square image larger than 2048px x 2048px. But with size <span style="color: #bd362f">not larger than 4.5Mb</span>.<br />After you will upload an image we will create next types and sizes',
+
 );
