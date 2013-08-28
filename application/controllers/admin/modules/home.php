@@ -3,7 +3,7 @@
 class Admin_Modules_Home_Controller extends Base_Controller {
 
 	/**
-	 * Field settings received via Modules::where('name', '=', 'blog')->only('settings')
+	 * Field settings received via Modules::where('name', '=', 'modules')->only('settings')
 	 * 
 	 * @var array $fields_settings
 	 */
@@ -24,6 +24,16 @@ class Admin_Modules_Home_Controller extends Base_Controller {
 	 * @var array $fields_settings
 	 */
 	static $editor_fields; 
+
+
+	/**
+	 * Additions for dropdowns
+	 * 
+	 * @var array $fields_settings
+	 */
+	public static $additions = array(	'access' 		=> 'adminaccess', 
+										'view_access' 	=> 'adminaccess', 
+										'active' 		=> 'yes_no');
 
 
 	/**
@@ -111,7 +121,7 @@ class Admin_Modules_Home_Controller extends Base_Controller {
 
 		foreach($fields as $key => $value) {
 			
-			if(isset(static::$fields_settings[$key])){
+			if(isset(static::$fields_settings[$key]) && in_array($key, array_keys(static::$editor_fields))){
 				
 				$options = (isset(static::$fields_settings[$key]['options'])) ? static::$fields_settings[$key]['options'] : null;
 				$attributes = (isset(static::$fields_settings[$key]['attributes'])) ? static::$fields_settings[$key]['attributes'] : array();
@@ -121,19 +131,5 @@ class Admin_Modules_Home_Controller extends Base_Controller {
 		}
 
 		return $result;
-	}
-
-
-	/**
-	 * Get all necessary data
-	 * For above views
-	 * 
-	 * @return void
-	 */
-	public function __construct(){
-
-		$additions = array('access' => 'adminaccess', 'view_access' => 'adminaccess', 'active' => 'yes_no');
-
-		list(static::$listing_fields, static::$fields_settings, static::$editor_fields) = Utilites::prepare_module_settings('modules', $additions);
 	}
 }

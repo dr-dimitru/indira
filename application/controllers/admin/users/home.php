@@ -175,7 +175,7 @@ class Admin_Users_Home_Controller extends Base_Controller {
 
 		foreach($fields as $key => $value) {
 			
-			if(isset(static::$fields_settings[$key])){
+			if(isset(static::$fields_settings[$key]) && in_array($key, array_keys(static::$editor_fields))){
 				
 				$options = (isset(static::$fields_settings[$key]['options'])) ? static::$fields_settings[$key]['options'] : null;
 				$attributes = (isset(static::$fields_settings[$key]['attributes'])) ? static::$fields_settings[$key]['attributes'] : array();
