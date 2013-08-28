@@ -1,2 +1,2 @@
 <?php 
-return array( 'id' => 14, 'created_at' => '2013-05-30%2010%3A23%3A35', 'updated_at' => '1371087966', 'type' => 'meta', 'name' => 'author', 'value' => 'https%3A%2F%2Fplus.google.com%2F104323115091442510576', 'additions' => '', 'order' => '4',  );
+return array( 'id' => 14, 'created_at' => '1371087966', 'updated_at' => '1371087966', 'type' => 'meta', 'name' => 'author', 'value' => '', 'additions' => '', 'order' => '4',  );
