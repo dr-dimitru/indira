@@ -62,12 +62,16 @@ class Admin_Template_Settings_Action_Controller extends Base_Controller {
 				
 				list($size, $media_query) = explode(',', $row->additions);
 
+				list($width, $height) = explode('x', $size);
+
 				$rotate = false;
 
 				$icon = Utilites::resize_image('public/uploads/'.$result["img_name"], $result["img_name"], $width, $height, true, $rotate);
 				imagepng($icon, 'public/uploads/'.$row->name.'.png', 9);
 
 				Template::where('type', '=', 'apple-touch-startup-image')->and_where('name', '=', $row->name)->update(array('value' => 'uploads/'.$row->name.'.png'));
+
+				unset($icon, $row, $width, $height, $size, $media_query);
 			}
 			
 			return Redirect::to_action('admin.template_settings.home@index');
