@@ -196,6 +196,15 @@ $(function(){
 
 	function animate_ajax(){
 		
+		if(mobile){
+			
+			$("#iosappcontainer").animate({ scrollTop: 0 }, "slow");
+		
+		}else{
+
+			$("html, body").animate({ scrollTop: 0 }, "slow");
+		}
+
 		$('.inner').removeClass('animated bounceInRight');
 		$('.inner').addClass('animated bounceOutLeft');
 	}
@@ -248,22 +257,25 @@ $(function(){
 		change_url = true;
 		animate_ajax();
 
-   		var State = History.getState();
-   			
+		var State = History.getState();
+				
 		var current_uri = State.url.split(window.location.protocol + "//" + window.location.host + "/").join('');
 		var current_lang = current_uri.split('/', 1);
 		current_uri = current_uri.split(current_lang).join('');
 
-   		$('#admin_lang_bar').find('a[id^="go_to_"]').each(function(){
+		if($('#admin_lang_bar').length !== 0){
+			
+			$('#admin_lang_bar').find('a[id^="go_to_"]').each(function(){
 
-   			var href = $(this).attr('href');
-   			
-   			var uri = href.split(window.location.protocol + "//" + window.location.host + "/").join('');
-   			var lang = uri.split('/', 1);
-   			var newURL = window.location.protocol + "//" + window.location.host + "/" + lang + current_uri;
-   			
-   			$(this).attr('href', newURL);
-   		});
+				var href = $(this).attr('href');
+				
+				var uri = href.split(window.location.protocol + "//" + window.location.host + "/").join('');
+				var lang = uri.split('/', 1);
+				var newURL = window.location.protocol + "//" + window.location.host + "/" + lang + current_uri;
+				
+				$(this).attr('href', newURL);
+			});
+		}
 	});
 });
 

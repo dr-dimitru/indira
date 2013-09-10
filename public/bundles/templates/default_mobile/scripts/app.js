@@ -190,6 +190,15 @@ $(function(){
 
 	function animate_ajax(){
 		
+		if(window.navigator.standalone){
+
+			$("#iosappcontainer").animate({ scrollTop: 0 }, "slow");
+
+		}else{
+
+			$("html, body").animate({ scrollTop: 0 }, "slow");
+		}
+		
 		$('.inner').removeClass('animated bounceInLeft');
 		$('.inner').addClass('animated bounceOutLeft');
 	}

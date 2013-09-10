@@ -189,6 +189,8 @@ $(function(){
 	window.onbeforeunload = closeEditorWarning
 
 	function animate_ajax(){
+
+		$("html, body").animate({ scrollTop: 0 }, "slow");
 		
 		$('.inner').removeClass('animated bounceInLeft');
 		$('.inner').addClass('animated bounceOutLeft');
