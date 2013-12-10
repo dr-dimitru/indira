@@ -9,8 +9,8 @@ class Filedb extends Filedbhelper{
 	 * @var string
 	 */
 	protected static $file_pattern = "<?php 
-return array( %s );";
-	
+	return array( %s );";
+
 
 	/**
 	 * Model's file pattern.
@@ -88,7 +88,7 @@ return array( %s );";
 
 			$this->table();
 		}
-		
+
 		return $this->init();
 	}
 
@@ -100,7 +100,7 @@ return array( %s );";
 	 * @return void
 	 */
 	protected function table($table=null){
-		
+
 		($table) ? static::$table = strtolower($table) : static::$table = strtolower(Str::plural(class_basename($this)));
 
 		return (strtolower(get_called_class()) == static::$table) ? $this : $this->init();
@@ -118,7 +118,7 @@ return array( %s );";
 		$path = static::path(null, static::$table);
 
 		if(!isset($this->{'full_table_'.static::$table}) || empty($this->{'full_table_'.static::$table})){
-			
+
 			if(is_dir($path)){
 
 				$rows = static::_scandir($path);
@@ -128,11 +128,11 @@ return array( %s );";
 				return 'No such table ('.$path.')!';
 
 			}
-		
+
 			foreach ($rows as $key => &$value) {
-				
+
 				if(strpos($value,EXT) !== false){
-					
+
 					$file_id = substr($value, 0, -4);
 
 					$this->{'full_table_'.static::$table}[$file_id] = static::get_file($file_id);
@@ -170,11 +170,11 @@ return array( %s );";
 			return 'No such table ('.$path.')!';
 
 		}
-	
+
 		foreach ($rows as $key => &$value) {
-			
+
 			if(strpos($value,EXT) !== false){
-				
+
 				$file_id = substr($value, 0, -4);
 
 				$table[$file_id] = static::get_file($file_id);
@@ -182,7 +182,7 @@ return array( %s );";
 
 			unset($key, $value);
 		}
-		
+
 
 		return $table;
 	}
@@ -216,11 +216,11 @@ return array( %s );";
 		}
 
 		if(isset($this->grouped)){
-					
+
 			return $this->grouped;
 
 		}elseif(isset($this->result) && !empty($this->result)){ 
-					
+
 			return static::array_to_object($this->result);
 
 		}else{
@@ -245,8 +245,8 @@ return array( %s );";
 	/**
 	 * Get row by id (or unuque field), and put data into object
 	 *
-	 * @param  int|string $id     unique value
-	 * @param  string     $field  field name
+	 * @param  int|string $id	  unique value
+	 * @param  string	  $field  field name
 	 * @return Filedb
 	 */
 	private function find($id = null, $field = null){
@@ -260,7 +260,7 @@ return array( %s );";
 
 			$id = intval($id);
 			$this->where_id($id);
-		
+
 		}elseif($field){
 
 			$this->where($field, '=', $id);
@@ -299,9 +299,9 @@ return array( %s );";
 	private function paginate($per_page, $array_data=null){
 
 		if(Input::get('page', 1) < 2){
-		
+
 			$start = 0;
-		
+
 		}else{
 
 			$start = (Input::get('page') - 1) * $per_page;
@@ -312,10 +312,10 @@ return array( %s );";
 			$groups = array_keys($this->grouped);
 			$groups_qty = count($groups);
 			$qty = count($this->grouped);
-			
+
 			ksort($this->grouped);
 			$this->grouped = array_slice($this->grouped, $start, $per_page);
-			
+
 
 		}else{
 
@@ -328,7 +328,7 @@ return array( %s );";
 			return Paginator::make($this->get($array_data), $qty, $per_page);
 
 		}else{
-			
+
 			return Paginator::make($this->get(), $qty, $per_page);
 		}
 	}
@@ -386,6 +386,10 @@ return array( %s );";
 	 */
 	protected function avg($field){
 
+		if($this->count() == 0){
+			return 0;
+		}
+
 		return $this->sum($field) / $this->count();
 	}
 
@@ -407,15 +411,15 @@ return array( %s );";
 
 			if(is_numeric($num)){
 
-				foreach ($pre_res as &$value) {
-					
+				foreach ($column as &$value) {
+
 					$res[] = $value[$field];
 
 					unset($value);
 				}
 
 				return array_sum($res);
-				
+
 			}else{
 
 				die('Non numeric field "'.$field.'" is provided!');
@@ -431,7 +435,7 @@ return array( %s );";
 	/**
 	 * Retreive quantity of rows in selection or full table
 	 *
-	 * @param  boolean 	$or    If set to TRUE search will be thru full table
+	 * @param  boolean 	$or	If set to TRUE search will be thru full table
 	 * @return int
 	 */
 	protected function count(){
@@ -468,7 +472,7 @@ return array( %s );";
 			if(is_numeric($num)){
 
 				foreach ($column as &$value) {
-					
+
 					$result[] = $value;
 
 					unset($value);
@@ -556,7 +560,7 @@ return array( %s );";
 					foreach ($field as &$column) {
 
 						(isset($row->{$column})) ? is_numeric($row->{$column}) ? $this->where_id($row->id)->update(array($column => floatval($row->{$column}) + $add)) : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
-						
+
 						unset($column);
 					}
 
@@ -642,7 +646,7 @@ return array( %s );";
 
 			foreach ($t as $file_id => &$row) {
 
-				$res[$file_id] = $row->{$field};
+				$res[$file_id] = (isset($row->{$field})) ? $row->{$field} : $row->created_at;
 
 				unset($file_id, $row);
 			}
@@ -686,7 +690,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function add($column, $function, $new_column){
-		
+
 		$value = (!is_null($function) && in_array($function, array('max', 'min', 'count', 'sum', 'avg'))) ? $this->$function($column) : $function;
 
 		if($this->_t()){
@@ -714,7 +718,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function between($column, $data1, $data2){
-		
+
 		$this->where($column, '>=', $data1)->and_where($column, '<=', $data2);
 
 		return $this;
@@ -730,7 +734,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function not_between($column, $data1, $data2){
-		
+
 		$this->where($column, '<', $data1)->or_where($column, '>', $data2);
 
 		return $this;
@@ -746,7 +750,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function where($column, $operator, $data){
-		
+
 		$this->__sleep();
 		$this->_switch_select($column, $operator, $data, false, false);
 
@@ -825,7 +829,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function and_where($column, $operator, $data){
-		
+
 		$this->_switch_select($column, $operator, $data, true, false);
 
 		return $this;
@@ -841,7 +845,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function or_where($column, $operator, $data){
-		
+
 		$this->_switch_select($column, $operator, $data, false, true);
 
 		return $this;
@@ -956,36 +960,36 @@ return array( %s );";
 		}
 
 		switch ($operator) {
-		    case '=':
-		        $this->where_equal($column, $data, $and, $or);
-		        break;
-		    case '<>':
-		    case '!=':
-		    	$this->where_not($column, $data, $and, $or);
-		    	break;
-		    case 'like':
-		    	$this->where_like($column, $data, $and, $or);
-		    	break;
-		    case 'similar':
-		    	$this->where_similar($column, $data, $and, $or);
-		    	break;
-		    case 'soundex':
-		    	$this->where_soundex($column, $data, $and, $or);
-		    	break;
-		    case '>':
-		    	$this->where_compare($column, $data, $and, $or, 'greater');
-		    	break;
-		   	case '<':
-		    	$this->where_compare($column, $data, $and, $or, 'less');
-		    	break;
-		    case '>=':
-		    	$this->where_compare($column, $data, $and, $or, 'greater_or_equal');
-		    	break;
-		   	case '<=':
-		    	$this->where_compare($column, $data, $and, $or, 'less_or_equal');
-		    	break;
-		    default:
-		    	die('Wrong operator ('. $operator .') provided or this operator is not supported');
+			case '=':
+				$this->where_equal($column, $data, $and, $or);
+				break;
+			case '<>':
+			case '!=':
+				$this->where_not($column, $data, $and, $or);
+				break;
+			case 'like':
+				$this->where_like($column, $data, $and, $or);
+				break;
+			case 'similar':
+				$this->where_similar($column, $data, $and, $or);
+				break;
+			case 'soundex':
+				$this->where_soundex($column, $data, $and, $or);
+				break;
+			case '>':
+				$this->where_compare($column, $data, $and, $or, 'greater');
+				break;
+			case '<':
+				$this->where_compare($column, $data, $and, $or, 'less');
+				break;
+			case '>=':
+				$this->where_compare($column, $data, $and, $or, 'greater_or_equal');
+				break;
+			case '<=':
+				$this->where_compare($column, $data, $and, $or, 'less_or_equal');
+				break;
+			default:
+				die('Wrong operator ('. $operator .') provided or this operator is not supported');
 
 		}
 
@@ -1009,19 +1013,19 @@ return array( %s );";
 
 			switch ($type) {
 				case 'greater':
-						$this->order_by('id');
+					$this->order_by('id');
 					break;
-				
+
 				case 'less':
-						$this->order_by('id', 'DESC');
+					$this->order_by('id', 'DESC');
 					break;
 
 				case 'greater_or_equal':
-						$this->order_by('id');
+					$this->order_by('id');
 					break;
 
 				case 'less_or_equal':
-						$this->order_by('id', 'DESC');
+					$this->order_by('id', 'DESC');
 					break;
 			}
 
@@ -1039,23 +1043,23 @@ return array( %s );";
 
 						switch ($type) {
 							case 'greater':
-									$result = $this->greater($row->{$column}, $data, $or, $file_id, $row);
-									($result) ? $res[$file_id] = $result : false;
+								$result = $this->greater($row->{$column}, $data, $or, $file_id, $row);
+								($result) ? $res[$file_id] = $result : false;
 								break;
-							
+
 							case 'less':
-									$result = $this->less($row->{$column}, $data, $or, $file_id, $row);
-									($result) ? $res[$file_id] = $result : false;
+								$result = $this->less($row->{$column}, $data, $or, $file_id, $row);
+								($result) ? $res[$file_id] = $result : false;
 								break;
 
 							case 'greater_or_equal':
-									$result = $this->greater_or_equal($row->{$column}, $data, $or, $file_id, $row);
-									($result) ? $res[$file_id] = $result : false;
+								$result = $this->greater_or_equal($row->{$column}, $data, $or, $file_id, $row);
+								($result) ? $res[$file_id] = $result : false;
 								break;
 
 							case 'less_or_equal':
-									$result = $this->less_or_equal($row->{$column}, $data, $or, $file_id, $row);
-									($result) ? $res[$file_id] = $result : false;
+								$result = $this->less_or_equal($row->{$column}, $data, $or, $file_id, $row);
+								($result) ? $res[$file_id] = $result : false;
 								break;
 						}
 					}
@@ -1228,7 +1232,7 @@ return array( %s );";
 	 * @return Filedb
 	 */
 	private function where_not($column, $data, $and=false, $or=false){
-		
+
 		if($t_where = $this->_t_where($and, $or)){
 
 			foreach ($t_where as $file_id => &$row) {
@@ -1483,7 +1487,7 @@ return array( %s );";
 						}
 
 					}else{
-						
+
 						if(soundex($row->{$column}) == soundex($data)){
 
 							if($or){
@@ -1587,7 +1591,7 @@ return array( %s );";
 			if($aggregate){
 
 				foreach ($result as $grouped_by => &$selection) {
-					
+
 					if(!isset(${'aggregated'.$grouped_by})){
 
 						$this->_t_set($previous_selection);
@@ -1596,7 +1600,7 @@ return array( %s );";
 					}
 
 					foreach ($selection as $file_id => &$row) {
-						
+
 						$column_name = ($aggregate[2]) ? $aggregate[2] : $aggregate[0];
 
 						$result[$grouped_by][$file_id]->{$column_name} = ${'aggregated'.$grouped_by};
@@ -1657,7 +1661,7 @@ return array( %s );";
 			$table[$this->id] = static::get_file($this->id);
 
 			foreach (static::$model as $column => &$default_value) {
-				
+
 				if(isset($this->{$column})){
 
 					$table[$this->id]->{$column} = $this->{$column};
@@ -1671,7 +1675,7 @@ return array( %s );";
 
 		}elseif(isset($this->{'full_table_'.static::$table})){
 
-		 	return $this->{'full_table_'.static::$table};
+			return $this->{'full_table_'.static::$table};
 		}
 	}
 
@@ -1690,7 +1694,7 @@ return array( %s );";
 
 		}elseif(isset($this->{'full_table_'.static::$table})){
 
-		 	$this->{'full_table_'.static::$table} = $data;
+			$this->{'full_table_'.static::$table} = $data;
 		}
 	}
 
@@ -1755,12 +1759,12 @@ return array( %s );";
 				if(is_array($column)){
 
 					$mid_res = array();
-					
+
 					foreach ($column as &$value) {
 
 						if(isset($row->{$value})){
-						
-							 $mid_res = array_merge($mid_res, array($value => $row->{$value}));
+
+							$mid_res = array_merge($mid_res, array($value => $row->{$value}));
 						}
 
 						unset($value);
@@ -1814,11 +1818,11 @@ return array( %s );";
 			foreach ($t as $file_id => &$row) {
 
 				if(is_array($column)){
-					
+
 					foreach ($column as &$value) {
 
 						if(isset($row->{$value})){
-						
+
 							$res[$file_id][$value] = $row->{$value};
 						}
 
@@ -1845,7 +1849,7 @@ return array( %s );";
 			return null;
 		}
 	}
-	
+
 
 	/**
 	 * Retreive value(s) of provided column(s) in according to .
@@ -1860,15 +1864,15 @@ return array( %s );";
 		if($t = $this->_t()){
 
 			foreach ($t as $file_id => &$row) {
-				
+
 				if(isset($row->{$column})){
 
 					if($row->{$column} == $data){
 
 						if(is_array($only)){
-							
+
 							foreach ($only as &$value) {
-								
+
 								$res[$value] = $row->{$value};
 
 								unset($value);
@@ -1877,7 +1881,7 @@ return array( %s );";
 						}elseif($only){
 
 							$res[$file_id] = $row->{$only};
-						
+
 						}else{
 
 							$res[$file_id] = $row->{$column};
@@ -1969,9 +1973,9 @@ return array( %s );";
 						}else{
 
 							$file[] = static::_row($model_key, $default_value);
-		 				}
+						}
 
-		 				unset($model_key, $default_value);
+						unset($model_key, $default_value);
 					}
 
 					sleep(0.1);
@@ -1981,20 +1985,20 @@ return array( %s );";
 						$file = Crypter::encrypt(static::_rawurlencode(sprintf(static::$file_pattern, implode('', $file))));
 
 					}else{
-						
+
 						$file = sprintf(static::$file_pattern, implode('', $file));
 					}
-					
+
 					File::mkdir($table_dir, 0777);
 
-		    		$result[] = File::put($file_dir, $file);
+					$result[] = File::put($file_dir, $file);
 
-		    		unset($row);
+					unset($row);
 				}
 
 				unset($t);
 			}
-	 
+
 			return $result;
 
 		}else{
@@ -2084,7 +2088,7 @@ return array( %s );";
 
 			File::mkdir($table_dir, 0777);
 
-			
+
 			$new_id 	= 	static::max_id();
 			$file_dir 	= 	static::path(++$new_id);
 
@@ -2150,12 +2154,12 @@ return array( %s );";
 
 				$model = static::object_to_array($model);
 			}
-			
+
 			$file = array();
 
 			$model_file = ($encrypt) ? sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = true; ') : sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = false; ');
 
-			
+
 			File::put(static::$models_dir.'/'.strtolower($name).EXT, $model_file);
 			self::create_model($name, $model, $encrypt);
 
@@ -2285,7 +2289,7 @@ return array( %s );";
 			}elseif(isset($this->result)){
 
 				if($this->result){
-					
+
 					foreach ($this->result as &$row) {
 
 						$this->delete($row->id);
@@ -2303,9 +2307,9 @@ return array( %s );";
 		}else{
 
 			if(is_array($ids)){
-				
+
 				foreach($ids as &$id){
-				
+
 					$status[] = File::delete(static::path($id));
 
 					unset($id);
@@ -2327,17 +2331,17 @@ return array( %s );";
 	 *
 	 * @return void
 	 */
-    final private function  __clone() {
+	final private function  __clone() {
 
-    }
+	}
 
 
-    /**
+	/**
 	 * magic __callStatic to call a callback 
 	 * with an array of parameters.
 	 * Triggered when invoking inaccessible methods in a static context.
 	 *
-	 * @param  $method      The callable to be called.
+	 * @param  $method	  	The callable to be called.
 	 * @param  $parameters  The parameters to be passed to the callback, as an indexed array.
 	 * @return mixed
 	 */
@@ -2351,7 +2355,7 @@ return array( %s );";
 		}
 
 		return call_user_func_array(array($model::$_inst, $method), $parameters);
-		
+
 	}
 
 
@@ -2362,30 +2366,30 @@ return array( %s );";
 	 * @return void
 	 */
 	function __destruct(){
-		
+
 		if(isset($this->{'find_'.Config::get('application.key')})){
 
 			//unset($this->{'full_table_'.static::$table});
 			unset($this->{'find_'.Config::get('application.key')});
 			unset($this->result);
 		}
-   	}
+	}
 
 
-   	/**
+	/**
 	 * magic __sleep
 	 * Unset unused vars
 	 *
 	 * @return void
 	 */
-   	public function __sleep(){
+	public function __sleep(){
 
-   		unset($this->result);
-   	}
+		unset($this->result);
+	}
 
 
 
-   	/**
+	/**
 	 * magic __call
 	 * Triggered when invoking inaccessible methods in an object context.
 	 *

@@ -98,7 +98,6 @@ class Filedbhelper{
 				}
 
 				$this->{$model_key} = $income_data[$model_key];
-			
 			}
 
 			unset($model_key, $default_value);
