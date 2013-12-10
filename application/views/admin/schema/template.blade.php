@@ -1,1 +1,1 @@
-@yield('schema')
+@__yield('schema')

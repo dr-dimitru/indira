@@ -1,1 +1,1 @@
-@yield('settings')
+@__yield('settings')

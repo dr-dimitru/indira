@@ -1,4 +1,4 @@
-@yield('modules')
+@__yield('modules')
 <script type="text/javascript">
 
 	$('select').change(function(){

@@ -1,1 +1,1 @@
-@yield('cache')
+@__yield('cache')

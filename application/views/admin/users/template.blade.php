@@ -1,6 +1,6 @@
 <div class="row-fluid">
 	
-	@yield('users')
+	@__yield('users')
 	
 </div>
 <script type="text/javascript">

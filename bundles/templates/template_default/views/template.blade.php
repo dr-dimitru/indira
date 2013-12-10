@@ -28,7 +28,7 @@
 			<div class="container">
 				<div class="inner">
 					<div id="work_area">
-						@yield('content')
+						@__yield('content')
 					</div>
 				</div>
 			</div>

@@ -1,4 +1,4 @@
-@yield('qrcode')
+@__yield('qrcode')
 <script type="text/javascript">
 
 	$('select').change(function(){

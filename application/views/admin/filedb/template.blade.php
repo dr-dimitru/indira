@@ -1,4 +1,4 @@
-@yield('filedb')
+@__yield('filedb')
 <script type="text/javascript">
 	$("input[id^='table_name_']").keypress(function(event){
 

@@ -1,4 +1,4 @@
-@yield('newsletter')
+@__yield('newsletter')
 <?php
 	$users = array();
 	$subscribed_users = array();

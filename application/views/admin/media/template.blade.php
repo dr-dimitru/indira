@@ -1,4 +1,4 @@
-@yield('media')
+@__yield('media')
 
 {{ HTML::script('cms/scripts/vendor/jquery.filedrop.js') }}
 {{ HTML::script('cms/scripts/uploader.js') }}

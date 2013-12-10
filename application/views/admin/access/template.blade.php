@@ -1,6 +1,6 @@
 <div class="row-fluid">
 
-	@yield('access')
+	@__yield('access')
 	
 </div>
 <script type="text/javascript">

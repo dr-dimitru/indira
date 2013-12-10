@@ -1,4 +1,4 @@
-@yield('cli')
+@__yield('cli')
 <script type="text/javascript">
 	$(function(){
 

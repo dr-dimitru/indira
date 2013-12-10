@@ -1,4 +1,4 @@
-@yield('posts')
+@__yield('posts')
 <script type="text/javascript">
 	
 	$('input[id^="tags"]input[id$="_fake_multiselect"]').typeahead({

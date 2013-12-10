@@ -1,6 +1,6 @@
 <div class="row-fluid">
 
-	@yield('languages')
+	@__yield('languages')
 	
 </div>
 <script type="text/javascript">

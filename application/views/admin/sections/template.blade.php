@@ -1,4 +1,4 @@
-@yield('sections')
+@__yield('sections')
 <script type="text/javascript">
 
 	$('select').change(function(){
