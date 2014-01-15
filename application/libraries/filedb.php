@@ -9,8 +9,8 @@ class Filedb extends Filedbhelper{
 	 * @var string
 	 */
 	protected static $file_pattern = "<?php 
-	return array( %s );";
-
+return array( %s );";
+	
 
 	/**
 	 * Model's file pattern.
@@ -84,12 +84,28 @@ class Filedb extends Filedbhelper{
 	 */
 	public function __construct(){
 
-		if(!isset(static::$table)){
+		if(static::$_inst){
 
-			$this->table();
+			foreach (static::$_inst as $key => $value) {
+				
+				if(stristr($key, 'full_table_')){
+
+					$this->{$key} = $value;
+				}
+
+				unset($key, $value);
+			}
 		}
 
-		return $this->init();
+		if(!isset(static::$table)){
+
+			static::$table = strtolower(get_called_class());
+		}
+
+		if(static::$table !== 'filedb'){
+
+			return $this->init();
+		}
 	}
 
 
@@ -108,6 +124,18 @@ class Filedb extends Filedbhelper{
 
 
 	/**
+	 * Filter to remove non-php files
+	 * from array. Files without .php extension
+	 *
+	 * @return boolean
+	 */
+	private function phpArrFilter($file_name) {
+
+		return strpos($file_name, '.php') !== false;
+	}
+
+
+	/**
 	 * Initialize FileDB. Get all records from table to array.
 	 * Prepare model. Check if table exists.
 	 *
@@ -119,6 +147,9 @@ class Filedb extends Filedbhelper{
 
 		if(!isset($this->{'full_table_'.static::$table}) || empty($this->{'full_table_'.static::$table})){
 
+
+			$this->{'full_table_'.static::$table} = array();
+
 			if(is_dir($path)){
 
 				$rows = static::_scandir($path);
@@ -129,15 +160,12 @@ class Filedb extends Filedbhelper{
 
 			}
 
+			$rows = array_filter($rows, array($this, 'phpArrFilter'));  
+			$rows = str_replace('.php', '', $rows);
+
 			foreach ($rows as $key => &$value) {
 
-				if(strpos($value,EXT) !== false){
-
-					$file_id = substr($value, 0, -4);
-
-					$this->{'full_table_'.static::$table}[$file_id] = static::get_file($file_id);
-				}
-
+				$this->{'full_table_'.static::$table}[$value] = static::get_file($value);
 				unset($key, $value);
 			}
 
@@ -170,11 +198,11 @@ class Filedb extends Filedbhelper{
 			return 'No such table ('.$path.')!';
 
 		}
-
+	
 		foreach ($rows as $key => &$value) {
-
+			
 			if(strpos($value,EXT) !== false){
-
+				
 				$file_id = substr($value, 0, -4);
 
 				$table[$file_id] = static::get_file($file_id);
@@ -182,7 +210,7 @@ class Filedb extends Filedbhelper{
 
 			unset($key, $value);
 		}
-
+		
 
 		return $table;
 	}
@@ -195,8 +223,7 @@ class Filedb extends Filedbhelper{
 	 */
 	protected function use_all(){
 
-		$path = static::path(null, static::$table);
-		$this->_t_set($this->get_full_table($path));
+		$this->_t_set($this->{'full_table_'.static::$table});
 
 		return $this;
 	}
@@ -216,11 +243,11 @@ class Filedb extends Filedbhelper{
 		}
 
 		if(isset($this->grouped)){
-
+					
 			return $this->grouped;
 
 		}elseif(isset($this->result) && !empty($this->result)){ 
-
+					
 			return static::array_to_object($this->result);
 
 		}else{
@@ -243,10 +270,10 @@ class Filedb extends Filedbhelper{
 
 
 	/**
-	 * Get row by id (or unuque field), and put data into object
+    * Get row by id (or unuque field), and put data into object
 	 *
-	 * @param  int|string $id	  unique value
-	 * @param  string	  $field  field name
+	 * @param  int|string $id	 unique value
+	 * @param  string	 $field  field name
 	 * @return Filedb
 	 */
 	private function find($id = null, $field = null){
@@ -294,14 +321,15 @@ class Filedb extends Filedbhelper{
 	 *
 	 * @param  int 			$per_page 	Quantity of shown rows per page
 	 * @param  array|null 	$array_data
+	 * @param  string|bool  $url
 	 * @return Paginator
 	 */
-	private function paginate($per_page, $array_data=null){
+	private function paginate($per_page, $array_data = null, $url = false){
 
 		if(Input::get('page', 1) < 2){
-
+		
 			$start = 0;
-
+		
 		}else{
 
 			$start = (Input::get('page') - 1) * $per_page;
@@ -312,10 +340,10 @@ class Filedb extends Filedbhelper{
 			$groups = array_keys($this->grouped);
 			$groups_qty = count($groups);
 			$qty = count($this->grouped);
-
+			
 			ksort($this->grouped);
 			$this->grouped = array_slice($this->grouped, $start, $per_page);
-
+			
 
 		}else{
 
@@ -325,11 +353,11 @@ class Filedb extends Filedbhelper{
 
 		if($array_data){
 
-			return Paginator::make($this->get($array_data), $qty, $per_page);
+			return Paginator::make($this->get($array_data), $qty, $per_page, $url);
 
 		}else{
-
-			return Paginator::make($this->get(), $qty, $per_page);
+			
+			return Paginator::make($this->get(), $qty, $per_page, $url);
 		}
 	}
 
@@ -387,6 +415,7 @@ class Filedb extends Filedbhelper{
 	protected function avg($field){
 
 		if($this->count() == 0){
+
 			return 0;
 		}
 
@@ -402,23 +431,14 @@ class Filedb extends Filedbhelper{
 	 */
 	protected function sum($field){
 
-		$column = $this->only(array($field));
+		if($column = $this->only($field, true)){
 
-		if(isset($column)){
+			if(is_numeric(intval(current($column)))){
 
-			$num = array_values($column);
-			$num = intval(array_shift($num));
+				$sum = array_sum($column);
 
-			if(is_numeric($num)){
-
-				foreach ($column as &$value) {
-
-					$res[] = $value[$field];
-
-					unset($value);
-				}
-
-				return array_sum($res);
+				unset($column);
+				return $sum;
 
 			}else{
 
@@ -426,31 +446,30 @@ class Filedb extends Filedbhelper{
 			}
 
 		}else{
+
+			unset($column);
 			return null;
 		}
-
 	}
 
 
 	/**
 	 * Retreive quantity of rows in selection or full table
 	 *
-	 * @param  boolean 	$or	If set to TRUE search will be thru full table
 	 * @return int
 	 */
 	protected function count(){
 
-		$rows = static::object_to_array($this->_t());
+		$rows = $this->_t();
 
 		if(isset($rows) && !empty($rows)){
 
-			return count($rows);
+			return count((array) $rows);
 
 		}else{
 
 			return 0;
 		}
-
 	}
 
 
@@ -462,25 +481,14 @@ class Filedb extends Filedbhelper{
 	 */
 	protected function max($field){
 
-		$column = $this->only(array($field));
+		if($column = $this->only($field, true)){
 
-		if(isset($column)){
+			if(is_numeric(intval(current($column)))){
 
-			$num = array_values($column);
-			$num = intval(array_shift($num));
+				$max = max($column);
 
-			if(is_numeric($num)){
-
-				foreach ($column as &$value) {
-
-					$result[] = $value;
-
-					unset($value);
-				}
-
-				$max = max($result);
-
-				return $max[$field];
+				unset($column);
+				return $max;
 
 			}else{
 
@@ -489,6 +497,7 @@ class Filedb extends Filedbhelper{
 
 		}else{
 
+			unset($column);
 			return null;
 		}
 	}
@@ -502,25 +511,14 @@ class Filedb extends Filedbhelper{
 	 */
 	private function min($field){
 
-		$column = $this->only(array($field));
+		if($column = $this->only($field, true)){
 
-		if(isset($column)){
+			if(is_numeric(intval(current($column)))){
 
-			$num = array_values($column);
-			$num = intval(array_shift($num));
+				$min = min($column);
 
-			if(is_numeric($num)){
-
-				foreach ($column as &$value) {
-
-					$result[] = $value;
-
-					unset($value);
-				}
-
-				$min = min($result);
-
-				return $min[$field];
+				unset($column);
+				return $min;
 
 			}else{
 
@@ -529,6 +527,7 @@ class Filedb extends Filedbhelper{
 
 		}else{
 
+			unset($column);
 			return null;
 		}
 	}
@@ -551,34 +550,74 @@ class Filedb extends Filedbhelper{
 
 			$add = ($on) ? $on : 1;
 
-			foreach ($preserved as $file_id => &$row) {
-
-				++$cycle;
+			if(isset($this->id)){
 
 				if(is_array($field)){
 
 					foreach ($field as &$column) {
 
-						(isset($row->{$column})) ? is_numeric($row->{$column}) ? $this->where_id($row->id)->update(array($column => floatval($row->{$column}) + $add)) : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
+						static::crement($this, '+', $column, $add);
 
 						unset($column);
 					}
 
+					$this->save();
+
 				}else{
 
-					(isset($row->{$field})) ? is_numeric($row->{$field}) ? $this->where_id($row->id)->update(array($field => floatval($row->{$field}) + $add)) : die('Non numeric column "'.$field.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$field.'" is not found in table: '.static::$table;
+					static::crement($this, '+', $field, $add);
+
+					$this->save();
 				}
 
-				if($rows <= $cycle){
+			}else{
 
-					$this->_t_set($preserved);
+				foreach ($preserved as $file_id => &$row) {
+
+					++$cycle;
+
+					if(is_array($field)){
+
+						foreach ($field as &$column) {
+
+							static::crement($row, '+', $column, $add);
+							
+							unset($column);
+						}
+
+					}else{
+
+						static::crement($row, '+', $field, $add);
+					}
+
+					$this->where_id($row->id)->update($row);
+
+					if($rows <= $cycle){
+
+						$this->_t_set($preserved);
+					}
+
+					unset($file_id, $row);
 				}
-
-				unset($file_id, $row);
 			}
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * [In|De]crement value of provided column(s) in selection
+	 *
+	 * @param  object	   $obj
+	 * @param  string (-|+) $operation
+	 * @param  string	   $column
+	 * @param  int 			$pad 	decrement value
+	 * @return void
+	 */
+	protected static function crement($obj, $operation, $column, $pad){
+
+		(isset($obj->{$column})) ? is_numeric($obj->{$column}) ? ($operation == '+') ? $obj->{$column} += $pad : $obj->{$column} -= $pad : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
 	}
 
 
@@ -599,30 +638,55 @@ class Filedb extends Filedbhelper{
 
 			$take = ($on) ? $on : 1;
 
-			foreach ($preserved as $file_id => &$row) {
-
-				++$cycle;
+			if(isset($this->id)){
 
 				if(is_array($field)){
 
 					foreach ($field as &$column) {
 
-						(isset($row->{$column})) ? is_numeric($row->{$column}) ? $this->where_id($row->id)->update(array($column => floatval($row->{$column}) - $take)) : die('Non numeric column "'.$column.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$column.'" is not found in table: '.static::$table;
+						static::crement($this, '-', $column, $take);
 
 						unset($column);
 					}
 
+					$this->save();
+
 				}else{
 
-					(isset($row->{$field})) ? is_numeric($row->{$field}) ? $this->where_id($row->id)->update(array($field => floatval($row->{$field}) - $take)) : die('Non numeric column "'.$field.'" is provided! Or select has many results') : 'Nothing to increment! -> Column: "'.$field.'" is not found in table: '.static::$table;
+					static::crement($this, '-', $field, $take);
+
+					$this->save();
 				}
 
-				if($rows <= $cycle){
+			}else{
 
-					$this->_t_set($preserved);
+				foreach ($preserved as $file_id => &$row) {
+
+					++$cycle;
+
+					if(is_array($field)){
+
+						foreach ($field as &$column) {
+
+							static::crement($row, '-', $column, $take);
+
+							unset($column);
+						}	
+
+					}else{
+
+						static::crement($row, '-', $field, $take);
+					}
+
+					$this->where_id($row->id)->update($row);
+
+					if($rows <= $cycle){
+
+						$this->_t_set($preserved);
+					}
+
+					unset($file_id, $row);
 				}
-
-				unset($file_id, $row);
 			}
 		}
 
@@ -661,16 +725,9 @@ class Filedb extends Filedbhelper{
 				arsort($res, $flags);
 			}
 
-			foreach ($res as $id => &$value) {
+			$this->result = array_replace($res, (array) $t);
 
-				$res[$id] = $t[$id];
-
-				unset($value);
-			}
-
-			$this->result = $res;
-
-			unset($t);
+			unset($t, $res);
 
 		}else{
 
@@ -690,7 +747,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function add($column, $function, $new_column){
-
+		
 		$value = (!is_null($function) && in_array($function, array('max', 'min', 'count', 'sum', 'avg'))) ? $this->$function($column) : $function;
 
 		if($this->_t()){
@@ -718,7 +775,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function between($column, $data1, $data2){
-
+		
 		$this->where($column, '>=', $data1)->and_where($column, '<=', $data2);
 
 		return $this;
@@ -734,7 +791,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function not_between($column, $data1, $data2){
-
+		
 		$this->where($column, '<', $data1)->or_where($column, '>', $data2);
 
 		return $this;
@@ -750,8 +807,8 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function where($column, $operator, $data){
-
-		$this->__sleep();
+		
+		$this->sleep();
 		$this->_switch_select($column, $operator, $data, false, false);
 
 		return $this;
@@ -766,7 +823,7 @@ class Filedb extends Filedbhelper{
 	 */
 	private function where_null($column){
 
-		$this->__sleep();
+		$this->sleep();
 		$this->_switch_select($column, '=', null, false, false);
 
 		return $this;
@@ -781,7 +838,7 @@ class Filedb extends Filedbhelper{
 	 */
 	private function where_not_null($column){
 
-		$this->__sleep();
+		$this->sleep();
 		$this->_switch_select($column, '!=', null, false, false);
 
 		return $this;
@@ -797,7 +854,7 @@ class Filedb extends Filedbhelper{
 	 */
 	private function where_in($column, $data_array){
 
-		$this->__sleep();
+		$this->sleep();
 		$this->_switch_select($column, '=', $data_array, false, false);
 
 		return $this;
@@ -813,7 +870,7 @@ class Filedb extends Filedbhelper{
 	 */
 	private function where_not_in($column, $data_array){
 
-		$this->__sleep();
+		$this->sleep();
 		$this->_switch_select($column, '!=', $data_array, false, false);
 
 		return $this;
@@ -829,7 +886,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function and_where($column, $operator, $data){
-
+		
 		$this->_switch_select($column, $operator, $data, true, false);
 
 		return $this;
@@ -845,7 +902,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function or_where($column, $operator, $data){
-
+		
 		$this->_switch_select($column, $operator, $data, false, true);
 
 		return $this;
@@ -979,13 +1036,13 @@ class Filedb extends Filedbhelper{
 			case '>':
 				$this->where_compare($column, $data, $and, $or, 'greater');
 				break;
-			case '<':
+		   	case '<':
 				$this->where_compare($column, $data, $and, $or, 'less');
 				break;
 			case '>=':
 				$this->where_compare($column, $data, $and, $or, 'greater_or_equal');
 				break;
-			case '<=':
+		   	case '<=':
 				$this->where_compare($column, $data, $and, $or, 'less_or_equal');
 				break;
 			default:
@@ -1013,19 +1070,19 @@ class Filedb extends Filedbhelper{
 
 			switch ($type) {
 				case 'greater':
-					$this->order_by('id');
+						$this->order_by('id');
 					break;
-
+				
 				case 'less':
-					$this->order_by('id', 'DESC');
+						$this->order_by('id', 'DESC');
 					break;
 
 				case 'greater_or_equal':
-					$this->order_by('id');
+						$this->order_by('id');
 					break;
 
 				case 'less_or_equal':
-					$this->order_by('id', 'DESC');
+						$this->order_by('id', 'DESC');
 					break;
 			}
 
@@ -1043,23 +1100,23 @@ class Filedb extends Filedbhelper{
 
 						switch ($type) {
 							case 'greater':
-								$result = $this->greater($row->{$column}, $data, $or, $file_id, $row);
-								($result) ? $res[$file_id] = $result : false;
+									$result = $this->greater($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
 								break;
-
+							
 							case 'less':
-								$result = $this->less($row->{$column}, $data, $or, $file_id, $row);
-								($result) ? $res[$file_id] = $result : false;
+									$result = $this->less($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
 								break;
 
 							case 'greater_or_equal':
-								$result = $this->greater_or_equal($row->{$column}, $data, $or, $file_id, $row);
-								($result) ? $res[$file_id] = $result : false;
+									$result = $this->greater_or_equal($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
 								break;
 
 							case 'less_or_equal':
-								$result = $this->less_or_equal($row->{$column}, $data, $or, $file_id, $row);
-								($result) ? $res[$file_id] = $result : false;
+									$result = $this->less_or_equal($row->{$column}, $data, $or, $file_id, $row);
+									($result) ? $res[$file_id] = $result : false;
 								break;
 						}
 					}
@@ -1232,7 +1289,7 @@ class Filedb extends Filedbhelper{
 	 * @return Filedb
 	 */
 	private function where_not($column, $data, $and=false, $or=false){
-
+		
 		if($t_where = $this->_t_where($and, $or)){
 
 			foreach ($t_where as $file_id => &$row) {
@@ -1487,7 +1544,7 @@ class Filedb extends Filedbhelper{
 						}
 
 					}else{
-
+						
 						if(soundex($row->{$column}) == soundex($data)){
 
 							if($or){
@@ -1591,7 +1648,7 @@ class Filedb extends Filedbhelper{
 			if($aggregate){
 
 				foreach ($result as $grouped_by => &$selection) {
-
+					
 					if(!isset(${'aggregated'.$grouped_by})){
 
 						$this->_t_set($previous_selection);
@@ -1600,7 +1657,7 @@ class Filedb extends Filedbhelper{
 					}
 
 					foreach ($selection as $file_id => &$row) {
-
+						
 						$column_name = ($aggregate[2]) ? $aggregate[2] : $aggregate[0];
 
 						$result[$grouped_by][$file_id]->{$column_name} = ${'aggregated'.$grouped_by};
@@ -1629,12 +1686,12 @@ class Filedb extends Filedbhelper{
 	 */
 	private function all(){
 
-		return $this->_t();
+		return $this->{'full_table_'.static::$table};
 	}
 
 
 	/**
-	 * Retreive all rows from table.
+	 * Retreive model array.
 	 *
 	 * @return array
 	 */
@@ -1661,7 +1718,7 @@ class Filedb extends Filedbhelper{
 			$table[$this->id] = static::get_file($this->id);
 
 			foreach (static::$model as $column => &$default_value) {
-
+				
 				if(isset($this->{$column})){
 
 					$table[$this->id]->{$column} = $this->{$column};
@@ -1675,7 +1732,7 @@ class Filedb extends Filedbhelper{
 
 		}elseif(isset($this->{'full_table_'.static::$table})){
 
-			return $this->{'full_table_'.static::$table};
+		 	return $this->{'full_table_'.static::$table};
 		}
 	}
 
@@ -1694,7 +1751,7 @@ class Filedb extends Filedbhelper{
 
 		}elseif(isset($this->{'full_table_'.static::$table})){
 
-			$this->{'full_table_'.static::$table} = $data;
+		 	$this->{'full_table_'.static::$table} = $data;
 		}
 	}
 
@@ -1759,12 +1816,12 @@ class Filedb extends Filedbhelper{
 				if(is_array($column)){
 
 					$mid_res = array();
-
+					
 					foreach ($column as &$value) {
 
 						if(isset($row->{$value})){
-
-							$mid_res = array_merge($mid_res, array($value => $row->{$value}));
+						
+							 $mid_res = array_merge($mid_res, array($value => $row->{$value}));
 						}
 
 						unset($value);
@@ -1806,12 +1863,12 @@ class Filedb extends Filedbhelper{
 	/**
 	 * Retreive value(s) of provided column(s).
 	 *
-	 * @param  string|array 		$column
+	 * @param  string|array $column
 	 * @param  boolean 		$and
 	 * @param  boolean 		$or
 	 * @return string|array|null
 	 */
-	protected function only($column){
+	protected function only($column, $a = false){
 
 		if($t = $this->_t()){
 
@@ -1833,7 +1890,14 @@ class Filedb extends Filedbhelper{
 
 					if(isset($row->{$column})){
 
-						$res = $row->{$column};
+						if($a){
+
+							$res[] = $row->{$column};
+
+						}else{
+						 
+							$res = $row->{$column};
+						}
 					}
 				}
 
@@ -1849,7 +1913,7 @@ class Filedb extends Filedbhelper{
 			return null;
 		}
 	}
-
+	
 
 	/**
 	 * Retreive value(s) of provided column(s) in according to .
@@ -1864,15 +1928,15 @@ class Filedb extends Filedbhelper{
 		if($t = $this->_t()){
 
 			foreach ($t as $file_id => &$row) {
-
+				
 				if(isset($row->{$column})){
 
 					if($row->{$column} == $data){
 
 						if(is_array($only)){
-
+							
 							foreach ($only as &$value) {
-
+								
 								$res[$value] = $row->{$value};
 
 								unset($value);
@@ -1881,7 +1945,7 @@ class Filedb extends Filedbhelper{
 						}elseif($only){
 
 							$res[$file_id] = $row->{$only};
-
+						
 						}else{
 
 							$res[$file_id] = $row->{$column};
@@ -1973,9 +2037,9 @@ class Filedb extends Filedbhelper{
 						}else{
 
 							$file[] = static::_row($model_key, $default_value);
-						}
+		 				}
 
-						unset($model_key, $default_value);
+		 				unset($model_key, $default_value);
 					}
 
 					sleep(0.1);
@@ -1985,20 +2049,22 @@ class Filedb extends Filedbhelper{
 						$file = Crypter::encrypt(static::_rawurlencode(sprintf(static::$file_pattern, implode('', $file))));
 
 					}else{
-
+						
 						$file = sprintf(static::$file_pattern, implode('', $file));
 					}
-
+					
 					File::mkdir($table_dir, 0777);
 
 					$result[] = File::put($file_dir, $file);
+					$this->result[$row->id] = static::get_file($row->id);
+					$this->{'full_table_'.static::$table}[$row->id] = static::get_file($row->id);
 
 					unset($row);
 				}
 
 				unset($t);
 			}
-
+	 
 			return $result;
 
 		}else{
@@ -2044,13 +2110,14 @@ class Filedb extends Filedbhelper{
 	 * Duplicate row by id
 	 *
 	 * @param  int|string $id
+	 * @param  bool		 $return_id
 	 * @return Filedb
 	 */
-	private function duplicate($id){
+	private function duplicate($id, $return_id = false){
 
-		$this->create($this->{'full_table_'.static::$table}[$id]);
+		$id = $this->create($this->{'full_table_'.static::$table}[$id], $return_id);
 
-		return $this;
+		return ($return_id) ? $id : $this;
 	}
 
 
@@ -2058,13 +2125,14 @@ class Filedb extends Filedbhelper{
 	 * Alias for insert() method
 	 *
 	 * @param  array|object $data
+	 * @param  bool		 $return_id
 	 * @return Filedb
 	 */
-	private function create($data){
+	private function create($data, $return_id = false){
 
 		$id = $this->insert($data);
 
-		return $this;
+		return ($return_id) ? $id : $this;
 	}
 
 
@@ -2088,7 +2156,7 @@ class Filedb extends Filedbhelper{
 
 			File::mkdir($table_dir, 0777);
 
-
+			
 			$new_id 	= 	static::max_id();
 			$file_dir 	= 	static::path(++$new_id);
 
@@ -2154,12 +2222,12 @@ class Filedb extends Filedbhelper{
 
 				$model = static::object_to_array($model);
 			}
-
+			
 			$file = array();
 
 			$model_file = ($encrypt) ? sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = true; ') : sprintf(static::$model_pattern, ucwords($name), strtolower($name), 'public static $encrypt = false; ');
 
-
+			
 			File::put(static::$models_dir.'/'.strtolower($name).EXT, $model_file);
 			self::create_model($name, $model, $encrypt);
 
@@ -2208,6 +2276,17 @@ class Filedb extends Filedbhelper{
 
 
 	/**
+	 * Is this table encrypted?
+	 *
+	 * @return boolean
+	 */
+	private static function is_encrypted(){
+
+		return (static::$encrypt);
+	}
+
+
+	/**
 	 * Encrypt table
 	 *
 	 * @return void
@@ -2244,6 +2323,8 @@ class Filedb extends Filedbhelper{
 
 		File::cleandir(static::$directory.'/'.static::$table);
 		self::create_model(static::$table, static::$model, static::$encrypt);
+
+		$this->_cleanup();
 	}
 
 
@@ -2256,6 +2337,8 @@ class Filedb extends Filedbhelper{
 
 		File::rmdir(static::$directory.'/'.static::$table);
 		File::delete(static::$models_dir.'/'.static::$table.EXT);
+
+		$this->_cleanup();
 	}
 
 	/**
@@ -2269,6 +2352,8 @@ class Filedb extends Filedbhelper{
 		File::mvdir(static::$directory.'/'.static::$table, static::$directory.'/'.$new_name);
 		File::delete(static::$models_dir.'/'.static::$table.EXT);
 		self::create_table($new_name, static::$model, static::$encrypt);
+
+		$this->_cleanup();
 	}
 
 
@@ -2289,7 +2374,7 @@ class Filedb extends Filedbhelper{
 			}elseif(isset($this->result)){
 
 				if($this->result){
-
+					
 					foreach ($this->result as &$row) {
 
 						$this->delete($row->id);
@@ -2297,6 +2382,7 @@ class Filedb extends Filedbhelper{
 						unset($row);
 						sleep(0.1);
 					}
+
 				}
 
 			}else{
@@ -2307,10 +2393,13 @@ class Filedb extends Filedbhelper{
 		}else{
 
 			if(is_array($ids)){
-
+				
 				foreach($ids as &$id){
-
+				
 					$status[] = File::delete(static::path($id));
+
+					unset($this->{'full_table_'.static::$table}[$id]);
+					unset($this->result[$id]);
 
 					unset($id);
 					sleep(0.1);
@@ -2320,6 +2409,8 @@ class Filedb extends Filedbhelper{
 
 			}else{
 
+				unset($this->{'full_table_'.static::$table}[$ids]);
+				unset($this->result[$ids]);
 				return File::delete(static::path($ids));
 			}
 		}
@@ -2331,9 +2422,7 @@ class Filedb extends Filedbhelper{
 	 *
 	 * @return void
 	 */
-	final private function  __clone() {
-
-	}
+	final private function __clone(){ }
 
 
 	/**
@@ -2341,7 +2430,7 @@ class Filedb extends Filedbhelper{
 	 * with an array of parameters.
 	 * Triggered when invoking inaccessible methods in a static context.
 	 *
-	 * @param  $method	  	The callable to be called.
+	 * @param  $method	  The callable to be called.
 	 * @param  $parameters  The parameters to be passed to the callback, as an indexed array.
 	 * @return mixed
 	 */
@@ -2349,7 +2438,7 @@ class Filedb extends Filedbhelper{
 
 		$model = get_called_class();
 
-		if ($model::$_inst === NULL || $model::$_inst !== $model){
+		if($model::$_inst === NULL || $model::$_inst !== $model){
 
 			$model::$_inst = new $model;
 		}
@@ -2369,7 +2458,6 @@ class Filedb extends Filedbhelper{
 
 		if(isset($this->{'find_'.Config::get('application.key')})){
 
-			//unset($this->{'full_table_'.static::$table});
 			unset($this->{'find_'.Config::get('application.key')});
 			unset($this->result);
 		}
@@ -2378,15 +2466,38 @@ class Filedb extends Filedbhelper{
 
 	/**
 	 * magic __sleep
+	 *
+	 * @return void
+	 */
+	public function __sleep(){ }
+
+
+	/**
+	 * non-magic sleep
 	 * Unset unused vars
 	 *
 	 * @return void
 	 */
-	public function __sleep(){
+	public function sleep(){
 
 		unset($this->result);
 	}
 
+	/**
+	 * non-magic cleanup
+	 * Unset unused vars
+	 *
+	 * @return void
+	 */
+	public function _cleanup(){
+
+		unset($this->result);
+		unset($this->{'full_table_'.static::$table});
+		unset(static::$_inst->{'full_table_'.static::$table});
+		$this->sleep();
+		$this->__sleep();
+		$this->__destruct();
+	}
 
 
 	/**

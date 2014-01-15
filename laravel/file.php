@@ -42,7 +42,10 @@ class File {
 	 */
 	public static function put($path, $data)
 	{
-		return file_put_contents($path, $data, LOCK_EX);
+		$i = file_put_contents($path, $data, LOCK_EX);
+		@chmod ($path, 0777);
+
+		return $i;
 	}
 
 	/**

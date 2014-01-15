@@ -70,6 +70,32 @@ class Filedbhelper{
 		return $this;
 	}
 
+
+	/**
+	 * Return result of find() method
+	 * as Object without full_table_* 
+	 * arrays and other additional data
+	 *
+	 * @return Object(stdClass)
+	 */
+	protected function return_as_stdclass(){
+
+		$res = new stdClass();
+
+		foreach($this as $key => $value) {
+                    
+            if(!stristr($key, 'full_table_')){
+
+                $res->{$key} = $value;
+            }
+
+            unset($key, $value);
+        }
+
+		return $res;
+	}
+
+
 	/**
 	 * Prepare POST data to model
 	 *

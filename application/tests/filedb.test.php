@@ -60,7 +60,7 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($check_text, Unittest::find(1)->text, $tmp->text);
 	}
 
-	public function testCreate100Rows(){
+	public function testCreate150Rows(){
 
 		$initial_count = Unittest::count();
 
@@ -88,7 +88,20 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 
 		unset($i);
 
-		$total_count = $initial_count + 100;
+		for ($i=1; $i <= 50; $i++){ 
+			
+			$tmp = Unittest::init();
+			$tmp->text = 'Created via Table instanse';
+			$tmp->int = $i;
+			$tmp->array = array('a' => 'abc', 'b' => 'bcd', 'c' => 'cde');
+			$tmp->object = '';
+
+			$tmp->save();
+		}
+
+		unset($i);
+
+		$total_count = $initial_count + 150;
 
 		$this->assertEquals($total_count, Unittest::count());
 	}
@@ -189,7 +202,7 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($control_max, $max);
 
 		Unittest::where('text', '=', 'testMAX')->delete();
-		// var_dump(Unittest::where('text', '=', 'testMAX')->get());
+
 		$this->assertEmpty(Unittest::where('text', '=', 'testMAX')->get());
 	}
 
@@ -209,7 +222,7 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($control_min, $min);
 
 		Unittest::where('text', '=', 'testMIN')->delete();
-		// var_dump(Unittest::where('text', '=', 'testMIN')->get());
+
 		$this->assertEmpty(Unittest::where('text', '=', 'testMIN')->get());
 	}
 
@@ -217,6 +230,7 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 
 		$tmp = Unittest::find(25);
 		$control_int = $tmp->int;
+
 		$tmp->increment('int');
 		++$control_int;
 		$this->assertEquals((int)$tmp->int, $control_int);
@@ -243,6 +257,7 @@ class TestFiledb extends PHPUnit_Framework_TestCase {
 
 		$tmp = Unittest::find(25);
 		$control_int = $tmp->int;
+
 		$tmp->decrement('int');
 		--$control_int;
 		$this->assertEquals((int)$tmp->int, $control_int);
