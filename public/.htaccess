@@ -1,10 +1,20 @@
+# ----------------------------------------------------------------------
+# /PUBLIC folder .htaccess
+# ----------------------------------------------------------------------
+# This .htaccess file is recommended
+# to be placed at root/public folder
+# of your Laravel powered application
+# ----------------------------------------------------------------------
+# This file works with Laravel 3 and 4
+# ----------------------------------------------------------------------
 # Turning on the rewrite engine is necessary for the following rules and
 # features. "+FollowSymLinks" must be enabled for this to work symbolically.
+# ----------------------------------------------------------------------
 
 <IfModule mod_rewrite.c>
-	Options +FollowSymLinks
-	DirectoryIndex index.php
-	RewriteEngine On
+  Options +FollowSymLinks
+  DirectoryIndex index.php
+  RewriteEngine On
 </IfModule>
 
 RewriteEngine On
@@ -19,36 +29,41 @@ RewriteRule . / [L]
 AddDefaultCharset utf-8
 AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
 
-#####################################################
-
 # ----------------------------------------------------------------------
 # A little more security
 # ----------------------------------------------------------------------
-
 # To avoid displaying the exact version number of Apache being used, add the
 # following to httpd.conf (it will not work in .htaccess):
 # ServerTokens Prod
-
+# ----------------------------------------------------------------------
 # "-Indexes" will have Apache block users from browsing folders without a
 # default document Usually you should leave this activated, because you
 # shouldn't allow everybody to surf through every folder on your server (which
 # includes rather private places like CMS system folders).
+# ----------------------------------------------------------------------
+
 <IfModule mod_autoindex.c>
   Options -Indexes
 </IfModule>
 
+# ----------------------------------------------------------------------
 # Block access to "hidden" directories or files whose names begin with a
 # period. This includes directories used by version control systems such as
 # Subversion or Git.
+# ----------------------------------------------------------------------
+
 <IfModule mod_rewrite.c>
   RewriteCond %{SCRIPT_FILENAME} -d [OR]
   RewriteCond %{SCRIPT_FILENAME} -f
   RewriteRule "(^|/)\." - [F]
 </IfModule>
 
+# ----------------------------------------------------------------------
 # Block access to backup and source files. These files may be left by some
 # text/html editors and pose a great security danger, when anyone can access
 # them.
+# ----------------------------------------------------------------------
+
 <FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist)|~)$">
   Order allow,deny
   Deny from all
@@ -59,24 +74,23 @@ AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
 # Suppress or force the "www." at the beginning of URLs
 # ----------------------------------------------------------------------
 # IMPORTANT: NEVER USE BOTH RULES AT THE SAME TIME!
-
 # ----------------------------------------------------------------------
-
 # Option 1:
 # Rewrite "www.example.com -> example.com".
-
+# ----------------------------------------------------------------------
 
 <IfModule mod_rewrite.c>
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
 </IfModule>
-# ----------------------------------------------------------------------
 
+# ----------------------------------------------------------------------
 # Option 2:
 # Rewrite "example.com -> www.example.com".
 # Be aware that the following rule might not be a good idea if you use "real"
 # subdomains for certain parts of your website.
+# ----------------------------------------------------------------------
 
 # <IfModule mod_rewrite.c>
 #   RewriteCond %{HTTPS} !=on
@@ -84,6 +98,11 @@ AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
 #   RewriteRule ^ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # </IfModule>
 
+
+# ----------------------------------------------------------------------
+# Compression is implemented by the DEFLATE filter.
+# The following directive will enable compression for documents in the container
+# ----------------------------------------------------------------------
 <IfModule mod_deflate.c>
 
   # Force deflate for mangled headers developer.yahoo.com/blogs/ydn/posts/2010/12/pushing-beyond-gzipping/
@@ -151,14 +170,14 @@ AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
 # ----------------------------------------------------------------------
 # Expires headers (for better cache control)
 # ----------------------------------------------------------------------
-
 # These are pretty far-future expires headers.
 # They assume you control versioning with filename-based cache busting
 # Additionally, consider that outdated proxies may miscache
-#   www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/
-
+# www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/
+# ----------------------------------------------------------------------
 # If you don't use filenames to version, lower the CSS and JS to something like
 # "access plus 1 week".
+# ----------------------------------------------------------------------
 
 <IfModule mod_expires.c>
   ExpiresActive on
@@ -212,10 +231,12 @@ AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
 # ----------------------------------------------------------------------
 # Proper MIME type for all files
 # ----------------------------------------------------------------------
-
 # JavaScript
-#   Normalize to standard type (it's sniffed in IE anyways)
-#   tools.ietf.org/html/rfc4329#section-7.2
+# Normalize to standard type (it's sniffed in IE anyways)
+# tools.ietf.org/html/rfc4329#section-7.2
+# ----------------------------------------------------------------------
+
+
 AddType application/javascript         js jsonp
 AddType application/json               json
 
