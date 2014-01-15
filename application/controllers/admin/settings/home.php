@@ -37,6 +37,11 @@ class Admin_Settings_Home_Controller extends Base_Controller {
 
 		foreach($data["setting"] as $row){
 
+			if(is_array($row->value)){
+
+				$row->value = Filedb::array_to_object($row->value);
+			}
+
 			if(is_object($row->value)){
 
 				${$row->id}[$row->param] = $row->value;
