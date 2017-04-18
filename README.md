@@ -7,14 +7,11 @@ And again we're happy to introduce the most easily customizable CMS in the world
 
 Indira CMS - Same idea as in Adminizer CMS, but in new interpretation: Laravel, Bootstrap, Font Awesome
 
-* Part of [Veliov Group](http://veliovgroup.com) project
+* Part of [Veliov Group](https://veliovgroup.com) project
 * [Indira CMS official website](http://indira-cms.com)
 * [GitHub Wiki](https://github.com/dr-dimitru/indira/wiki) 
 * [Download](https://github.com/dr-dimitru/indira/archive/master.zip)     
-* [Indira CMS on GitHub](https://github.com/dr-dimitru/indira)
-* [Request free subdomain](mailto:info@indira-cms.com?subject=Request free subdomain&body=Hello my name is [Your Name]. %0A%0A I would like to qequest domain for testing. %0A I want [name] as name of subdomain. %0A%0A I will use this domain for next [how long you whish to use domain months, weeks?]. %0A I need this domain for [What primary use for domain?] %0A%0A Additionaly I need: [What do you need? FTP-access, MySQL database, Big storage?]. %0A%0A%0A Thank you, [Your Credentials])
 * [Donate via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5MG529GH5NXLJ)
-* [Flattr Indira CMS](http://flattr.com/thing/1812115/Indira-CMS)
 
 --
 
