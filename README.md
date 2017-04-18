@@ -1,4 +1,4 @@
-###Indira CMS
+### Indira CMS
 
 CMS take the best of idea from [Adminizer CMS](https://github.com/dr-dimitru/Adminizer) and creative development from Laravel.
 And again we're happy to introduce the most easily customizable CMS in the world - [Indira](http://indira-cms.com)
@@ -20,7 +20,7 @@ Indira CMS - Same idea as in Adminizer CMS, but in new interpretation: Laravel, 
 
 ## Quick installation guide
 
-###Requirements (Laravel)
+### Requirements (Laravel)
 
  - Apache, nginx, or another compatible web server.
  - Laravel takes advantage of the powerful features that have become available in PHP 5.3. Consequently, PHP 5.3 is a requirement.
@@ -34,13 +34,13 @@ After you meet all Laravel's requirements, please proceed to next step:
 
 --
 
-####Download sources
+#### Download sources
  - Go to GitHub
  - Download source code from master branch
 
 --
 
-####Upload to server
+#### Upload to server
 
 To upload downloaded and edited files you may use build-in functionality of yours hosting-provider, something like "file management" or "FTP-management" or application which will provide direct access to your FTP-server, for example Forklift or Filezilla.
 
@@ -50,7 +50,7 @@ To upload downloaded and edited files you may use build-in functionality of your
 
 --
 
-####Setting up the server side
+#### Setting up the server side
 
 After uploading all files into your server you need to change rights to public/upload & storage folders you need to make them writable.
  - Go to your server root folder
@@ -78,7 +78,7 @@ If you will expect any issues with routing to /public at first try to remove .ht
 
 --
 
-####Setting up Application Key
+#### Setting up Application Key
 Secret application key. It's extremely important that you change the application key option before working on your site. This key is used throughout the framework for encryption, hashing, etc.
 
 Method #1:
@@ -95,7 +95,7 @@ Method #2:
 
 --
 
-####First login /admin
+#### First login /admin
 
 After most of work is done, let's login into admin side go to yourdomain.com/admin:
  - The default username / password is - admin / admin
@@ -109,7 +109,7 @@ After most of work is done, let's login into admin side go to yourdomain.com/adm
 
 --
 
-####Setting up your Application
+#### Setting up your Application
  - Go to Admin side - yourdomain.com/admin
  - Then, if you're not logged in yet - login as admin with maximum rights (777)
  - Next - click on settings (wrench icon in top bar) -> Main Settings:
@@ -130,4 +130,4 @@ After most of work is done, let's login into admin side go to yourdomain.com/adm
    - Logo - Default Logo in default templates. You may use html-tags or image as a logo of your app (Recommended)
 
 
-######All done !
+###### All done !
